@@ -1,0 +1,36 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "general.notifications.section" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notifications" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "通知" } }
+      }
+    },
+    "general.notifyOnFailure" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notify when a sync fails or needs attention" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同步失败或需要处理时通知" } }
+      }
+    },
+    "notification.failure.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@: %@" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%@: %@" } }
+      }
+    },
+    "notification.failure.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Repository Sync Needs Attention" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库同步需要处理" } }
+      }
+    },
+    "notification.failure.unknown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "An unknown error occurred." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "发生未知错误。" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

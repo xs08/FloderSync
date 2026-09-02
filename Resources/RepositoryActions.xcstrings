@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.cancel" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } }
+      }
+    },
+    "repository.checkConnection" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Check Connection" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "检查连接" } }
+      }
+    },
+    "repository.commitTemplate" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Commit Message" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提交信息" } }
+      }
+    },
+    "repository.connection.succeeded" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connected" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "连接正常" } }
+      }
+    },
+    "repository.remove.confirm.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Only the obsSync configuration is removed. Sync history is retained, and local files and Git data are not deleted." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "只会移除 obsSync 配置；同步历史会保留，也不会删除本地文件或 Git 数据。" } }
+      }
+    },
+    "repository.remove.confirm.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove This Repository?" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "要移除此仓库吗？" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}
