@@ -2,33 +2,88 @@
   "sourceLanguage" : "en",
   "strings" : {
     "general.notifications.section" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notifications" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "通知" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知"
+          }
+        }
       }
     },
     "general.notifyOnFailure" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Notify when a sync fails or needs attention" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同步失败或需要处理时通知" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify when a sync fails or needs attention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步失败或需要处理时通知"
+          }
+        }
       }
     },
     "notification.failure.body" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "%@: %@" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%@: %@" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@: %@"
+          }
+        }
       }
     },
     "notification.failure.title" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Repository Sync Needs Attention" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库同步需要处理" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repository Sync Needs Attention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓库同步需要处理"
+          }
+        }
       }
     },
     "notification.failure.unknown" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "An unknown error occurred." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "发生未知错误。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An unknown error occurred."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发生未知错误。"
+          }
+        }
       }
     }
   },

@@ -14,8 +14,10 @@ struct MenuBarView: View {
         }
         .frame(width: 360)
         .task { model.start() }
-        .alert("error.title", isPresented: errorIsPresented) {
-            Button("action.ok", role: .cancel) { model.presentedError = nil }
+        .alert(L10n.string("error.title", table: .settings), isPresented: errorIsPresented) {
+            Button(L10n.string("action.ok", table: .settings), role: .cancel) {
+                model.presentedError = nil
+            }
         } message: {
             Text(model.presentedError ?? "")
         }
@@ -52,8 +54,6 @@ struct MenuBarView: View {
                 Label("repositories.empty.title", systemImage: "externaldrive.badge.plus")
             } description: {
                 Text("repositories.empty.message")
-            } actions: {
-                Button("settings.open") { openSettings() }
             }
             .frame(minHeight: 210)
             .padding(.horizontal, 20)
@@ -73,14 +73,17 @@ struct MenuBarView: View {
     private var footer: some View {
         HStack {
             Button {
+                RepositoryPicker.shared.cancel()
                 openSettings()
             } label: {
                 Label("settings.open", systemImage: "gearshape")
             }
             .buttonStyle(.plain)
             Spacer()
-            Button("app.quit") {
-                NSApplication.shared.terminate(nil)
+            Button {
+                chooseRepository()
+            } label: {
+                Label("repository.add", systemImage: "plus")
             }
             .buttonStyle(.plain)
         }
@@ -118,6 +121,15 @@ struct MenuBarView: View {
             set: { if !$0 { model.presentedError = nil } }
         )
     }
+
+    private func chooseRepository() {
+        Task {
+            guard let url = await RepositoryPicker.shared.chooseRepository() else { return }
+            if await model.addRepository(at: url) {
+                openSettings()
+            }
+        }
+    }
 }
 
 private struct RepositoryRow: View {
@@ -134,7 +146,7 @@ private struct RepositoryRow: View {
                     .lineLimit(1)
                 Text(detailText)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(model.needsUserAttention(profile) ? Color.orange : .secondary)
                     .lineLimit(1)
             }
             Spacer()
@@ -169,8 +181,11 @@ private struct RepositoryRow: View {
     }
 
     private var detailText: String {
+        if model.needsUserAttention(profile) {
+            return L10n.string("repository.status.needsAttention", table: .repositoryActions)
+        }
         guard let run = model.latestRun(for: profile) else {
-            return String(localized: "repository.neverSynced")
+            return L10n.string("repository.neverSynced")
         }
         return run.finishedAt.formatted(date: .abbreviated, time: .shortened)
     }

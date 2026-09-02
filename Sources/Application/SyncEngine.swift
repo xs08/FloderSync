@@ -31,7 +31,7 @@ struct SyncEngine: Sendable {
 
             if status.hasUnmergedPaths || status.hasOperationInProgress {
                 throw SyncFailure.conflict(
-                    "A Git merge, rebase, cherry-pick, or conflict is already in progress. Resolve or abort it before syncing again."
+                    L10n.string("error.operationInProgress", table: .errors)
                 )
             }
 

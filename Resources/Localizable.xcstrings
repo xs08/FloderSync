@@ -3,104 +3,287 @@
   "strings" : {
     "app.name" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "obsSync" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "obsSync" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FloderSync"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FloderSync"
+          }
+        }
       }
     },
     "app.quit" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Quit" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "退出" } }
-      }
-    },
-    "repository.add" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Repository" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加仓库" } }
-      }
-    },
-    "repository.neverSynced" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Not synced yet" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "尚未同步" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出"
+          }
+        }
       }
     },
     "repositories.empty.message" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add an existing Git repository in Settings." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请在设置中添加已有的 Git 仓库。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose a local Git repository to start syncing."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个本地 Git 仓库以开始同步。"
+          }
+        }
       }
     },
     "repositories.empty.title" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No Repositories" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂无仓库" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Repositories"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无仓库"
+          }
+        }
       }
     },
     "repositories.settings.empty.message" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose an existing local Git repository to begin." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择一个已有的本地 Git 仓库以开始使用。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an existing local Git repository to begin."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择一个已有的本地 Git 仓库以开始使用。"
+          }
+        }
+      }
+    },
+    "repository.add" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "添加仓库"
+          }
+        }
+      }
+    },
+    "repository.neverSynced" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not synced yet"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未同步"
+          }
+        }
       }
     },
     "settings.automation" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Automation" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "自动化" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automation"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "自动化"
+          }
+        }
       }
     },
     "settings.diagnostics" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "History & Diagnostics" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "历史与诊断" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History & Diagnostics"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "历史与诊断"
+          }
+        }
       }
     },
     "settings.general" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "General" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "通用" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "General"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通用"
+          }
+        }
       }
     },
     "settings.open" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Settings" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开设置" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开设置"
+          }
+        }
       }
     },
     "settings.repositories" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Repositories" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repositories"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓库"
+          }
+        }
       }
     },
     "status.problems" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Some repositories need attention" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "部分仓库需要处理" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some repositories need attention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "部分仓库需要处理"
+          }
+        }
       }
     },
     "status.ready" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Ready" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已就绪" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已就绪"
+          }
+        }
       }
     },
     "status.syncing" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Syncing…" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在同步…" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Syncing…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在同步…"
+          }
+        }
       }
     },
     "sync.all" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sync All" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "全部同步" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync All"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "全部同步"
+          }
+        }
       }
     },
     "sync.repository" : {
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sync repository" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同步仓库" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步仓库"
+          }
+        }
       }
     }
   },

@@ -37,7 +37,7 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
         name: String,
         localPath: String,
         remoteName: String = "origin",
-        commitMessageTemplate: String = "obsSync: automatic sync at {timestamp}",
+        commitMessageTemplate: String = "FloderSync: automatic sync at {timestamp}",
         policies: [SyncPolicy] = [.fileChanges],
         isEnabled: Bool = true
     ) {
@@ -137,6 +137,11 @@ struct RepositoryInfo: Equatable, Sendable {
     let remoteURL: String
 }
 
+enum RepositorySynchronizationState: Equatable, Sendable {
+    case upToDate
+    case outOfSync
+}
+
 struct GitWorkingTreeStatus: Equatable, Sendable {
     let hasChanges: Bool
     let hasUnmergedPaths: Bool
@@ -204,11 +209,11 @@ enum SyncFailure: Error, Equatable, Sendable {
              let .commandFailed(_, message):
             message
         case .detachedHead:
-            "The repository is in detached HEAD state."
+            L10n.string("error.detachedHead", table: .errors)
         case .timedOut:
-            "The Git command timed out."
+            L10n.string("error.timedOut", table: .errors)
         case .cancelled:
-            "The sync was cancelled."
+            L10n.string("error.cancelled", table: .errors)
         }
     }
 }
