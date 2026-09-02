@@ -40,6 +40,7 @@
 		BF173DF80B0040C83B670286 /* JSONRunHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E286961F14031EC4378F740 /* JSONRunHistoryStore.swift */; };
 		C01DEA89B0FC31EBEBEE514F /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 48F34EF3998FD19F21BACF4A /* Settings.xcstrings */; };
 		C449A7F91042B9D4C996DF58 /* RepositoryActions.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F80D7F8E91535E8642998883 /* RepositoryActions.xcstrings */; };
+		C5492244399C18D506C4D985 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA26AD8498CBE1D15070797 /* Assets.xcassets */; };
 		D4922A5BAA939FA73CBE0F6D /* JSONRunHistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */; };
 		D7D34EC098A0EBB491C6E90B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29008BF496757BF302BECB /* AppModel.swift */; };
 		D927950B934BAE385ED1556F /* ObsSyncApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */; };
@@ -84,6 +85,7 @@
 		998AA02E7F485FB2161C177C /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		9AE444A74ACC94FC503A8600 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		9CA26AD8498CBE1D15070797 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduler.swift; sourceTree = "<group>"; };
 		AB99BE2F94A900ADF4A4FC57 /* ProcessGitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessGitClient.swift; sourceTree = "<group>"; };
 		B2D24536D26E02945B2AF930 /* FSEventsDirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSEventsDirectoryWatcher.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 		2BC62D10C8C6F962092DDE25 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9CA26AD8498CBE1D15070797 /* Assets.xcassets */,
 				E9903E96D182B1169AEB9DD0 /* Automation.xcstrings */,
 				6EF2240985155158FD931603 /* Errors.xcstrings */,
 				E6A7B28E59319EFBFC0637D1 /* History.xcstrings */,
@@ -304,6 +307,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C5492244399C18D506C4D985 /* Assets.xcassets in Resources */,
 				39F606B5FD6ECEFEAE87D004 /* Automation.xcstrings in Resources */,
 				44A59B4B96DC89C56D793142 /* Errors.xcstrings in Resources */,
 				190A1C3CBBF6DE82AFB32B56 /* History.xcstrings in Resources */,

@@ -10,7 +10,16 @@ struct FloderSyncApp: App {
                 .environment(\.locale, model.appLanguage.locale)
                 .preferredColorScheme(model.appTheme.preferredColorScheme)
         } label: {
-            Image(systemName: menuBarSymbol)
+            ZStack(alignment: .bottomTrailing) {
+                Image("MenuBarIcon")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+
+                menuBarStatusBadge
+            }
+            .frame(width: 20, height: 18)
                 .accessibilityLabel(Text("app.name"))
                 .task { model.start() }
         }
@@ -26,11 +35,23 @@ struct FloderSyncApp: App {
         }
     }
 
-    private var menuBarSymbol: String {
+    @ViewBuilder
+    private var menuBarStatusBadge: some View {
         switch model.overallState {
-        case .ready: "arrow.triangle.2.circlepath"
-        case .syncing: "arrow.triangle.2.circlepath.circle.fill"
-        case .problems: "exclamationmark.triangle.fill"
+        case .ready:
+            EmptyView()
+        case .syncing:
+            statusDot(color: .accentColor)
+        case .problems:
+            statusDot(color: .red)
         }
+    }
+
+    private func statusDot(color: Color) -> some View {
+        Circle()
+            .fill(color)
+            .overlay(Circle().stroke(.white.opacity(0.9), lineWidth: 0.8))
+            .frame(width: 6, height: 6)
+            .offset(x: 1, y: 1)
     }
 }
