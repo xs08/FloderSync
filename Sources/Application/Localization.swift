@@ -45,11 +45,15 @@ enum LocalizationTable: String, Sendable {
 }
 
 enum L10n {
-    static func string(_ key: String, table: LocalizationTable = .localizable) -> String {
+    static func string(
+        _ key: String,
+        table: LocalizationTable = .localizable,
+        language: AppLanguage = .selected
+    ) -> String {
         NSLocalizedString(
             key,
             tableName: table.rawValue,
-            bundle: selectedBundle,
+            bundle: selectedBundle(for: language),
             value: key,
             comment: ""
         )
@@ -63,12 +67,33 @@ enum L10n {
         String(format: string(key, table: table), locale: AppLanguage.selected.locale, arguments: arguments)
     }
 
-    private static var selectedBundle: Bundle {
-        guard let identifier = AppLanguage.selected.localizationIdentifier,
+    private static func selectedBundle(for language: AppLanguage) -> Bundle {
+        guard let identifier = language.localizationIdentifier,
               let path = Bundle.main.path(forResource: identifier, ofType: "lproj"),
               let bundle = Bundle(path: path) else {
             return .main
         }
         return bundle
+    }
+}
+
+extension AppLanguage {
+    func pickerTitle(interfaceLanguage: AppLanguage) -> String {
+        switch self {
+        case .system:
+            L10n.string(
+                "general.language.system",
+                table: .settings,
+                language: interfaceLanguage
+            )
+        case .english:
+            L10n.string("general.language.english", table: .settings, language: .english)
+        case .simplifiedChinese:
+            L10n.string(
+                "general.language.simplifiedChinese",
+                table: .settings,
+                language: .simplifiedChinese
+            )
+        }
     }
 }

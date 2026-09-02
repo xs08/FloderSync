@@ -3,6 +3,11 @@ import SwiftUI
 struct MenuBarView: View {
     @ObservedObject var model: AppModel
 
+    private static let repositoryRowHeight: CGFloat = 56
+    private static let repositoryRowSpacing: CGFloat = 8
+    private static let repositoryVerticalPadding: CGFloat = 24
+    private static let maximumRepositoryListHeight: CGFloat = 360
+
     var body: some View {
         VStack(spacing: 0) {
             header
@@ -58,15 +63,22 @@ struct MenuBarView: View {
             .padding(.horizontal, 20)
         } else {
             ScrollView {
-                LazyVStack(spacing: 8) {
+                VStack(spacing: Self.repositoryRowSpacing) {
                     ForEach(model.profiles) { profile in
                         RepositoryRow(profile: profile, model: model)
                     }
                 }
                 .padding(12)
             }
-            .frame(maxHeight: 360)
+            .frame(height: Self.repositoryListHeight(for: model.profiles.count))
         }
+    }
+
+    static func repositoryListHeight(for profileCount: Int) -> CGFloat {
+        guard profileCount > 0 else { return 0 }
+        let rows = CGFloat(profileCount) * repositoryRowHeight
+        let spacing = CGFloat(profileCount - 1) * repositoryRowSpacing
+        return min(repositoryVerticalPadding + rows + spacing, maximumRepositoryListHeight)
     }
 
     private var footer: some View {

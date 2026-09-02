@@ -51,6 +51,48 @@ final class LocalizationCatalogTests: XCTestCase {
         XCTAssertEqual(L10n.string("settings.general"), "通用")
     }
 
+    func testLanguagePickerUsesEachLanguagesOwnName() {
+        XCTAssertEqual(
+            AppLanguage.english.pickerTitle(interfaceLanguage: .simplifiedChinese),
+            "English"
+        )
+        XCTAssertEqual(
+            AppLanguage.simplifiedChinese.pickerTitle(interfaceLanguage: .english),
+            "简体中文"
+        )
+        XCTAssertEqual(
+            AppLanguage.system.pickerTitle(interfaceLanguage: .english),
+            "Follows System Settings (English and Simplified Chinese)"
+        )
+        XCTAssertEqual(
+            AppLanguage.system.pickerTitle(interfaceLanguage: .simplifiedChinese),
+            "跟随系统设置（英文和简体中文）"
+        )
+    }
+
+    func testExplicitLocalizationLanguageDoesNotDependOnSavedSelection() {
+        let defaults = UserDefaults.standard
+        let originalValue = defaults.string(forKey: AppLanguage.defaultsKey)
+        defer {
+            if let originalValue {
+                defaults.set(originalValue, forKey: AppLanguage.defaultsKey)
+            } else {
+                defaults.removeObject(forKey: AppLanguage.defaultsKey)
+            }
+        }
+
+        defaults.set(AppLanguage.english.rawValue, forKey: AppLanguage.defaultsKey)
+
+        XCTAssertEqual(
+            L10n.string("settings.repositories", language: .simplifiedChinese),
+            "仓库"
+        )
+        XCTAssertEqual(
+            L10n.string("settings.automation", language: .english),
+            "Automation"
+        )
+    }
+
     func testEveryCatalogEntryHasEnglishAndSimplifiedChineseTranslations() throws {
         let projectRoot = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()

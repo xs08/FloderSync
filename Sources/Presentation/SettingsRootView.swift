@@ -1,12 +1,68 @@
 import AppKit
 import SwiftUI
 
+struct SettingsPalette {
+    let windowBackground: Color
+    let contentBackground: Color
+    let sidebarBackground: Color
+    let elevatedBackground: Color
+    let windowBorder: Color
+    let sidebarBorder: Color
+    let divider: Color
+    let primaryText: Color
+    let secondaryText: Color
+    let mutedText: Color
+    let navigationText: Color
+    let selectionBackground: Color
+    let selectionForeground: Color
+    let shadow: Color
+
+    init(colorScheme: ColorScheme) {
+        if colorScheme == .dark {
+            // A cool charcoal ramp modeled after native macOS utility surfaces. Elevation is
+            // expressed through lightness rather than heavy shadows or translucent overlays.
+            windowBackground = Color(red: 0.129, green: 0.157, blue: 0.176)
+            contentBackground = Color(red: 0.145, green: 0.173, blue: 0.192)
+            sidebarBackground = Color(red: 0.102, green: 0.125, blue: 0.141)
+            elevatedBackground = Color(red: 0.169, green: 0.200, blue: 0.220)
+            windowBorder = Color(red: 0.310, green: 0.357, blue: 0.384)
+            sidebarBorder = Color(red: 0.239, green: 0.286, blue: 0.314)
+            divider = Color(red: 0.220, green: 0.259, blue: 0.282)
+            primaryText = Color(red: 0.949, green: 0.961, blue: 0.969)
+            secondaryText = Color(red: 0.714, green: 0.749, blue: 0.769)
+            mutedText = Color(red: 0.541, green: 0.588, blue: 0.616)
+            navigationText = Color(red: 0.894, green: 0.918, blue: 0.929)
+            selectionBackground = Color(red: 0.090, green: 0.420, blue: 0.790)
+            selectionForeground = .white
+            shadow = .clear
+        } else {
+            windowBackground = Color(nsColor: .windowBackgroundColor)
+            contentBackground = Color(nsColor: .windowBackgroundColor)
+            sidebarBackground = Color(nsColor: .controlBackgroundColor)
+            elevatedBackground = Color(nsColor: .textBackgroundColor)
+            windowBorder = Color(nsColor: .separatorColor)
+            sidebarBorder = Color(nsColor: .separatorColor)
+            divider = Color(nsColor: .separatorColor)
+            primaryText = Color(nsColor: .labelColor)
+            secondaryText = Color(nsColor: .secondaryLabelColor)
+            mutedText = Color(nsColor: .tertiaryLabelColor)
+            navigationText = Color(nsColor: .labelColor)
+            selectionBackground = .accentColor
+            selectionForeground = .white
+            shadow = .black.opacity(0.08)
+        }
+    }
+}
+
 struct SettingsRootView: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         ZStack {
-            Color(nsColor: .windowBackgroundColor)
+            palette.windowBackground
 
             HStack(spacing: 0) {
                 SettingsSidebar(model: model)
@@ -17,6 +73,10 @@ struct SettingsRootView: View {
         }
         .frame(minWidth: 900, idealWidth: 960, minHeight: 560, idealHeight: 640)
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .strokeBorder(palette.windowBorder, lineWidth: 1)
+        }
         .ignoresSafeArea(.container, edges: .top)
         .task { model.start() }
         .onDisappear { RepositoryPicker.shared.cancel() }
@@ -71,7 +131,10 @@ struct SettingsRootView: View {
 
 private struct SettingsSidebar: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
     @FocusState private var focusedSection: AppModel.SettingsSection?
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     private let primarySections: [AppModel.SettingsSection] = [
         .repositories,
@@ -88,7 +151,8 @@ private struct SettingsSidebar: View {
                     } label: {
                         SettingsSidebarLabel(
                             section: section,
-                            isSelected: model.selectedSettingsSection == section
+                            isSelected: model.selectedSettingsSection == section,
+                            language: model.appLanguage
                         )
                     }
                     .buttonStyle(.plain)
@@ -109,7 +173,9 @@ private struct SettingsSidebar: View {
                         .font(.title3)
                 }
                 .foregroundStyle(
-                    model.selectedSettingsSection == .general ? Color.accentColor : .secondary
+                    model.selectedSettingsSection == .general
+                        ? palette.selectionBackground
+                        : palette.secondaryText
                 )
                 .help(L10n.string("settings.general"))
                 .accessibilityLabel(L10n.string("settings.general"))
@@ -125,7 +191,7 @@ private struct SettingsSidebar: View {
                     Image(systemName: "power")
                         .font(.title3)
                 }
-                .foregroundStyle(.secondary)
+                .foregroundStyle(palette.secondaryText)
                 .help(L10n.string("app.quit"))
                 .accessibilityLabel(L10n.string("app.quit"))
                 .focusEffectDisabled()
@@ -140,12 +206,12 @@ private struct SettingsSidebar: View {
         }
         .background {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.92))
+                .fill(palette.sidebarBackground)
                 .overlay {
                     RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(.white.opacity(0.42), lineWidth: 1)
+                        .strokeBorder(palette.sidebarBorder, lineWidth: 1)
                 }
-                .shadow(color: .black.opacity(0.06), radius: 12, y: 4)
+                .shadow(color: palette.shadow, radius: 8, y: 3)
         }
     }
 
@@ -158,20 +224,24 @@ private struct SettingsSidebar: View {
 private struct SettingsSidebarLabel: View {
     let section: AppModel.SettingsSection
     let isSelected: Bool
+    let language: AppLanguage
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: section.symbolName)
                 .frame(width: 20)
-            Text(L10n.string(section.titleKey))
+            Text(L10n.string(section.titleKey, language: language))
                 .fontWeight(isSelected ? .semibold : .regular)
             Spacer(minLength: 0)
         }
-        .foregroundStyle(isSelected ? Color.white : Color.primary)
+        .foregroundStyle(isSelected ? palette.selectionForeground : palette.navigationText)
         .padding(.horizontal, 14)
         .frame(maxWidth: .infinity, minHeight: 44)
         .background(
-            isSelected ? Color.accentColor : Color.clear,
+            isSelected ? palette.selectionBackground : Color.clear,
             in: RoundedRectangle(cornerRadius: 10, style: .continuous)
         )
         .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
@@ -180,12 +250,16 @@ private struct SettingsSidebarLabel: View {
 
 private struct SettingsDetail: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         VStack(spacing: 0) {
             HStack {
                 Text(L10n.string(model.selectedSettingsSection.titleKey))
                     .font(.title2.weight(.semibold))
+                    .foregroundStyle(palette.primaryText)
                 Spacer()
             }
             .padding(.horizontal, 28)
@@ -206,7 +280,7 @@ private struct SettingsDetail: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(palette.contentBackground)
     }
 }
 
@@ -232,18 +306,25 @@ private extension AppModel.SettingsSection {
 
 private struct RepositorySettingsView: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
     @State private var pendingRemoval: SyncProfile?
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     @ViewBuilder
     var body: some View {
         if model.profiles.isEmpty {
             ContentUnavailableView {
-                Label(
-                    L10n.string("repositories.empty.title"),
-                    systemImage: "externaldrive.badge.plus"
-                )
+                Label {
+                    Text(L10n.string("repositories.empty.title"))
+                        .foregroundStyle(palette.primaryText)
+                } icon: {
+                    Image(systemName: "externaldrive.badge.plus")
+                        .foregroundStyle(palette.mutedText)
+                }
             } description: {
                 Text(L10n.string("repositories.settings.empty.message"))
+                    .foregroundStyle(palette.secondaryText)
             } actions: {
                 Button(L10n.string("repository.add", table: .settings)) {
                     chooseRepository()
@@ -279,8 +360,10 @@ private struct RepositorySettingsView: View {
                     }
                 }
                 .listStyle(.sidebar)
+                .scrollContentBackground(.hidden)
+                .background(palette.elevatedBackground)
 
-                Divider()
+                Divider().overlay(palette.divider)
 
                 HStack(spacing: 14) {
                     Button(action: chooseRepository) {
@@ -301,23 +384,27 @@ private struct RepositorySettingsView: View {
                 .buttonStyle(.borderless)
                 .padding(.horizontal, 12)
                 .frame(height: 38)
-                .background(.bar)
+                .background(palette.elevatedBackground)
             }
             .frame(width: 260)
 
-            Divider()
+            Divider().overlay(palette.divider)
 
             Group {
                 if let profile = selectedProfile {
                     RepositoryDetailView(profile: profile, model: model)
                 } else {
                     ContentUnavailableView {
-                        Label(
-                            L10n.string("repository.select.title", table: .settings),
-                            systemImage: "externaldrive.badge.plus"
-                        )
+                        Label {
+                            Text(L10n.string("repository.select.title", table: .settings))
+                                .foregroundStyle(palette.primaryText)
+                        } icon: {
+                            Image(systemName: "externaldrive.badge.plus")
+                                .foregroundStyle(palette.mutedText)
+                        }
                     } description: {
                         Text(L10n.string("repository.select.message", table: .settings))
+                            .foregroundStyle(palette.secondaryText)
                     }
                 }
             }
@@ -394,6 +481,9 @@ private struct RepositorySettingsView: View {
 private struct RepositoryDetailView: View {
     let profile: SyncProfile
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         Form {
@@ -507,12 +597,17 @@ private struct RepositoryDetailView: View {
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(palette.contentBackground)
         .padding(20)
     }
 }
 
 private struct GeneralSettingsView: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         Form {
@@ -562,7 +657,7 @@ private struct GeneralSettingsView: View {
                     )
                 ) {
                     ForEach(AppLanguage.allCases) { language in
-                        Text(languageTitle(language)).tag(language)
+                        Text(language.pickerTitle(interfaceLanguage: model.appLanguage)).tag(language)
                     }
                 }
             } header: {
@@ -586,18 +681,9 @@ private struct GeneralSettingsView: View {
             }
         }
         .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(palette.contentBackground)
         .padding(24)
-    }
-
-    private func languageTitle(_ language: AppLanguage) -> String {
-        switch language {
-        case .system:
-            L10n.string("general.language.system", table: .settings)
-        case .english:
-            L10n.string("general.language.english", table: .settings)
-        case .simplifiedChinese:
-            L10n.string("general.language.simplifiedChinese", table: .settings)
-        }
     }
 
     private func themeTitle(_ theme: AppTheme) -> String {
@@ -614,16 +700,23 @@ private struct GeneralSettingsView: View {
 
 private struct AutomationSettingsView: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         if model.profiles.isEmpty {
             ContentUnavailableView {
-                Label(
-                    L10n.string("repositories.empty.title"),
-                    systemImage: "clock.badge.exclamationmark"
-                )
+                Label {
+                    Text(L10n.string("repositories.empty.title"))
+                        .foregroundStyle(palette.primaryText)
+                } icon: {
+                    Image(systemName: "clock.badge.exclamationmark")
+                        .foregroundStyle(palette.mutedText)
+                }
             } description: {
                 Text(L10n.string("automation.empty.message", table: .automation))
+                    .foregroundStyle(palette.secondaryText)
             }
             .padding(24)
         } else {
@@ -642,8 +735,10 @@ private struct AutomationSettingsView: View {
 private struct AutomationProfileCard: View {
     let profile: SyncProfile
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
 
     private let intervalOptions: [TimeInterval?] = [nil, 300, 900, 1_800, 3_600, 10_800, 21_600]
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         GroupBox {
@@ -685,6 +780,10 @@ private struct AutomationProfileCard: View {
                 }
             }
         }
+        .background(
+            palette.elevatedBackground,
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
         .disabled(!profile.isEnabled)
     }
 
@@ -783,17 +882,24 @@ private struct DailyTimesEditor: View {
 
 private struct HistorySettingsView: View {
     @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selection: UUID?
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
     var body: some View {
         if model.recentRuns.isEmpty {
             ContentUnavailableView {
-                Label(
-                    L10n.string("history.empty.title", table: .history),
-                    systemImage: "clock.arrow.circlepath"
-                )
+                Label {
+                    Text(L10n.string("history.empty.title", table: .history))
+                        .foregroundStyle(palette.primaryText)
+                } icon: {
+                    Image(systemName: "clock.arrow.circlepath")
+                        .foregroundStyle(palette.mutedText)
+                }
             } description: {
                 Text(L10n.string("history.empty.message", table: .history))
+                    .foregroundStyle(palette.secondaryText)
             }
             .padding(24)
         } else {
@@ -818,10 +924,15 @@ private struct HistorySettingsView: View {
                     if let run = selectedRun {
                         SyncRunDetailView(run: run, profileName: profileName(for: run))
                     } else {
-                        ContentUnavailableView(
-                            L10n.string("history.select.title", table: .history),
-                            systemImage: "sidebar.left"
-                        )
+                        ContentUnavailableView {
+                            Label {
+                                Text(L10n.string("history.select.title", table: .history))
+                                    .foregroundStyle(palette.primaryText)
+                            } icon: {
+                                Image(systemName: "sidebar.left")
+                                    .foregroundStyle(palette.mutedText)
+                            }
+                        }
                     }
                 }
                 .frame(minWidth: 430, maxWidth: .infinity, maxHeight: .infinity)
