@@ -1,25 +1,39 @@
-# FloderSync
+<p align="center">
+  <img src="./docs/assets/flodersync-icon.png" width="152" alt="FloderSync icon">
+</p>
 
-FloderSync 是一个原生 macOS 菜单栏 Git 自动同步工具。它复用系统 Git 与现有认证，不保存 Git 密码、Token 或 SSH 私钥。
+<h1 align="center">FloderSync</h1>
 
-当前 MVP 基线包括：
+<p align="center">
+  A native macOS menu bar utility that keeps local Git repositories in sync automatically.
+</p>
 
-- 多个已有本地 Git 仓库配置与远端连接检查。
-- 手动同步、每日多个时间点、固定间隔、文件变化 5 秒去抖同步。
-- `add/commit -> pull --rebase -> push` 的保守同步流程。
-- 冲突、进行中的 rebase/merge、detached HEAD、认证和网络错误分类。
-- 同仓库串行、重复触发合并、不同仓库最多并发 2。
-- 菜单栏状态、快捷同步/添加仓库、侧边栏设置、历史诊断和登录启动。
-- 失败/冲突通知，简体中文与英文 String Catalog。
+<p align="center">
+  <strong>English</strong> · <a href="./README.zh-CN.md">简体中文</a>
+</p>
 
-## 开发环境
+FloderSync uses the Git installation and authentication already configured on your Mac. It never stores Git passwords, access tokens, or SSH private keys.
 
-- macOS 14+
-- Xcode 16+（当前验证环境：Xcode 26.6、Swift 6.3.3）
+## Highlights
+
+- Manage multiple existing local Git repositories and verify their remote connections.
+- Sync manually, at multiple daily times, on a fixed interval, or after file changes with a five-second debounce.
+- Use a conservative `add/commit -> pull --rebase -> push` workflow.
+- Detect conflicts, in-progress rebases or merges, detached HEAD, authentication errors, and network failures.
+- Serialize operations for the same repository, coalesce repeated triggers, and sync up to two different repositories concurrently.
+- See status in the menu bar, start a sync quickly, add repositories, review history and diagnostics, and launch at login.
+- Receive notifications for failures and conflicts.
+- Switch between English and Simplified Chinese without restarting the app.
+- Follow the system appearance or select a light or dark theme.
+
+## Requirements
+
+- macOS 14 or later
+- Xcode 16 or later (currently verified with Xcode 26.6 and Swift 6.3.3)
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen)
-- 系统可执行的 Git
+- A working system Git installation
 
-## 生成与验证
+## Build and test
 
 ```bash
 xcodegen generate
@@ -33,28 +47,28 @@ xcodebuild test \
   -destination 'platform=macOS'
 ```
 
-也可以打开 `obsSync.xcodeproj` 后直接运行 `obsSync` scheme。应用使用 `LSUIElement`，启动后只显示在系统菜单栏，不显示 Dock 图标。
+You can also open `obsSync.xcodeproj` and run the `obsSync` scheme. FloderSync is an `LSUIElement` app, so it appears only in the system menu bar and does not show a Dock icon.
 
-## Git 与认证
+## Git and authentication
 
-应用按顺序查找 `/usr/bin/git`、Apple Silicon Homebrew Git 和 Intel Homebrew Git，并使用 Git/SSH/credential helper 的现有用户配置。自动同步设置 `GIT_TERMINAL_PROMPT=0`，认证无法非交互完成时会停止并提示，不会在应用内索取或保存凭据。
+FloderSync searches for Git at `/usr/bin/git`, the Apple Silicon Homebrew path, and the Intel Homebrew path, in that order. It reuses your existing Git, SSH, and credential-helper configuration.
 
-设置中的“检查连接”使用 `git ls-remote --heads` 验证所选仓库的远端与当前后台认证环境。
+Automatic sync runs with `GIT_TERMINAL_PROMPT=0`. If authentication cannot complete non-interactively, the operation stops and FloderSync reports the error instead of asking for or storing credentials. The **Check Connection** action uses `git ls-remote --heads` to validate the selected repository's remote with the same background authentication environment.
 
-## 数据位置
+## Data location
 
-运行配置和最近 100 条同步摘要保存在：
+Configuration and the 100 most recent sync summaries are stored in:
 
 ```text
 ~/Library/Application Support/dev.obssync.app/
 ```
 
-移除仓库只删除 FloderSync 的配置，不删除本地工作区或 `.git` 数据。
+Removing a repository from FloderSync deletes only its app configuration. It does not delete the local working tree or any `.git` data.
 
-## 发布前待办
+## Before release
 
-- 将开发期 Bundle Identifier `dev.obssync.app` 替换为最终反向域名标识。
-- 配置 Developer ID、Hardened Runtime、公证与更新渠道。
-- 在已签名 App 中完成真实 SSH、HTTPS Keychain、登录启动和完整窗口视觉矩阵验证。
+- Replace the development bundle identifier `dev.obssync.app` with the final reverse-domain identifier.
+- Configure Developer ID signing, Hardened Runtime, notarization, and an update channel.
+- Validate real SSH, HTTPS Keychain, launch-at-login, and the complete window appearance matrix in a signed build.
 
-设计、需求和测试文档见 [docs/README.md](./docs/README.md)。
+See [docs/README.md](./docs/README.md) for the product requirements, architecture, test plan, and implementation roadmap.
