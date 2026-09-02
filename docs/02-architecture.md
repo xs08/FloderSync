@@ -163,6 +163,8 @@ GUI 应用通常不继承交互式 shell 的环境。架构中应显式解析 Gi
 
 语言偏好存入 `UserDefaults`。视图注入对应 `Locale`，动态字符串查找器按用户选择加载 `en.lproj`、`zh-Hans.lproj` 或系统首选资源，因此不需要重启应用。
 
+设置窗口由 `SettingsWindowConfigurator` 在获得 `NSWindow` 后统一配置：隐藏标题文字、启用透明标题栏和 full-size content view，同时保留标准窗口控制、阴影、拖动和缩放行为。SwiftUI 根视图负责 28pt continuous 外观裁剪；侧边栏不使用 `List`，改为固定宽度的语义按钮栈，以精确控制圆角选中态，并避免系统分栏背景侵入内容区。侧边栏卡片与主内容之间使用留白和表面色区分，不再使用硬分割线。
+
 UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间距和原生控件为准；支持键盘快捷键（至少 `⌘,` 设置、手动同步命令）和所有关键状态（空、加载、同步中、失败、权限不足、路径失效）。
 
 ## 8. 关键架构决策记录（ADR）

@@ -5,6 +5,28 @@ import XCTest
 
 @MainActor
 final class UIRenderTests: XCTestCase {
+    func testSettingsWindowUsesImmersiveChrome() {
+        let model = AppModel()
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 960, height: 640),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "FloderSync Settings"
+        window.contentView = NSHostingView(rootView: SettingsRootView(model: model))
+        window.orderFront(nil)
+        defer { window.close() }
+        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
+
+        XCTAssertEqual(window.titleVisibility, .hidden)
+        XCTAssertTrue(window.titlebarAppearsTransparent)
+        XCTAssertEqual(window.titlebarSeparatorStyle, .none)
+        XCTAssertTrue(window.styleMask.contains(.fullSizeContentView))
+        XCTAssertFalse(window.isOpaque)
+        XCTAssertEqual(window.backgroundColor, .clear)
+    }
+
     func testRenderMenuBarEmptyStatesForVisualReview() throws {
         let model = AppModel()
 
@@ -30,7 +52,7 @@ final class UIRenderTests: XCTestCase {
         let model = AppModel()
 
         try render(
-            SettingsRootView(model: model)
+            SettingsRootView(model: model, configuresWindow: false)
                 .environment(\.locale, Locale(identifier: "zh-Hans"))
                 .environment(\.colorScheme, .light),
             size: CGSize(width: 960, height: 640),
