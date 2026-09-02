@@ -1,0 +1,150 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "action.ok" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "OK" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "好" } }
+      }
+    },
+    "error.repositoryAlreadyAdded" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This repository has already been added." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "此仓库已经添加。" } }
+      }
+    },
+    "error.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "obsSync Couldn't Complete the Action" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "obsSync 无法完成操作" } }
+      }
+    },
+    "general.approvalRequired" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Approval is required in System Settings" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "需要在系统设置中批准" } }
+      }
+    },
+    "general.language" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "语言" } }
+      }
+    },
+    "general.language.section" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Language" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "语言" } }
+      }
+    },
+    "general.language.system" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Follows System Settings (English and Simplified Chinese)" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "跟随系统设置（英文和简体中文）" } }
+      }
+    },
+    "general.launchAtLogin" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Launch obsSync at login" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "登录时启动 obsSync" } }
+      }
+    },
+    "general.openLoginItems" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Login Items" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "打开登录项设置" } }
+      }
+    },
+    "general.startup.section" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Startup" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启动" } }
+      }
+    },
+    "repository.add" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Repository" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加仓库" } }
+      }
+    },
+    "repository.branchPolicy" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "分支" } }
+      }
+    },
+    "repository.currentBranch" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Current checked-out branch" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "当前检出分支" } }
+      }
+    },
+    "repository.enabled" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enable automatic sync" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "启用自动同步" } }
+      }
+    },
+    "repository.name" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Name" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "名称" } }
+      }
+    },
+    "repository.path" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Local Folder" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "本地文件夹" } }
+      }
+    },
+    "repository.picker.action" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加" } }
+      }
+    },
+    "repository.picker.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose an Existing Git Repository" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择已有的 Git 仓库" } }
+      }
+    },
+    "repository.remote" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "远端" } }
+      }
+    },
+    "repository.remove" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove Repository" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "移除仓库" } }
+      }
+    },
+    "repository.section.behavior" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Behavior" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "行为" } }
+      }
+    },
+    "repository.section.identity" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Repository" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库" } }
+      }
+    },
+    "repository.select.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select a repository in the sidebar to review its configuration." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在侧边栏中选择仓库以查看其配置。" } }
+      }
+    },
+    "repository.select.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Select a Repository" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择仓库" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

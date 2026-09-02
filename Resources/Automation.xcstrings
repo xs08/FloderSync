@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "automation.daily" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Daily Times" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "每日定时" } }
+      }
+    },
+    "automation.daily.add" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add Time" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加时间" } }
+      }
+    },
+    "automation.daily.off" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No daily sync times" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "未设置每日同步时间" } }
+      }
+    },
+    "automation.daily.remove" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove daily time" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "移除每日时间" } }
+      }
+    },
+    "automation.daily.time" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sync time" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同步时间" } }
+      }
+    },
+    "automation.empty.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a repository before configuring automation." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "添加仓库后才能配置自动同步。" } }
+      }
+    },
+    "automation.fileChanges" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Sync after file changes stop for 5 seconds" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "文件停止变化 5 秒后同步" } }
+      }
+    },
+    "automation.interval" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Repeat" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "重复间隔" } }
+      }
+    },
+    "automation.interval.hours" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Every %d hours" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "每 %d 小时" } }
+      }
+    },
+    "automation.interval.minutes" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Every %d minutes" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "每 %d 分钟" } }
+      }
+    },
+    "automation.interval.off" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Off" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "关闭" } }
+      }
+    },
+    "automation.repositoryDisabled" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Automatic sync disabled" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "自动同步已停用" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

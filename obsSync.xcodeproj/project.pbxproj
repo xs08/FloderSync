@@ -1,0 +1,590 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		078DBD1A585DC90931CD6CD3 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062F32F20AF6E12A8717C646 /* MenuBarView.swift */; };
+		0C78F5790EAC0A640AD668DE /* ProcessGitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB99BE2F94A900ADF4A4FC57 /* ProcessGitClient.swift */; };
+		14DA9261DBF64E65AC995FC4 /* SyncEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9EABF0697691AD62B15244 /* SyncEngineTests.swift */; };
+		190A1C3CBBF6DE82AFB32B56 /* History.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6A7B28E59319EFBFC0637D1 /* History.xcstrings */; };
+		1AB693969C5DC969B5C94829 /* FileChangeScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEFCF5BC7F70020E38169922 /* FileChangeScheduler.swift */; };
+		39F606B5FD6ECEFEAE87D004 /* Automation.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E9903E96D182B1169AEB9DD0 /* Automation.xcstrings */; };
+		3CF4FBEE0CE55C6C9255350A /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */; };
+		3FEF49C155237853AA96CC7A /* UIRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F692AF4B202E87ABE5050B76 /* UIRenderTests.swift */; };
+		450ABF086E6FF2E7D6057B8C /* SyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4E6F2FE0A46BBB9F2409C0 /* SyncModels.swift */; };
+		4899D075BD39353DA0511FE8 /* UserNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F34C21C3F42415899CCDEFB /* UserNotificationService.swift */; };
+		5C2FC09B4F3941516E577C41 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */; };
+		5CBC7530840C1461E79F509C /* GitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E855D28821340B65667957EE /* GitClient.swift */; };
+		5F52C6864D914B1A64A1E731 /* JSONProfileStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA60C851105CC4DD34DF4B3 /* JSONProfileStoreTests.swift */; };
+		6431B4D7314F2AA09CF41CAC /* FSEventsDirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2D24536D26E02945B2AF930 /* FSEventsDirectoryWatcher.swift */; };
+		798F024DB126DF71D68D4D3E /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC4D531CBB1D7BB718B9D35 /* SyncEngine.swift */; };
+		7B3DB5FD354D16872C7D5197 /* CatchUpCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D57DFF53638C2F4B72248D4 /* CatchUpCalculatorTests.swift */; };
+		7FB7D0DC54714D334CEB475A /* SystemWakeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4B59959E6C8D3C08B2257B /* SystemWakeMonitor.swift */; };
+		813F90B2576A08D5BC8EFD87 /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE444A74ACC94FC503A8600 /* ProfileStore.swift */; };
+		89CE39A8C3FD9A53FC88AEE3 /* RunHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A698585A5FDDCF7D545E34 /* RunHistoryStore.swift */; };
+		91206E439D4921AE433976D4 /* ScheduleCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDCC3CC2CC1BAE8BEE945D /* ScheduleCalculatorTests.swift */; };
+		9E87D58633FC751B934B39B0 /* SyncCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11535174AB588D3F4AE693E8 /* SyncCoordinatorTests.swift */; };
+		AB6777E8761671F3F4C54804 /* ProcessGitClientIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */; };
+		ABAC66BD997DC7D7CA4308DD /* CatchUpCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2302C5CD6F5B53A9271DA6B1 /* CatchUpCalculator.swift */; };
+		B2E6E282CD5864CC6CC53C3E /* Notifications.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8D12B63143DE69FA1C1A6878 /* Notifications.xcstrings */; };
+		BB8B830AF534035FDECE3062 /* AutomationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */; };
+		BF173DF80B0040C83B670286 /* JSONRunHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E286961F14031EC4378F740 /* JSONRunHistoryStore.swift */; };
+		C01DEA89B0FC31EBEBEE514F /* Settings.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 48F34EF3998FD19F21BACF4A /* Settings.xcstrings */; };
+		C449A7F91042B9D4C996DF58 /* RepositoryActions.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = F80D7F8E91535E8642998883 /* RepositoryActions.xcstrings */; };
+		D4922A5BAA939FA73CBE0F6D /* JSONRunHistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */; };
+		D7D34EC098A0EBB491C6E90B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29008BF496757BF302BECB /* AppModel.swift */; };
+		D927950B934BAE385ED1556F /* ObsSyncApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */; };
+		DBF3B2CBB0F6DE3A6E74FD98 /* SettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405AE485A5D0418E8D514578 /* SettingsRootView.swift */; };
+		DD1FEB71D1B583A3CB923D02 /* FileEventFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */; };
+		E32003662F7D17BD3DAAE00A /* LoginItemService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA87E9E1BFA13130C2F9D52 /* LoginItemService.swift */; };
+		F17E1068F31899DF625D888B /* JSONProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F68F794915C2164206920F8 /* JSONProfileStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		25E41F9B09AF3799B028923C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2275CE13923BAFCA54B80F28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C4576B632D753E2229515E5;
+			remoteInfo = obsSync;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		062F32F20AF6E12A8717C646 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		0F68F794915C2164206920F8 /* JSONProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONProfileStore.swift; sourceTree = "<group>"; };
+		11535174AB588D3F4AE693E8 /* SyncCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinatorTests.swift; sourceTree = "<group>"; };
+		17A698585A5FDDCF7D545E34 /* RunHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunHistoryStore.swift; sourceTree = "<group>"; };
+		1F34C21C3F42415899CCDEFB /* UserNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationService.swift; sourceTree = "<group>"; };
+		2302C5CD6F5B53A9271DA6B1 /* CatchUpCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpCalculator.swift; sourceTree = "<group>"; };
+		2EC4D531CBB1D7BB718B9D35 /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
+		30E61765D9381998A51F096B /* obsSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = obsSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObsSyncApp.swift; sourceTree = "<group>"; };
+		405AE485A5D0418E8D514578 /* SettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRootView.swift; sourceTree = "<group>"; };
+		48F34EF3998FD19F21BACF4A /* Settings.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Settings.xcstrings; sourceTree = "<group>"; };
+		4B29008BF496757BF302BECB /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		4E286961F14031EC4378F740 /* JSONRunHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRunHistoryStore.swift; sourceTree = "<group>"; };
+		5FA87E9E1BFA13130C2F9D52 /* LoginItemService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemService.swift; sourceTree = "<group>"; };
+		7A9EABF0697691AD62B15244 /* SyncEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngineTests.swift; sourceTree = "<group>"; };
+		8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRunHistoryStoreTests.swift; sourceTree = "<group>"; };
+		8D12B63143DE69FA1C1A6878 /* Notifications.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Notifications.xcstrings; sourceTree = "<group>"; };
+		8D57DFF53638C2F4B72248D4 /* CatchUpCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpCalculatorTests.swift; sourceTree = "<group>"; };
+		9AE444A74ACC94FC503A8600 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
+		9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduler.swift; sourceTree = "<group>"; };
+		AB99BE2F94A900ADF4A4FC57 /* ProcessGitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessGitClient.swift; sourceTree = "<group>"; };
+		B2D24536D26E02945B2AF930 /* FSEventsDirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSEventsDirectoryWatcher.swift; sourceTree = "<group>"; };
+		BB4E6F2FE0A46BBB9F2409C0 /* SyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncModels.swift; sourceTree = "<group>"; };
+		BEBAB136B9D70B8D6C095C20 /* obsSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = obsSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
+		C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessGitClientIntegrationTests.swift; sourceTree = "<group>"; };
+		C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileEventFilterTests.swift; sourceTree = "<group>"; };
+		CB4B59959E6C8D3C08B2257B /* SystemWakeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemWakeMonitor.swift; sourceTree = "<group>"; };
+		D2BDCC3CC2CC1BAE8BEE945D /* ScheduleCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCalculatorTests.swift; sourceTree = "<group>"; };
+		E6A7B28E59319EFBFC0637D1 /* History.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = History.xcstrings; sourceTree = "<group>"; };
+		E855D28821340B65667957EE /* GitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitClient.swift; sourceTree = "<group>"; };
+		E9903E96D182B1169AEB9DD0 /* Automation.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Automation.xcstrings; sourceTree = "<group>"; };
+		EDA60C851105CC4DD34DF4B3 /* JSONProfileStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONProfileStoreTests.swift; sourceTree = "<group>"; };
+		EEFCF5BC7F70020E38169922 /* FileChangeScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileChangeScheduler.swift; sourceTree = "<group>"; };
+		F692AF4B202E87ABE5050B76 /* UIRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIRenderTests.swift; sourceTree = "<group>"; };
+		F80D7F8E91535E8642998883 /* RepositoryActions.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = RepositoryActions.xcstrings; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0E3D2E245530C293E5B5582E /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				4B29008BF496757BF302BECB /* AppModel.swift */,
+				062F32F20AF6E12A8717C646 /* MenuBarView.swift */,
+				405AE485A5D0418E8D514578 /* SettingsRootView.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		230471F695B487E93E06D5F4 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		2BC62D10C8C6F962092DDE25 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E9903E96D182B1169AEB9DD0 /* Automation.xcstrings */,
+				E6A7B28E59319EFBFC0637D1 /* History.xcstrings */,
+				9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */,
+				8D12B63143DE69FA1C1A6878 /* Notifications.xcstrings */,
+				F80D7F8E91535E8642998883 /* RepositoryActions.xcstrings */,
+				48F34EF3998FD19F21BACF4A /* Settings.xcstrings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		3DBAC632B2776939DF8667CD /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				8D57DFF53638C2F4B72248D4 /* CatchUpCalculatorTests.swift */,
+				C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */,
+				EDA60C851105CC4DD34DF4B3 /* JSONProfileStoreTests.swift */,
+				8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */,
+				C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */,
+				D2BDCC3CC2CC1BAE8BEE945D /* ScheduleCalculatorTests.swift */,
+				11535174AB588D3F4AE693E8 /* SyncCoordinatorTests.swift */,
+				7A9EABF0697691AD62B15244 /* SyncEngineTests.swift */,
+				F692AF4B202E87ABE5050B76 /* UIRenderTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		5D5BA5B3A7BBAB96C295E2F2 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				B2D24536D26E02945B2AF930 /* FSEventsDirectoryWatcher.swift */,
+				0F68F794915C2164206920F8 /* JSONProfileStore.swift */,
+				4E286961F14031EC4378F740 /* JSONRunHistoryStore.swift */,
+				5FA87E9E1BFA13130C2F9D52 /* LoginItemService.swift */,
+				AB99BE2F94A900ADF4A4FC57 /* ProcessGitClient.swift */,
+				CB4B59959E6C8D3C08B2257B /* SystemWakeMonitor.swift */,
+				1F34C21C3F42415899CCDEFB /* UserNotificationService.swift */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		947457A723143F5005CFFD2D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				230471F695B487E93E06D5F4 /* App */,
+				D469F8AD6CBF3AA7B6965B9F /* Application */,
+				DC40797D767006FD857BBA2D /* Domain */,
+				5D5BA5B3A7BBAB96C295E2F2 /* Infrastructure */,
+				0E3D2E245530C293E5B5582E /* Presentation */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		D469F8AD6CBF3AA7B6965B9F /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */,
+				2302C5CD6F5B53A9271DA6B1 /* CatchUpCalculator.swift */,
+				EEFCF5BC7F70020E38169922 /* FileChangeScheduler.swift */,
+				9AE444A74ACC94FC503A8600 /* ProfileStore.swift */,
+				17A698585A5FDDCF7D545E34 /* RunHistoryStore.swift */,
+				C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */,
+				2EC4D531CBB1D7BB718B9D35 /* SyncEngine.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		D674C8A2FC40292F9C345185 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				30E61765D9381998A51F096B /* obsSync.app */,
+				BEBAB136B9D70B8D6C095C20 /* obsSyncTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DC40797D767006FD857BBA2D /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				E855D28821340B65667957EE /* GitClient.swift */,
+				BB4E6F2FE0A46BBB9F2409C0 /* SyncModels.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		FFBBECEFCD686A4F88105BFE = {
+			isa = PBXGroup;
+			children = (
+				2BC62D10C8C6F962092DDE25 /* Resources */,
+				947457A723143F5005CFFD2D /* Sources */,
+				3DBAC632B2776939DF8667CD /* Tests */,
+				D674C8A2FC40292F9C345185 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8C4576B632D753E2229515E5 /* obsSync */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94F4F3135A39A1EB98FBA268 /* Build configuration list for PBXNativeTarget "obsSync" */;
+			buildPhases = (
+				4B710BBF40D03A54BE2EB36F /* Sources */,
+				3957C63E4BF51276997D246B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = obsSync;
+			packageProductDependencies = (
+			);
+			productName = obsSync;
+			productReference = 30E61765D9381998A51F096B /* obsSync.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9F8E401F1C6C94A173E54BA6 /* obsSyncTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 843AAF9ADD718AE47810BDA4 /* Build configuration list for PBXNativeTarget "obsSyncTests" */;
+			buildPhases = (
+				E0997CF0AA368DA3406063FB /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				91F6B543874E902F21FDD3AF /* PBXTargetDependency */,
+			);
+			name = obsSyncTests;
+			packageProductDependencies = (
+			);
+			productName = obsSyncTests;
+			productReference = BEBAB136B9D70B8D6C095C20 /* obsSyncTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2275CE13923BAFCA54B80F28 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					8C4576B632D753E2229515E5 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 88B6807FF5A7AE626510BC39 /* Build configuration list for PBXProject "obsSync" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+				"zh-Hans",
+			);
+			mainGroup = FFBBECEFCD686A4F88105BFE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D674C8A2FC40292F9C345185 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8C4576B632D753E2229515E5 /* obsSync */,
+				9F8E401F1C6C94A173E54BA6 /* obsSyncTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3957C63E4BF51276997D246B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				39F606B5FD6ECEFEAE87D004 /* Automation.xcstrings in Resources */,
+				190A1C3CBBF6DE82AFB32B56 /* History.xcstrings in Resources */,
+				5C2FC09B4F3941516E577C41 /* Localizable.xcstrings in Resources */,
+				B2E6E282CD5864CC6CC53C3E /* Notifications.xcstrings in Resources */,
+				C449A7F91042B9D4C996DF58 /* RepositoryActions.xcstrings in Resources */,
+				C01DEA89B0FC31EBEBEE514F /* Settings.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4B710BBF40D03A54BE2EB36F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7D34EC098A0EBB491C6E90B /* AppModel.swift in Sources */,
+				BB8B830AF534035FDECE3062 /* AutomationScheduler.swift in Sources */,
+				ABAC66BD997DC7D7CA4308DD /* CatchUpCalculator.swift in Sources */,
+				6431B4D7314F2AA09CF41CAC /* FSEventsDirectoryWatcher.swift in Sources */,
+				1AB693969C5DC969B5C94829 /* FileChangeScheduler.swift in Sources */,
+				5CBC7530840C1461E79F509C /* GitClient.swift in Sources */,
+				F17E1068F31899DF625D888B /* JSONProfileStore.swift in Sources */,
+				BF173DF80B0040C83B670286 /* JSONRunHistoryStore.swift in Sources */,
+				E32003662F7D17BD3DAAE00A /* LoginItemService.swift in Sources */,
+				078DBD1A585DC90931CD6CD3 /* MenuBarView.swift in Sources */,
+				D927950B934BAE385ED1556F /* ObsSyncApp.swift in Sources */,
+				0C78F5790EAC0A640AD668DE /* ProcessGitClient.swift in Sources */,
+				813F90B2576A08D5BC8EFD87 /* ProfileStore.swift in Sources */,
+				89CE39A8C3FD9A53FC88AEE3 /* RunHistoryStore.swift in Sources */,
+				DBF3B2CBB0F6DE3A6E74FD98 /* SettingsRootView.swift in Sources */,
+				3CF4FBEE0CE55C6C9255350A /* SyncCoordinator.swift in Sources */,
+				798F024DB126DF71D68D4D3E /* SyncEngine.swift in Sources */,
+				450ABF086E6FF2E7D6057B8C /* SyncModels.swift in Sources */,
+				7FB7D0DC54714D334CEB475A /* SystemWakeMonitor.swift in Sources */,
+				4899D075BD39353DA0511FE8 /* UserNotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0997CF0AA368DA3406063FB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B3DB5FD354D16872C7D5197 /* CatchUpCalculatorTests.swift in Sources */,
+				DD1FEB71D1B583A3CB923D02 /* FileEventFilterTests.swift in Sources */,
+				5F52C6864D914B1A64A1E731 /* JSONProfileStoreTests.swift in Sources */,
+				D4922A5BAA939FA73CBE0F6D /* JSONRunHistoryStoreTests.swift in Sources */,
+				AB6777E8761671F3F4C54804 /* ProcessGitClientIntegrationTests.swift in Sources */,
+				91206E439D4921AE433976D4 /* ScheduleCalculatorTests.swift in Sources */,
+				9E87D58633FC751B934B39B0 /* SyncCoordinatorTests.swift in Sources */,
+				14DA9261DBF64E65AC995FC4 /* SyncEngineTests.swift in Sources */,
+				3FEF49C155237853AA96CC7A /* UIRenderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		91F6B543874E902F21FDD3AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8C4576B632D753E2229515E5 /* obsSync */;
+			targetProxy = 25E41F9B09AF3799B028923C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB75686F0C713897435E7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = obsSync;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.app;
+				PRODUCT_NAME = obsSync;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		45FF6B88320CD967843165CC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/obsSync.app/Contents/MacOS/obsSync";
+			};
+			name = Release;
+		};
+		5D215B6228007E3C833B9CED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		645B4262C03A8FE5D31B5CE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/obsSync.app/Contents/MacOS/obsSync";
+			};
+			name = Debug;
+		};
+		8BBCC91EFDDFE10DD45CC502 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = obsSync;
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.app;
+				PRODUCT_NAME = obsSync;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BF48B49ED453CE3AE8469D36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		843AAF9ADD718AE47810BDA4 /* Build configuration list for PBXNativeTarget "obsSyncTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				645B4262C03A8FE5D31B5CE3 /* Debug */,
+				45FF6B88320CD967843165CC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		88B6807FF5A7AE626510BC39 /* Build configuration list for PBXProject "obsSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BF48B49ED453CE3AE8469D36 /* Debug */,
+				5D215B6228007E3C833B9CED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		94F4F3135A39A1EB98FBA268 /* Build configuration list for PBXNativeTarget "obsSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8BBCC91EFDDFE10DD45CC502 /* Debug */,
+				1DEB75686F0C713897435E7B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2275CE13923BAFCA54B80F28 /* Project object */;
+}
