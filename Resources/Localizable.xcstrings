@@ -85,6 +85,7 @@
       }
     },
     "repository.add" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

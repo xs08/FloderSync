@@ -6,7 +6,7 @@
 
 - 原生 macOS 应用：Swift + SwiftUI，必要时以少量 AppKit 适配平台能力。
 - 菜单栏：SwiftUI `MenuBarExtra` 的 window 样式，用于状态与快捷操作。
-- 设置窗口：SwiftUI `Settings`/独立 window scene，使用系统原生控件和 SF Symbols。
+- 设置窗口：AppKit `NSWindowController` 在首帧前配置窗口 chrome，再用 `NSHostingController` 承载 SwiftUI 内容。
 - Git：通过 Foundation `Process` 调用系统 Git CLI，不链接或实现 Git 协议。
 - 登录启动：macOS 13+ 的 `SMAppService`；MVP 注册主应用为 login item，不引入特权 helper。
 - 文件监听：FSEvents 封装为基础设施适配器。
@@ -169,6 +169,10 @@ GUI 应用通常不继承交互式 shell 的环境。架构中应显式解析 Gi
 
 UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间距和原生控件为准；支持键盘快捷键（至少 `⌘,` 设置、手动同步命令）和所有关键状态（空、加载、同步中、失败、权限不足、路径失效）。
 
+上述方案的问题根因、取舍、实现落点与回归约束统一记录在[UI、窗口与故障复盘设计](./06-ui-window-and-troubleshooting-design.md)，后续修改窗口或交互时必须同步检查该基线。
+
+菜单栏品牌符号存放于 Asset Catalog，源文件为保留矢量数据和原始色彩的 SVG。SVG 使用深蓝到亮青的横向渐变，并将整体边界控制为接近 1:1：文件夹略窄、略高，轨道箭头只轻微越界；文件夹轮廓采用较细描边，双向箭头略加粗以维持 18pt 下的方向辨识度。SwiftUI 以 original rendering mode 加载，只负责尺寸与状态点组合。README 品牌展示图使用同一结构的透明 PNG；根 `README.md` 为英文入口，`README.zh-CN.md` 为简体中文入口，两者顶部互链并保持章节、命令与事实一致。
+
 ## 8. 关键架构决策记录（ADR）
 
 | ADR | 建议 | 状态 |
@@ -182,11 +186,14 @@ UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间�
 | 007 最低系统 | macOS 14+，新版视觉按可用性渐进增强 | 已确认 |
 | 008 本地化 | String Catalog 管理简体中文与英文，英文为开发语言 | 已确认 |
 | 009 设置窗口 | AppKit 展示前配置 full-size content，再嵌入 SwiftUI | 已确认 |
+| 010 品牌资源 | README 渐变 PNG + 菜单栏原色渐变 SVG | 已确认 |
 
 ## 9. 官方设计与 API 基线
 
 - Apple HIG — Designing for macOS: https://developer.apple.com/design/human-interface-guidelines/designing-for-macos/
 - Apple HIG — Settings: https://developer.apple.com/design/human-interface-guidelines/settings
 - SwiftUI `MenuBarExtra`: https://developer.apple.com/documentation/swiftui/menubarextra
-- SwiftUI `Settings`: https://developer.apple.com/documentation/swiftui/settings
+- AppKit `NSWindow`: https://developer.apple.com/documentation/appkit/nswindow
+- AppKit `NSHostingController`: https://developer.apple.com/documentation/swiftui/nshostingcontroller
+- SwiftUI `CommandGroupPlacement.appSettings`: https://developer.apple.com/documentation/swiftui/commandgroupplacement/appsettings
 - Service Management `SMAppService`: https://developer.apple.com/documentation/servicemanagement/smappservice

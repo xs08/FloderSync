@@ -2,69 +2,190 @@
   "sourceLanguage" : "en",
   "strings" : {
     "error.cancelled" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The sync was cancelled." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "同步已取消。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The sync was cancelled."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步已取消。"
+          }
+        }
       }
     },
     "error.couldNotCreateStream" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Could not monitor file-system changes." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法监控文件系统变化。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not monitor file-system changes."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法监控文件系统变化。"
+          }
+        }
       }
     },
     "error.couldNotStartStream" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Could not start monitoring file-system changes." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "无法启动文件系统变化监控。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not start monitoring file-system changes."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启动文件系统变化监控。"
+          }
+        }
       }
     },
     "error.detachedHead" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The repository is in detached HEAD state." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库当前处于 detached HEAD 状态。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The repository is in detached HEAD state."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓库当前处于 detached HEAD 状态。"
+          }
+        }
       }
     },
     "error.gitUnavailable" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Git was not found at %@." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "在 %@ 未找到 Git。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git was not found at %@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 %@ 未找到 Git。"
+          }
+        }
       }
     },
     "error.invalidRepository" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The selected folder is not a readable Git repository." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "所选文件夹不是可读取的 Git 仓库。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected folder is not a readable Git repository."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "所选文件夹不是可读取的 Git 仓库。"
+          }
+        }
       }
     },
     "error.operationInProgress" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "A Git merge, rebase, cherry-pick, or conflict is already in progress. Resolve or abort it before syncing again." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库正在进行合并、变基、拣选或冲突处理。请先解决或中止该操作，再重新同步。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Git merge, rebase, cherry-pick, or conflict is already in progress. Resolve or abort it before syncing again."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓库正在进行合并、变基、拣选或冲突处理。请先解决或中止该操作，再重新同步。"
+          }
+        }
       }
     },
     "error.remoteMissing" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remote ‘%@’ is not configured." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "尚未配置远端“%@”。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remote ‘%@’ is not configured."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未配置远端“%@”。"
+          }
+        }
       }
     },
     "error.timedOut" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The Git command timed out." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "Git 命令执行超时。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Git command timed out."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git 命令执行超时。"
+          }
+        }
       }
     },
     "error.unsupportedSchema" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unsupported configuration version: %d." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "不支持的配置版本：%d。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unsupported configuration version: %d."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不支持的配置版本：%d。"
+          }
+        }
       }
     },
     "error.watchedFolderUnavailable" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The monitored folder is unavailable: %@" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "监控的文件夹不可用：%@" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The monitored folder is unavailable: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控的文件夹不可用：%@"
+          }
+        }
       }
     }
   },

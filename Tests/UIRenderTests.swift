@@ -5,6 +5,14 @@ import XCTest
 
 @MainActor
 final class UIRenderTests: XCTestCase {
+    func testMenuBarIconIsAvailableAsOriginalColorArtwork() throws {
+        let icon = try XCTUnwrap(NSImage(named: "MenuBarIcon"))
+
+        XCTAssertFalse(icon.isTemplate)
+        XCTAssertGreaterThan(icon.size.width, 0)
+        XCTAssertGreaterThan(icon.size.height, 0)
+    }
+
     func testSettingsWindowUsesImmersiveChrome() throws {
         let defaults = UserDefaults.standard
         let originalTheme = defaults.string(forKey: AppTheme.defaultsKey)
