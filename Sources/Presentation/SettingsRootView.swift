@@ -82,6 +82,7 @@ struct SettingsRootView: View {
 
 private struct SettingsSidebar: View {
     @ObservedObject var model: AppModel
+    @FocusState private var focusedSection: AppModel.SettingsSection?
 
     private let primarySections: [AppModel.SettingsSection] = [
         .repositories,
@@ -102,6 +103,8 @@ private struct SettingsSidebar: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .focused($focusedSection, equals: section)
+                    .focusEffectDisabled()
                 }
             }
             .padding(.horizontal, 10)
@@ -121,6 +124,8 @@ private struct SettingsSidebar: View {
                 )
                 .help(L10n.string("settings.general"))
                 .accessibilityLabel(L10n.string("settings.general"))
+                .focused($focusedSection, equals: .general)
+                .focusEffectDisabled()
 
                 Spacer()
 
@@ -134,10 +139,15 @@ private struct SettingsSidebar: View {
                 .foregroundStyle(.secondary)
                 .help(L10n.string("app.quit"))
                 .accessibilityLabel(L10n.string("app.quit"))
+                .focusEffectDisabled()
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 18)
             .padding(.bottom, 18)
+        }
+        .onChange(of: focusedSection) { _, section in
+            guard let section, section != model.selectedSettingsSection else { return }
+            navigate(to: section)
         }
         .background {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -599,6 +609,22 @@ private struct GeneralSettingsView: View {
             } header: {
                 Text(L10n.string("general.language.section", table: .settings))
             }
+
+            Section {
+                Picker(
+                    L10n.string("general.theme", table: .settings),
+                    selection: Binding(
+                        get: { model.appTheme },
+                        set: { model.setAppTheme($0) }
+                    )
+                ) {
+                    ForEach(AppTheme.allCases) { theme in
+                        Text(themeTitle(theme)).tag(theme)
+                    }
+                }
+            } header: {
+                Text(L10n.string("general.theme.section", table: .settings))
+            }
         }
         .formStyle(.grouped)
         .padding(24)
@@ -612,6 +638,17 @@ private struct GeneralSettingsView: View {
             L10n.string("general.language.english", table: .settings)
         case .simplifiedChinese:
             L10n.string("general.language.simplifiedChinese", table: .settings)
+        }
+    }
+
+    private func themeTitle(_ theme: AppTheme) -> String {
+        switch theme {
+        case .system:
+            L10n.string("general.theme.system", table: .settings)
+        case .light:
+            L10n.string("general.theme.light", table: .settings)
+        case .dark:
+            L10n.string("general.theme.dark", table: .settings)
         }
     }
 }

@@ -8,6 +8,7 @@ struct FloderSyncApp: App {
         MenuBarExtra {
             MenuBarView(model: model)
                 .environment(\.locale, model.appLanguage.locale)
+                .preferredColorScheme(preferredColorScheme)
         } label: {
             Image(systemName: menuBarSymbol)
                 .accessibilityLabel(Text("app.name"))
@@ -18,7 +19,9 @@ struct FloderSyncApp: App {
         Settings {
             SettingsRootView(model: model)
                 .environment(\.locale, model.appLanguage.locale)
+                .preferredColorScheme(preferredColorScheme)
         }
+        .windowStyle(.hiddenTitleBar)
     }
 
     private var menuBarSymbol: String {
@@ -26,6 +29,14 @@ struct FloderSyncApp: App {
         case .ready: "arrow.triangle.2.circlepath"
         case .syncing: "arrow.triangle.2.circlepath.circle.fill"
         case .problems: "exclamationmark.triangle.fill"
+        }
+    }
+
+    private var preferredColorScheme: ColorScheme? {
+        switch model.appTheme {
+        case .system: nil
+        case .light: .light
+        case .dark: .dark
         }
     }
 }
