@@ -1,6 +1,24 @@
 import Combine
 import Foundation
 
+enum AppTheme: String, CaseIterable, Identifiable, Sendable {
+    case system
+    case light
+    case dark
+
+    static let defaultsKey = "appTheme"
+
+    var id: Self { self }
+
+    static var selected: Self {
+        guard let rawValue = UserDefaults.standard.string(forKey: defaultsKey),
+              let theme = Self(rawValue: rawValue) else {
+            return .system
+        }
+        return theme
+    }
+}
+
 @MainActor
 final class AppModel: ObservableObject {
     struct InitialSyncPrompt: Identifiable, Equatable {
@@ -38,6 +56,7 @@ final class AppModel: ObservableObject {
     @Published private(set) var launchAtLoginStatus: LoginItemStatus = .disabled
     @Published private(set) var notifyOnFailure: Bool
     @Published private(set) var appLanguage: AppLanguage
+    @Published private(set) var appTheme: AppTheme
     @Published private(set) var connectionChecks: [UUID: ConnectionCheckState] = [:]
     @Published var selectedSettingsSection: SettingsSection = .repositories
     @Published var selectedProfileID: UUID?
@@ -73,6 +92,7 @@ final class AppModel: ObservableObject {
         self.notificationService = notificationService
         self.notifyOnFailure = UserDefaults.standard.object(forKey: "notifyOnFailure") as? Bool ?? true
         self.appLanguage = AppLanguage.selected
+        self.appTheme = AppTheme.selected
     }
 
     var overallState: OverallState {
@@ -277,6 +297,11 @@ final class AppModel: ObservableObject {
     func setAppLanguage(_ language: AppLanguage) {
         UserDefaults.standard.set(language.rawValue, forKey: AppLanguage.defaultsKey)
         appLanguage = language
+    }
+
+    func setAppTheme(_ theme: AppTheme) {
+        UserDefaults.standard.set(theme.rawValue, forKey: AppTheme.defaultsKey)
+        appTheme = theme
     }
 
     func syncAll() {

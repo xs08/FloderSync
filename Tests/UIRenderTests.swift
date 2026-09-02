@@ -58,6 +58,13 @@ final class UIRenderTests: XCTestCase {
             size: CGSize(width: 960, height: 640),
             to: URL(fileURLWithPath: "/tmp/obsSync-settings-zh.png")
         )
+        try render(
+            SettingsRootView(model: model, configuresWindow: false)
+                .environment(\.locale, Locale(identifier: "en"))
+                .environment(\.colorScheme, .dark),
+            size: CGSize(width: 960, height: 640),
+            to: URL(fileURLWithPath: "/tmp/obsSync-settings-en-dark.png")
+        )
     }
 
     private func render<Content: View>(

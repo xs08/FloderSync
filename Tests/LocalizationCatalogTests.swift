@@ -3,6 +3,36 @@ import XCTest
 @testable import obsSync
 
 final class LocalizationCatalogTests: XCTestCase {
+    @MainActor
+    func testThemeSelectionPersistsAndRestores() {
+        let defaults = UserDefaults.standard
+        let originalValue = defaults.string(forKey: AppTheme.defaultsKey)
+        defer {
+            if let originalValue {
+                defaults.set(originalValue, forKey: AppTheme.defaultsKey)
+            } else {
+                defaults.removeObject(forKey: AppTheme.defaultsKey)
+            }
+        }
+
+        defaults.set(AppTheme.dark.rawValue, forKey: AppTheme.defaultsKey)
+        let model = AppModel()
+
+        XCTAssertEqual(AppTheme.selected, .dark)
+        XCTAssertEqual(model.appTheme, .dark)
+
+        model.setAppTheme(.light)
+
+        XCTAssertEqual(model.appTheme, .light)
+        XCTAssertEqual(AppTheme.selected, .light)
+
+        defaults.set("unsupported-theme", forKey: AppTheme.defaultsKey)
+        XCTAssertEqual(AppTheme.selected, .system)
+
+        defaults.removeObject(forKey: AppTheme.defaultsKey)
+        XCTAssertEqual(AppTheme.selected, .system)
+    }
+
     func testExplicitLanguageSelectionChangesLocalizedStringsImmediately() {
         let defaults = UserDefaults.standard
         let originalValue = defaults.string(forKey: AppLanguage.defaultsKey)
