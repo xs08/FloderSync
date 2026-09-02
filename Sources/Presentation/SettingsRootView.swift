@@ -575,6 +575,56 @@ private struct RepositoryDetailView: View {
             }
 
             Section {
+                Picker(
+                    L10n.string("automation.source", table: .automation),
+                    selection: Binding<UUID?>(
+                        get: { profile.automationRuleID },
+                        set: { model.setRepositoryAutomationRule(profileID: profile.id, ruleID: $0) }
+                    )
+                ) {
+                    Text(L10n.string("automation.source.custom", table: .automation))
+                        .tag(Optional<UUID>.none)
+                    ForEach(model.automationRules) { rule in
+                        Text(rule.name).tag(Optional(rule.id))
+                    }
+                }
+
+                if let ruleID = profile.automationRuleID,
+                   let rule = model.automationRule(id: ruleID) {
+                    AutomationConfigurationSummary(configuration: rule.configuration)
+                    LabeledContent {
+                        Button(L10n.string("automation.rule.edit", table: .automation)) {
+                            model.selectedAutomationRuleID = rule.id
+                            model.selectedSettingsSection = .automation
+                        }
+                    } label: {
+                        Text(L10n.string("automation.rule.shared", table: .automation))
+                    }
+                } else if profile.automationRuleID != nil {
+                    Label(
+                        L10n.string("automation.rule.missing", table: .automation),
+                        systemImage: "exclamationmark.triangle.fill"
+                    )
+                    .foregroundStyle(.orange)
+                    Button(L10n.string("automation.source.useCustom", table: .automation)) {
+                        model.setRepositoryAutomationRule(profileID: profile.id, ruleID: nil)
+                    }
+                } else {
+                    AutomationConfigurationEditor(
+                        configuration: profile.customAutomationConfiguration,
+                        onChange: { configuration in
+                            model.setCustomAutomationConfiguration(
+                                profileID: profile.id,
+                                configuration: configuration
+                            )
+                        }
+                    )
+                }
+            } header: {
+                Text(L10n.string("automation.repository.section", table: .automation))
+            }
+
+            Section {
                 HStack(spacing: 12) {
                     Button(L10n.string("sync.repository")) { model.sync(profile) }
                         .disabled(model.syncingProfileIDs.contains(profile.id))
@@ -701,101 +751,449 @@ private struct GeneralSettingsView: View {
 private struct AutomationSettingsView: View {
     @ObservedObject var model: AppModel
     @Environment(\.colorScheme) private var colorScheme
+    @State private var pendingRemoval: AutomationRule?
 
     private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
 
+    @ViewBuilder
     var body: some View {
-        if model.profiles.isEmpty {
+        if model.automationRules.isEmpty {
             ContentUnavailableView {
                 Label {
-                    Text(L10n.string("repositories.empty.title"))
+                    Text(L10n.string("automation.rules.empty.title", table: .automation))
                         .foregroundStyle(palette.primaryText)
                 } icon: {
-                    Image(systemName: "clock.badge.exclamationmark")
+                    Image(systemName: "clock.arrow.2.circlepath")
                         .foregroundStyle(palette.mutedText)
                 }
             } description: {
-                Text(L10n.string("automation.empty.message", table: .automation))
+                Text(L10n.string("automation.rules.empty.message", table: .automation))
                     .foregroundStyle(palette.secondaryText)
+            } actions: {
+                Button(L10n.string("automation.rule.add", table: .automation)) {
+                    model.addAutomationRule()
+                }
+                .buttonStyle(.borderedProminent)
             }
             .padding(24)
         } else {
-            ScrollView {
-                LazyVStack(spacing: 14) {
-                    ForEach(model.profiles) { profile in
-                        AutomationProfileCard(profile: profile, model: model)
+            HStack(spacing: 0) {
+                VStack(spacing: 0) {
+                    List(selection: $model.selectedAutomationRuleID) {
+                        ForEach(model.automationRules) { rule in
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(rule.name).lineLimit(1)
+                                Text(ruleUsageLabel(rule))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .tag(rule.id)
+                        }
+                    }
+                    .listStyle(.sidebar)
+                    .scrollContentBackground(.hidden)
+                    .background(palette.elevatedBackground)
+
+                    Divider().overlay(palette.divider)
+
+                    HStack(spacing: 14) {
+                        Button { model.addAutomationRule() } label: {
+                            Image(systemName: "plus")
+                        }
+                        .help(L10n.string("automation.rule.add", table: .automation))
+                        .accessibilityLabel(L10n.string("automation.rule.add", table: .automation))
+
+                        Button { pendingRemoval = selectedRule } label: {
+                            Image(systemName: "minus")
+                        }
+                        .disabled(selectedRule == nil)
+                        .help(L10n.string("automation.rule.remove", table: .automation))
+                        .accessibilityLabel(L10n.string("automation.rule.remove", table: .automation))
+
+                        Spacer()
+                    }
+                    .buttonStyle(.borderless)
+                    .padding(.horizontal, 12)
+                    .frame(height: 38)
+                    .background(palette.elevatedBackground)
+                }
+                .frame(width: 260)
+
+                Divider().overlay(palette.divider)
+
+                Group {
+                    if let rule = selectedRule {
+                        AutomationRuleDetailView(rule: rule, model: model)
+                            .id(rule.id)
+                    } else {
+                        ContentUnavailableView(
+                            L10n.string("automation.rule.select", table: .automation),
+                            systemImage: "clock.arrow.2.circlepath"
+                        )
                     }
                 }
-                .padding(20)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .onAppear {
+                if model.selectedAutomationRuleID == nil {
+                    model.selectedAutomationRuleID = model.automationRules.first?.id
+                }
+            }
+            .alert(
+                L10n.string("automation.rule.remove.confirm.title", table: .automation),
+                isPresented: removalIsPresented
+            ) {
+                Button(L10n.string("action.cancel", table: .repositoryActions), role: .cancel) {
+                    pendingRemoval = nil
+                }
+                Button(L10n.string("automation.rule.remove", table: .automation), role: .destructive) {
+                    guard let pendingRemoval else { return }
+                    _ = model.removeAutomationRule(
+                        id: pendingRemoval.id,
+                        detachReferencedRepositories: true
+                    )
+                    self.pendingRemoval = nil
+                }
+            } message: {
+                Text(removalMessage)
+            }
+        }
+    }
+
+    private var selectedRule: AutomationRule? {
+        model.automationRule(id: model.selectedAutomationRuleID)
+    }
+
+    private func ruleUsageLabel(_ rule: AutomationRule) -> String {
+        L10n.format(
+            "automation.rule.usage",
+            table: .automation,
+            model.repositories(using: rule.id).count
+        )
+    }
+
+    private var removalIsPresented: Binding<Bool> {
+        Binding(
+            get: { pendingRemoval != nil },
+            set: { if !$0 { pendingRemoval = nil } }
+        )
+    }
+
+    private var removalMessage: String {
+        guard let rule = pendingRemoval else { return "" }
+        let count = model.repositories(using: rule.id).count
+        if count == 0 {
+            return L10n.string("automation.rule.remove.confirm.unused", table: .automation)
+        }
+        return L10n.format(
+            "automation.rule.remove.confirm.used",
+            table: .automation,
+            count
+        )
+    }
+}
+
+private struct AutomationRuleDetailView: View {
+    let rule: AutomationRule
+    @ObservedObject var model: AppModel
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var draft: AutomationRule
+
+    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
+
+    init(rule: AutomationRule, model: AppModel) {
+        self.rule = rule
+        self.model = model
+        _draft = State(initialValue: rule)
+    }
+
+    var body: some View {
+        Form {
+            Section {
+                TextField(
+                    L10n.string("automation.rule.name", table: .automation),
+                    text: $draft.name
+                )
+            } header: {
+                Text(L10n.string("automation.rule.identity", table: .automation))
+            }
+
+            Section {
+                AutomationConfigurationEditor(
+                    configuration: draft.configuration,
+                    onChange: { draft.configuration = $0 }
+                )
+            } header: {
+                Text(L10n.string("automation.rule.configuration", table: .automation))
+            }
+
+            Section {
+                let repositories = model.repositories(using: rule.id)
+                if repositories.isEmpty {
+                    Text(L10n.string("automation.rule.repositories.none", table: .automation))
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(repositories) { profile in
+                        Label(profile.name, systemImage: "externaldrive.fill")
+                    }
+                }
+            } header: {
+                Text(L10n.string("automation.rule.repositories", table: .automation))
+            }
+
+            Section {
+                HStack {
+                    if !model.repositories(using: rule.id).isEmpty {
+                        Text(L10n.format(
+                            "automation.rule.saveImpact",
+                            table: .automation,
+                            model.repositories(using: rule.id).count
+                        ))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button(L10n.string("automation.rule.save", table: .automation)) {
+                        if model.saveAutomationRule(draft) {
+                            draft = model.automationRule(id: draft.id) ?? draft
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(draft == rule)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
+        .background(palette.contentBackground)
+        .padding(20)
+    }
+}
+
+private struct AutomationConfigurationSummary: View {
+    let configuration: AutomationConfiguration
+
+    var body: some View {
+        LabeledContent(
+            L10n.string("automation.summary.triggers", table: .automation),
+            value: triggerSummary
+        )
+        LabeledContent(
+            L10n.string("automation.integration", table: .automation),
+            value: integrationTitle(configuration.integrationStrategy)
+        )
+    }
+
+    private var triggerSummary: String {
+        var parts: [String] = []
+        if let seconds = configuration.fileChangeDebounceSeconds {
+            parts.append(L10n.format("automation.summary.fileChanges", table: .automation, Int(seconds)))
+        }
+        if let seconds = configuration.intervalSeconds {
+            parts.append(L10n.format("automation.summary.interval", table: .automation, Int(seconds / 60)))
+        }
+        if !configuration.dailyTimes.isEmpty {
+            let times = configuration.dailyTimes.map {
+                String(format: "%02d:%02d", $0.hour, $0.minute)
+            }.joined(separator: ", ")
+            parts.append(times)
+        }
+        return parts.joined(separator: " · ")
+    }
+}
+
+private struct AutomationConfigurationEditor: View {
+    let configuration: AutomationConfiguration
+    let onChange: (AutomationConfiguration) -> Void
+
+    private enum FileDelayChoice: Int, CaseIterable, Identifiable {
+        case fiveSeconds = 5
+        case tenSeconds = 10
+        case oneMinute = 60
+        case custom = -1
+        var id: Self { self }
+    }
+
+    private enum IntervalChoice: Int, CaseIterable, Identifiable {
+        case fiveMinutes = 300
+        case tenMinutes = 600
+        case oneHour = 3_600
+        case custom = -1
+        var id: Self { self }
+    }
+
+    var body: some View {
+        Toggle(
+            L10n.string("automation.fileChanges", table: .automation),
+            isOn: Binding(
+                get: { configuration.watchesFileChanges },
+                set: { setFileChangesEnabled($0) }
+            )
+        )
+
+        if let seconds = configuration.fileChangeDebounceSeconds {
+            Picker(
+                L10n.string("automation.fileChanges.delay", table: .automation),
+                selection: Binding(
+                    get: { fileDelayChoice(seconds) },
+                    set: { setFileDelayChoice($0) }
+                )
+            ) {
+                ForEach(FileDelayChoice.allCases) { choice in
+                    Text(fileDelayTitle(choice)).tag(choice)
+                }
+            }
+            if fileDelayChoice(seconds) == .custom {
+                Stepper(
+                    L10n.format("automation.fileChanges.customSeconds", table: .automation, Int(seconds)),
+                    value: Binding(
+                        get: { Int(seconds) },
+                        set: { setFileDelay(TimeInterval($0)) }
+                    ),
+                    in: 1...3_600
+                )
+            }
+        }
+
+        Toggle(
+            L10n.string("automation.interval", table: .automation),
+            isOn: Binding(
+                get: { configuration.intervalSeconds != nil },
+                set: { setIntervalEnabled($0) }
+            )
+        )
+
+        if let seconds = configuration.intervalSeconds {
+            Picker(
+                L10n.string("automation.interval", table: .automation),
+                selection: Binding(
+                    get: { intervalChoice(seconds) },
+                    set: { setIntervalChoice($0) }
+                )
+            ) {
+                ForEach(IntervalChoice.allCases) { choice in
+                    Text(intervalTitle(choice)).tag(choice)
+                }
+            }
+            if intervalChoice(seconds) == .custom {
+                Stepper(
+                    L10n.format("automation.interval.customMinutes", table: .automation, Int(seconds / 60)),
+                    value: Binding(
+                        get: { max(1, Int(seconds / 60)) },
+                        set: { setInterval(TimeInterval($0 * 60)) }
+                    ),
+                    in: 1...1_440
+                )
+            }
+        }
+
+        DailyTimesEditor(
+            times: configuration.dailyTimes,
+            onChange: setDailyTimes
+        )
+
+        Picker(
+            L10n.string("automation.integration", table: .automation),
+            selection: Binding(
+                get: { configuration.integrationStrategy },
+                set: { strategy in
+                    var updated = configuration
+                    updated.integrationStrategy = strategy
+                    onChange(updated)
+                }
+            )
+        ) {
+            ForEach(SyncIntegrationStrategy.allCases) { strategy in
+                Text(integrationTitle(strategy)).tag(strategy)
+            }
+        }
+
+        Text(integrationDescription(configuration.integrationStrategy))
+            .font(.caption)
+            .foregroundStyle(.secondary)
+    }
+
+    private func setFileChangesEnabled(_ enabled: Bool) {
+        var updated = configuration
+        updated.policies.removeAll { if case .fileChanges = $0 { true } else { false } }
+        if enabled { updated.policies.append(.fileChanges(debounceSeconds: 5)) }
+        onChange(updated)
+    }
+
+    private func setFileDelay(_ seconds: TimeInterval) {
+        var updated = configuration
+        updated.policies.removeAll { if case .fileChanges = $0 { true } else { false } }
+        updated.policies.append(.fileChanges(debounceSeconds: min(max(seconds, 1), 3_600)))
+        onChange(updated)
+    }
+
+    private func setIntervalEnabled(_ enabled: Bool) {
+        var updated = configuration
+        updated.policies.removeAll { if case .interval = $0 { true } else { false } }
+        if enabled { updated.policies.append(.interval(seconds: 300)) }
+        onChange(updated)
+    }
+
+    private func setInterval(_ seconds: TimeInterval) {
+        var updated = configuration
+        updated.policies.removeAll { if case .interval = $0 { true } else { false } }
+        updated.policies.append(.interval(seconds: min(max(seconds, 60), 86_400)))
+        onChange(updated)
+    }
+
+    private func setDailyTimes(_ times: [DailyTime]) {
+        var updated = configuration
+        updated.policies.removeAll { if case .daily = $0 { true } else { false } }
+        if !times.isEmpty { updated.policies.append(.daily(times: times.sorted())) }
+        onChange(updated)
+    }
+
+    private func fileDelayChoice(_ seconds: TimeInterval) -> FileDelayChoice {
+        FileDelayChoice(rawValue: Int(seconds)) ?? .custom
+    }
+
+    private func setFileDelayChoice(_ choice: FileDelayChoice) {
+        setFileDelay(TimeInterval(choice == .custom ? 30 : choice.rawValue))
+    }
+
+    private func fileDelayTitle(_ choice: FileDelayChoice) -> String {
+        switch choice {
+        case .fiveSeconds: L10n.string("automation.delay.5seconds", table: .automation)
+        case .tenSeconds: L10n.string("automation.delay.10seconds", table: .automation)
+        case .oneMinute: L10n.string("automation.delay.1minute", table: .automation)
+        case .custom: L10n.string("automation.duration.custom", table: .automation)
+        }
+    }
+
+    private func intervalChoice(_ seconds: TimeInterval) -> IntervalChoice {
+        IntervalChoice(rawValue: Int(seconds)) ?? .custom
+    }
+
+    private func setIntervalChoice(_ choice: IntervalChoice) {
+        setInterval(TimeInterval(choice == .custom ? 1_800 : choice.rawValue))
+    }
+
+    private func intervalTitle(_ choice: IntervalChoice) -> String {
+        switch choice {
+        case .fiveMinutes: L10n.string("automation.interval.5minutes", table: .automation)
+        case .tenMinutes: L10n.string("automation.interval.10minutes", table: .automation)
+        case .oneHour: L10n.string("automation.interval.1hour", table: .automation)
+        case .custom: L10n.string("automation.duration.custom", table: .automation)
         }
     }
 }
 
-private struct AutomationProfileCard: View {
-    let profile: SyncProfile
-    @ObservedObject var model: AppModel
-    @Environment(\.colorScheme) private var colorScheme
-
-    private let intervalOptions: [TimeInterval?] = [nil, 300, 900, 1_800, 3_600, 10_800, 21_600]
-    private var palette: SettingsPalette { SettingsPalette(colorScheme: colorScheme) }
-
-    var body: some View {
-        GroupBox {
-            Form {
-                Toggle(
-                    L10n.string("automation.fileChanges", table: .automation),
-                    isOn: Binding(
-                        get: { profile.watchesFileChanges },
-                        set: { model.setFileChangeSync(id: profile.id, enabled: $0) }
-                    )
-                )
-
-                Picker(
-                    L10n.string("automation.interval", table: .automation),
-                    selection: Binding(
-                        get: { profile.intervalSeconds },
-                        set: { model.setIntervalSync(id: profile.id, seconds: $0) }
-                    )
-                ) {
-                    ForEach(intervalOptions, id: \.self) { interval in
-                        Text(intervalLabel(interval)).tag(interval)
-                    }
-                }
-
-                DailyTimesEditor(
-                    times: profile.dailyTimes,
-                    onChange: { model.setDailyTimes(id: profile.id, times: $0) }
-                )
-            }
-            .formStyle(.grouped)
-        } label: {
-            HStack {
-                Label(profile.name, systemImage: "externaldrive.fill")
-                Spacer()
-                if !profile.isEnabled {
-                    Text(L10n.string("automation.repositoryDisabled", table: .automation))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .background(
-            palette.elevatedBackground,
-            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
-        )
-        .disabled(!profile.isEnabled)
+private func integrationTitle(_ strategy: SyncIntegrationStrategy) -> String {
+    switch strategy {
+    case .rebase: L10n.string("automation.integration.rebase", table: .automation)
+    case .merge: L10n.string("automation.integration.merge", table: .automation)
     }
+}
 
-    private func intervalLabel(_ interval: TimeInterval?) -> String {
-        guard let interval else {
-            return L10n.string("automation.interval.off", table: .automation)
-        }
-        let minutes = Int(interval / 60)
-        if minutes < 60 {
-            return L10n.format("automation.interval.minutes", table: .automation, minutes)
-        }
-        return L10n.format("automation.interval.hours", table: .automation, minutes / 60)
+private func integrationDescription(_ strategy: SyncIntegrationStrategy) -> String {
+    switch strategy {
+    case .rebase: L10n.string("automation.integration.rebase.description", table: .automation)
+    case .merge: L10n.string("automation.integration.merge.description", table: .automation)
     }
 }
 
@@ -964,6 +1362,18 @@ private struct SyncRunDetailView: View {
                 LabeledContent(L10n.string("history.repository", table: .history), value: profileName)
                 LabeledContent(L10n.string("history.result", table: .history), value: resultText(run.result))
                 LabeledContent(L10n.string("history.trigger", table: .history), value: triggerText(run.trigger))
+                if let automationRuleName = run.automationRuleName {
+                    LabeledContent(
+                        L10n.string("history.automationRule", table: .history),
+                        value: automationRuleName
+                    )
+                }
+                if let integrationStrategy = run.integrationStrategy {
+                    LabeledContent(
+                        L10n.string("history.integrationStrategy", table: .history),
+                        value: integrationTitle(integrationStrategy)
+                    )
+                }
                 LabeledContent(L10n.string("history.started", table: .history), value: run.startedAt.formatted())
                 LabeledContent(L10n.string("history.duration", table: .history), value: durationText)
             } header: {

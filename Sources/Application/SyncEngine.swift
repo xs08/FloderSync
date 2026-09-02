@@ -10,6 +10,7 @@ struct SyncEngine: Sendable {
     func synchronize(
         profile: SyncProfile,
         trigger: SyncTrigger,
+        automationRuleName: String? = nil,
         now: @Sendable () -> Date = Date.init
     ) async -> SyncRunRecord {
         let runID = UUID()
@@ -46,7 +47,9 @@ struct SyncEngine: Sendable {
                     steps: completedSteps,
                     failureCategory: nil,
                     failureMessage: nil,
-                    hadLocalChanges: false
+                    hadLocalChanges: false,
+                    integrationStrategy: profile.integrationStrategy,
+                    automationRuleName: automationRuleName
                 )
             }
 
@@ -67,10 +70,11 @@ struct SyncEngine: Sendable {
 
             activeStep = .pulling
             try Task.checkCancellation()
-            try await git.pullRebase(
+            try await git.integrateRemote(
                 at: repository.rootPath,
                 remote: profile.remoteName,
-                branch: repository.currentBranch
+                branch: repository.currentBranch,
+                strategy: profile.integrationStrategy
             )
             completedSteps.append(.init(step: .pulling, completedAt: now()))
 
@@ -93,7 +97,9 @@ struct SyncEngine: Sendable {
                 steps: completedSteps,
                 failureCategory: nil,
                 failureMessage: nil,
-                hadLocalChanges: hadLocalChanges
+                hadLocalChanges: hadLocalChanges,
+                integrationStrategy: profile.integrationStrategy,
+                automationRuleName: automationRuleName
             )
         } catch is CancellationError {
             return failureRecord(
@@ -104,7 +110,8 @@ struct SyncEngine: Sendable {
                 finishedAt: now(),
                 steps: completedSteps,
                 failure: .cancelled,
-                hadLocalChanges: hadLocalChanges
+                hadLocalChanges: hadLocalChanges,
+                automationRuleName: automationRuleName
             )
         } catch let failure as SyncFailure {
             return failureRecord(
@@ -115,7 +122,8 @@ struct SyncEngine: Sendable {
                 finishedAt: now(),
                 steps: completedSteps,
                 failure: failure,
-                hadLocalChanges: hadLocalChanges
+                hadLocalChanges: hadLocalChanges,
+                automationRuleName: automationRuleName
             )
         } catch {
             return failureRecord(
@@ -126,7 +134,8 @@ struct SyncEngine: Sendable {
                 finishedAt: now(),
                 steps: completedSteps,
                 failure: .commandFailed(step: activeStep, message: error.localizedDescription),
-                hadLocalChanges: hadLocalChanges
+                hadLocalChanges: hadLocalChanges,
+                automationRuleName: automationRuleName
             )
         }
     }
@@ -139,7 +148,8 @@ struct SyncEngine: Sendable {
         finishedAt: Date,
         steps: [SyncStepRecord],
         failure: SyncFailure,
-        hadLocalChanges: Bool
+        hadLocalChanges: Bool,
+        automationRuleName: String?
     ) -> SyncRunRecord {
         let result: SyncRunResult
         if failure == .cancelled {
@@ -160,7 +170,9 @@ struct SyncEngine: Sendable {
             steps: steps,
             failureCategory: failure.category,
             failureMessage: failure.displayMessage,
-            hadLocalChanges: hadLocalChanges
+            hadLocalChanges: hadLocalChanges,
+            integrationStrategy: profile.integrationStrategy,
+            automationRuleName: automationRuleName
         )
     }
 }

@@ -57,6 +57,11 @@ private actor DelayedGitClient: GitClient {
 
     func stageAll(at path: String) async throws { }
     func commit(at path: String, message: String) async throws { }
-    func pullRebase(at path: String, remote: String, branch: String) async throws { }
+    func integrateRemote(
+        at path: String,
+        remote: String,
+        branch: String,
+        strategy: SyncIntegrationStrategy
+    ) async throws { }
     func push(at path: String, remote: String, branch: String) async throws { }
 }

@@ -17,8 +17,9 @@ FloderSync uses the Git installation and authentication already configured on yo
 ## Highlights
 
 - Manage multiple existing local Git repositories and verify their remote connections.
-- Sync manually, at multiple daily times, on a fixed interval, or after file changes with a five-second debounce.
-- Use a conservative `add/commit -> pull --rebase -> push` workflow.
+- Reuse automation rules across repositories or keep an independent configuration for one repository.
+- Sync manually, at multiple daily times, on a fixed interval, or after file changes with a configurable quiet period.
+- Choose Rebase or Merge for remote integration; Rebase is the conservative default.
 - Detect conflicts, in-progress rebases or merges, detached HEAD, authentication errors, and network failures.
 - Serialize operations for the same repository, coalesce repeated triggers, and sync up to two different repositories concurrently.
 - See status in the menu bar, start a sync quickly, add repositories, review history and diagnostics, and launch at login.

@@ -20,45 +20,37 @@ struct DailyTime: Codable, Hashable, Sendable, Comparable {
 enum SyncPolicy: Codable, Hashable, Sendable {
     case daily(times: [DailyTime])
     case interval(seconds: TimeInterval)
-    case fileChanges
+    case fileChanges(debounceSeconds: TimeInterval)
 }
 
-struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
-    let id: UUID
-    var name: String
-    var localPath: String
-    var remoteName: String
-    var commitMessageTemplate: String
+enum SyncIntegrationStrategy: String, Codable, CaseIterable, Identifiable, Sendable {
+    case rebase
+    case merge
+
+    var id: Self { self }
+}
+
+struct AutomationConfiguration: Codable, Hashable, Sendable {
     var policies: [SyncPolicy]
-    var isEnabled: Bool
+    var integrationStrategy: SyncIntegrationStrategy
 
     init(
-        id: UUID = UUID(),
-        name: String,
-        localPath: String,
-        remoteName: String = "origin",
-        commitMessageTemplate: String = "FloderSync: automatic sync at {timestamp}",
-        policies: [SyncPolicy] = [.fileChanges],
-        isEnabled: Bool = true
+        policies: [SyncPolicy] = [.fileChanges(debounceSeconds: 5)],
+        integrationStrategy: SyncIntegrationStrategy = .rebase
     ) {
-        self.id = id
-        self.name = name
-        self.localPath = localPath
-        self.remoteName = remoteName
-        self.commitMessageTemplate = commitMessageTemplate
         self.policies = policies
-        self.isEnabled = isEnabled
-    }
-
-    func commitMessage(at date: Date) -> String {
-        commitMessageTemplate.replacingOccurrences(
-            of: "{timestamp}",
-            with: date.formatted(.iso8601)
-        )
+        self.integrationStrategy = integrationStrategy
     }
 
     var watchesFileChanges: Bool {
-        policies.contains(.fileChanges)
+        fileChangeDebounceSeconds != nil
+    }
+
+    var fileChangeDebounceSeconds: TimeInterval? {
+        policies.compactMap { policy in
+            if case let .fileChanges(debounceSeconds) = policy { return debounceSeconds }
+            return nil
+        }.first
     }
 
     var intervalSeconds: TimeInterval? {
@@ -73,6 +65,97 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
             if case let .daily(times) = policy { return times }
             return nil
         }.first ?? []
+    }
+}
+
+struct AutomationRule: Identifiable, Codable, Hashable, Sendable {
+    let id: UUID
+    var name: String
+    var configuration: AutomationConfiguration
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        configuration: AutomationConfiguration = AutomationConfiguration()
+    ) {
+        self.id = id
+        self.name = name
+        self.configuration = configuration
+    }
+}
+
+struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
+    let id: UUID
+    var name: String
+    var localPath: String
+    var remoteName: String
+    var commitMessageTemplate: String
+    var customAutomationConfiguration: AutomationConfiguration
+    var automationRuleID: UUID?
+    var isEnabled: Bool
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        localPath: String,
+        remoteName: String = "origin",
+        commitMessageTemplate: String = "FloderSync: automatic sync at {timestamp}",
+        policies: [SyncPolicy] = [.fileChanges(debounceSeconds: 5)],
+        integrationStrategy: SyncIntegrationStrategy = .rebase,
+        automationRuleID: UUID? = nil,
+        isEnabled: Bool = true
+    ) {
+        self.id = id
+        self.name = name
+        self.localPath = localPath
+        self.remoteName = remoteName
+        self.commitMessageTemplate = commitMessageTemplate
+        self.customAutomationConfiguration = AutomationConfiguration(
+            policies: policies,
+            integrationStrategy: integrationStrategy
+        )
+        self.automationRuleID = automationRuleID
+        self.isEnabled = isEnabled
+    }
+
+    func commitMessage(at date: Date) -> String {
+        commitMessageTemplate.replacingOccurrences(
+            of: "{timestamp}",
+            with: date.formatted(.iso8601)
+        )
+    }
+
+    var watchesFileChanges: Bool {
+        customAutomationConfiguration.watchesFileChanges
+    }
+
+    var fileChangeDebounceSeconds: TimeInterval? {
+        customAutomationConfiguration.fileChangeDebounceSeconds
+    }
+
+    var intervalSeconds: TimeInterval? {
+        customAutomationConfiguration.intervalSeconds
+    }
+
+    var dailyTimes: [DailyTime] {
+        customAutomationConfiguration.dailyTimes
+    }
+
+    var integrationStrategy: SyncIntegrationStrategy {
+        customAutomationConfiguration.integrationStrategy
+    }
+
+    var policies: [SyncPolicy] {
+        get { customAutomationConfiguration.policies }
+        set { customAutomationConfiguration.policies = newValue }
+    }
+
+    func resolved(using rules: [AutomationRule]) -> SyncProfile? {
+        guard let automationRuleID else { return self }
+        guard let rule = rules.first(where: { $0.id == automationRuleID }) else { return nil }
+        var resolved = self
+        resolved.customAutomationConfiguration = rule.configuration
+        return resolved
     }
 }
 
@@ -129,6 +212,36 @@ struct SyncRunRecord: Identifiable, Codable, Sendable {
     let failureCategory: SyncFailureCategory?
     let failureMessage: String?
     let hadLocalChanges: Bool
+    let integrationStrategy: SyncIntegrationStrategy?
+    let automationRuleName: String?
+
+    init(
+        id: UUID,
+        profileID: UUID,
+        trigger: SyncTrigger,
+        startedAt: Date,
+        finishedAt: Date,
+        result: SyncRunResult,
+        steps: [SyncStepRecord],
+        failureCategory: SyncFailureCategory?,
+        failureMessage: String?,
+        hadLocalChanges: Bool,
+        integrationStrategy: SyncIntegrationStrategy? = nil,
+        automationRuleName: String? = nil
+    ) {
+        self.id = id
+        self.profileID = profileID
+        self.trigger = trigger
+        self.startedAt = startedAt
+        self.finishedAt = finishedAt
+        self.result = result
+        self.steps = steps
+        self.failureCategory = failureCategory
+        self.failureMessage = failureMessage
+        self.hadLocalChanges = hadLocalChanges
+        self.integrationStrategy = integrationStrategy
+        self.automationRuleName = automationRuleName
+    }
 }
 
 struct RepositoryInfo: Equatable, Sendable {

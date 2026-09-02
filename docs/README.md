@@ -13,6 +13,7 @@
 4. [实现路线图](./04-implementation-roadmap.md)：按风险和依赖拆分实现阶段并记录进度。
 5. [验证记录](./05-verification.md)：记录自动化证据、环境限制和发布前验证矩阵。
 6. [UI、窗口与故障复盘设计](./06-ui-window-and-troubleshooting-design.md)：固化设置窗口、主题、本地化、仓库接入、错误状态和图标迭代中的关键技术方案。
+7. [自动化规则库设计](./07-automation-rule-library-design.md)：定义共享规则、仓库自定义配置、触发条件、Rebase/Merge 策略和配置迁移。
 
 ## 阶段门
 

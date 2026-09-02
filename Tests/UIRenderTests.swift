@@ -100,16 +100,39 @@ final class UIRenderTests: XCTestCase {
             }
         }
 
-        let model = AppModel()
+        let rule = AutomationRule(
+            name: "Rule 1",
+            configuration: AutomationConfiguration(
+                policies: [
+                    .fileChanges(debounceSeconds: 10),
+                    .daily(times: [try DailyTime(hour: 8, minute: 0)])
+                ],
+                integrationStrategy: .rebase
+            )
+        )
+        let profile = SyncProfile(
+            name: "Notes",
+            localPath: "/Users/example/Notes",
+            automationRuleID: rule.id
+        )
+        let model = AppModel(initialConfiguration: AppConfiguration(
+            profiles: [profile],
+            automationRules: [rule]
+        ))
         model.setAppLanguage(.simplifiedChinese)
         model.setAppTheme(.dark)
         model.selectedSettingsSection = .automation
 
-        try render(
-            SettingsRootView(model: model)
+        let size = CGSize(width: 960, height: 640)
+        let hostingView = NSHostingView(
+            rootView: SettingsRootView(model: model)
                 .environment(\.locale, model.appLanguage.locale)
-                .environment(\.colorScheme, .dark),
-            size: CGSize(width: 960, height: 640),
+                .environment(\.colorScheme, .dark)
+                .frame(width: size.width, height: size.height)
+        )
+        hostingView.frame = CGRect(origin: .zero, size: size)
+        try render(
+            hostingView,
             to: URL(fileURLWithPath: "/tmp/FloderSync-settings-dark-refined.png")
         )
     }

@@ -12,7 +12,7 @@ final class SyncEngineTests: XCTestCase {
 
         XCTAssertEqual(record.result, .succeeded)
         XCTAssertTrue(record.hadLocalChanges)
-        XCTAssertEqual(calls, ["validate", "status", "stage", "commit", "pull", "push"])
+        XCTAssertEqual(calls, ["validate", "status", "stage", "commit", "pull:rebase", "push"])
         XCTAssertEqual(record.steps.map(\.step), SyncStep.allCases)
     }
 
@@ -26,8 +26,29 @@ final class SyncEngineTests: XCTestCase {
 
         XCTAssertEqual(record.result, .succeeded)
         XCTAssertFalse(record.hadLocalChanges)
-        XCTAssertEqual(calls, ["validate", "status", "pull", "push"])
+        XCTAssertEqual(calls, ["validate", "status", "pull:rebase", "push"])
         XCTAssertEqual(record.steps.map(\.step), [.validation, .status, .pulling, .pushing])
+    }
+
+    func testMergeStrategyIsForwardedAndRecorded() async throws {
+        let git = FakeGitClient(hasChanges: false)
+        let engine = SyncEngine(git: git)
+        let profile = SyncProfile(
+            name: "Notes",
+            localPath: "/tmp/notes",
+            integrationStrategy: .merge
+        )
+
+        let record = await engine.synchronize(
+            profile: profile,
+            trigger: .interval,
+            automationRuleName: "Rule 1"
+        )
+        let calls = await git.calls
+
+        XCTAssertEqual(calls, ["validate", "status", "pull:merge", "push"])
+        XCTAssertEqual(record.integrationStrategy, .merge)
+        XCTAssertEqual(record.automationRuleName, "Rule 1")
     }
 
     func testConflictStopsBeforePushAndRequiresUserAction() async throws {
@@ -40,7 +61,7 @@ final class SyncEngineTests: XCTestCase {
 
         XCTAssertEqual(record.result, .needsUserAction)
         XCTAssertEqual(record.failureCategory, .conflict)
-        XCTAssertEqual(calls, ["validate", "status", "stage", "commit", "pull"])
+        XCTAssertEqual(calls, ["validate", "status", "stage", "commit", "pull:rebase"])
         XCTAssertFalse(calls.contains("push"))
     }
 
@@ -119,8 +140,13 @@ private actor FakeGitClient: GitClient {
         calls.append("commit")
     }
 
-    func pullRebase(at path: String, remote: String, branch: String) async throws {
-        calls.append("pull")
+    func integrateRemote(
+        at path: String,
+        remote: String,
+        branch: String,
+        strategy: SyncIntegrationStrategy
+    ) async throws {
+        calls.append("pull:\(strategy.rawValue)")
         if let pullFailure { throw pullFailure }
     }
 

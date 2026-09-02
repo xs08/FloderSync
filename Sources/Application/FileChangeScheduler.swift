@@ -54,9 +54,10 @@ actor FileChangeScheduler {
         }
         debounceTasks[profile.id]?.cancel()
         let handler = triggerHandler
+        let debounceSeconds = min(max(profile.fileChangeDebounceSeconds ?? 5, 1), 3_600)
         debounceTasks[profile.id] = Task {
             do {
-                try await Task.sleep(for: .seconds(5))
+                try await Task.sleep(for: .seconds(debounceSeconds))
                 try Task.checkCancellation()
                 await handler?(profile, .fileChanges)
             } catch {

@@ -12,6 +12,7 @@ actor SyncCoordinator {
     private struct Request: Sendable {
         let profile: SyncProfile
         let trigger: SyncTrigger
+        let automationRuleName: String?
     }
 
     private let engine: SyncEngine
@@ -35,8 +36,16 @@ actor SyncCoordinator {
         eventContinuation.finish()
     }
 
-    func enqueue(profile: SyncProfile, trigger: SyncTrigger) {
-        let request = Request(profile: profile, trigger: trigger)
+    func enqueue(
+        profile: SyncProfile,
+        trigger: SyncTrigger,
+        automationRuleName: String? = nil
+    ) {
+        let request = Request(
+            profile: profile,
+            trigger: trigger,
+            automationRuleName: automationRuleName
+        )
         if activeProfileIDs.contains(profile.id) {
             pendingByProfileID[profile.id] = merge(
                 existing: pendingByProfileID[profile.id],
@@ -74,7 +83,11 @@ actor SyncCoordinator {
 
         while true {
             eventContinuation.yield(.started(profileID: request.profile.id))
-            let record = await engine.synchronize(profile: request.profile, trigger: request.trigger)
+            let record = await engine.synchronize(
+                profile: request.profile,
+                trigger: request.trigger,
+                automationRuleName: request.automationRuleName
+            )
             eventContinuation.yield(.finished(record))
 
             if let pending = pendingByProfileID.removeValue(forKey: request.profile.id) {
@@ -102,6 +115,10 @@ actor SyncCoordinator {
         } else {
             trigger = incoming.trigger
         }
-        return Request(profile: incoming.profile, trigger: trigger)
+        return Request(
+            profile: incoming.profile,
+            trigger: trigger,
+            automationRuleName: incoming.automationRuleName
+        )
     }
 }

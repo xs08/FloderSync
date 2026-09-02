@@ -63,7 +63,14 @@ Infrastructure
 ```text
 SyncProfile
   id, name, localPath, remoteName, branchPolicy,
-  commitMessageTemplate, policies[], isEnabled
+  commitMessageTemplate, customAutomationConfiguration,
+  automationRuleID?, isEnabled
+
+AutomationRule
+  id, name, configuration
+
+AutomationConfiguration
+  policies[], integrationStrategy(rebase | merge)
 
 SyncPolicy
   manual | daily(times, weekdays?) | interval(duration) |
@@ -181,7 +188,8 @@ UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间�
 | 002 应用形态 | 原生 SwiftUI 菜单栏应用 + 独立设置窗口 | 已确认 |
 | 003 后台模型 | 登录会话内运行，`SMAppService.mainApp` | 已确认 |
 | 004 发布模型 | Developer ID 签名公证、直接分发 | 已确认 |
-| 005 同步整合 | 自动提交后 `pull --rebase`，冲突即停 | 已确认 |
+| 005 同步整合 | 自动提交后按有效配置执行 Rebase 或 Merge；默认 Rebase，冲突即停 | 已确认 |
+| 006 自动化复用 | 规则库保存完整自动化配置；仓库按 ID 引用规则或保存自定义配置 | 已确认 |
 | 006 数据存储 | 版本化 JSON 配置 + 有界历史存储 | 已确认 |
 | 007 最低系统 | macOS 14+，新版视觉按可用性渐进增强 | 已确认 |
 | 008 本地化 | String Catalog 管理简体中文与英文，英文为开发语言 | 已确认 |

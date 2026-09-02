@@ -109,9 +109,21 @@ struct ProcessGitClient: GitClient, Sendable {
         _ = try await run(arguments: ["-C", path, "commit", "-m", message], step: .committing)
     }
 
-    func pullRebase(at path: String, remote: String, branch: String) async throws {
+    func integrateRemote(
+        at path: String,
+        remote: String,
+        branch: String,
+        strategy: SyncIntegrationStrategy
+    ) async throws {
+        let strategyArguments: [String]
+        switch strategy {
+        case .rebase:
+            strategyArguments = ["--rebase"]
+        case .merge:
+            strategyArguments = ["--no-rebase", "--no-edit"]
+        }
         _ = try await run(
-            arguments: ["-C", path, "pull", "--rebase", remote, branch],
+            arguments: ["-C", path, "pull"] + strategyArguments + [remote, branch],
             step: .pulling
         )
     }

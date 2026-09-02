@@ -100,6 +100,29 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertEqual(contents, "remote update\n")
     }
 
+    func testMergeStrategyCreatesMergeCommitForDivergedHistory() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.pushRemoteChange("remote update\n")
+        try fixture.write("local file\n", to: fixture.workURL.appendingPathComponent("Local.md"))
+
+        let profile = SyncProfile(
+            name: "Notes",
+            localPath: fixture.workURL.path,
+            integrationStrategy: .merge
+        )
+        let record = await SyncEngine(git: ProcessGitClient(timeout: 10))
+            .synchronize(profile: profile, trigger: .manual)
+
+        XCTAssertEqual(record.result, .succeeded, record.failureMessage ?? "")
+        XCTAssertEqual(record.integrationStrategy, .merge)
+        let parents = try fixture.git([
+            "-C", fixture.workURL.path, "show", "-s", "--format=%P", "HEAD"
+        ]).split(separator: " ")
+        XCTAssertEqual(parents.count, 2)
+    }
+
     func testConflictingChangesStopBeforePush() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }
