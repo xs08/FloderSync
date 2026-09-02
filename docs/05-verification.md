@@ -23,6 +23,13 @@
 - 主题偏好测试确认深浅色选择可即时写入模型并持久化，非法或缺失配置回退为跟随系统。
 - 编译产物已经包含 `en.lproj` 和 `zh-Hans.lproj` 的全部 String Catalog 输出。
 
+## Xcode 环境诊断
+
+- Xcode 26.6 的 Recommended Settings 已写入 `project.yml` 并通过 XcodeGen 固化，包括 Asset Symbol Extensions、Dead Code Stripping、Missing Localizability、User Script Sandboxing 与 String Catalog Symbols；这些设置影响构建分析、资源符号生成和产物优化，不参与 `NSWindow` 标题栏布局。
+- 构建日志确认目标没有链接 `AppIntents.framework`，元数据处理器也明确跳过 App Intents 提取。`com.apple.linkd.autoShortcut` 连接失败来自 Xcode/macOS 在调试启动期间进行的系统快捷指令注册，不是 FloderSync 发起的同步或窗口调用，也不会生成顶部标题栏。
+- `Unable to obtain a task name port right` 属于调试器附加或目标进程退出时的进程权限日志；应用可正常启动和测试时不视为功能错误，与窗口层级无关。
+- `FSFindFolder error=-43` 表示系统文件夹查询返回“文件不存在”。当前配置存储、历史存储和仓库选择测试均通过，未发现对应的业务路径失败；保留为环境日志观察项，若后续伴随具体文件功能失败，再按当时路径单独定位。
+
 ## 发布前必须验证
 
 - 在 Developer ID 签名与 Hardened Runtime 下运行 Git、SSH 和 credential helper。

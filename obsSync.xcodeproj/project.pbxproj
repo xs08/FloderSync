@@ -31,6 +31,7 @@
 		813F90B2576A08D5BC8EFD87 /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AE444A74ACC94FC503A8600 /* ProfileStore.swift */; };
 		89CE39A8C3FD9A53FC88AEE3 /* RunHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17A698585A5FDDCF7D545E34 /* RunHistoryStore.swift */; };
 		91206E439D4921AE433976D4 /* ScheduleCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2BDCC3CC2CC1BAE8BEE945D /* ScheduleCalculatorTests.swift */; };
+		9A9FA331E660412F0270C9BD /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 998AA02E7F485FB2161C177C /* SettingsWindowController.swift */; };
 		9E87D58633FC751B934B39B0 /* SyncCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11535174AB588D3F4AE693E8 /* SyncCoordinatorTests.swift */; };
 		AB6777E8761671F3F4C54804 /* ProcessGitClientIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */; };
 		ABAC66BD997DC7D7CA4308DD /* CatchUpCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2302C5CD6F5B53A9271DA6B1 /* CatchUpCalculator.swift */; };
@@ -80,6 +81,7 @@
 		8D12B63143DE69FA1C1A6878 /* Notifications.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Notifications.xcstrings; sourceTree = "<group>"; };
 		8D57DFF53638C2F4B72248D4 /* CatchUpCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpCalculatorTests.swift; sourceTree = "<group>"; };
 		921A7EE0CE48D36B4170CCBA /* LocalizationCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationCatalogTests.swift; sourceTree = "<group>"; };
+		998AA02E7F485FB2161C177C /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		9AE444A74ACC94FC503A8600 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduler.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */,
+				998AA02E7F485FB2161C177C /* SettingsWindowController.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -268,7 +271,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					8C4576B632D753E2229515E5 = {
 						ProvisioningStyle = Automatic;
@@ -335,6 +338,7 @@
 				37222E173840FAB98F703DDB /* RepositoryPicker.swift in Sources */,
 				89CE39A8C3FD9A53FC88AEE3 /* RunHistoryStore.swift in Sources */,
 				DBF3B2CBB0F6DE3A6E74FD98 /* SettingsRootView.swift in Sources */,
+				9A9FA331E660412F0270C9BD /* SettingsWindowController.swift in Sources */,
 				3CF4FBEE0CE55C6C9255350A /* SyncCoordinator.swift in Sources */,
 				798F024DB126DF71D68D4D3E /* SyncEngine.swift in Sources */,
 				450ABF086E6FF2E7D6057B8C /* SyncModels.swift in Sources */,
@@ -416,6 +420,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -446,9 +452,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -462,6 +470,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
@@ -513,6 +522,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -543,9 +554,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -566,6 +579,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;
