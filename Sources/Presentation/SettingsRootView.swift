@@ -3,15 +3,32 @@ import SwiftUI
 
 struct SettingsRootView: View {
     @ObservedObject var model: AppModel
+    private let configuresWindow: Bool
+
+    init(model: AppModel, configuresWindow: Bool = true) {
+        self.model = model
+        self.configuresWindow = configuresWindow
+    }
 
     var body: some View {
-        HStack(spacing: 0) {
-            SettingsSidebar(model: model)
-                .frame(width: 220)
-            Divider()
-            SettingsDetail(model: model)
+        ZStack {
+            Color(nsColor: .windowBackgroundColor)
+
+            HStack(spacing: 0) {
+                SettingsSidebar(model: model)
+                    .frame(width: 220)
+                    .padding(12)
+                SettingsDetail(model: model)
+            }
         }
         .frame(minWidth: 900, idealWidth: 960, minHeight: 560, idealHeight: 640)
+        .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .background {
+            if configuresWindow {
+                SettingsWindowConfigurator()
+            }
+        }
+        .ignoresSafeArea(.container, edges: .top)
         .task { model.start() }
         .onDisappear { RepositoryPicker.shared.cancel() }
         .alert(L10n.string("error.title", table: .settings), isPresented: errorIsPresented) {
@@ -74,38 +91,36 @@ private struct SettingsSidebar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Text(L10n.string("app.name"))
-                    .font(.headline)
-                Spacer()
-            }
-            .padding(.horizontal, 14)
-            .frame(height: 52)
-
-            List(selection: selection) {
-                Section {
-                    ForEach(primarySections) { section in
-                        SettingsSidebarLabel(section: section)
-                            .tag(section)
+            VStack(spacing: 6) {
+                ForEach(primarySections) { section in
+                    Button {
+                        navigate(to: section)
+                    } label: {
+                        SettingsSidebarLabel(
+                            section: section,
+                            isSelected: model.selectedSettingsSection == section
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
             }
-            .listStyle(.sidebar)
+            .padding(.horizontal, 10)
+            .padding(.top, 72)
 
-            Divider()
+            Spacer(minLength: 24)
 
             HStack {
                 Button {
                     navigate(to: .general)
                 } label: {
-                    Label(
-                        L10n.string("settings.general"),
-                        systemImage: AppModel.SettingsSection.general.symbolName
-                    )
+                    Image(systemName: AppModel.SettingsSection.general.symbolName)
+                        .font(.title3)
                 }
                 .foregroundStyle(
                     model.selectedSettingsSection == .general ? Color.accentColor : .secondary
                 )
+                .help(L10n.string("settings.general"))
+                .accessibilityLabel(L10n.string("settings.general"))
 
                 Spacer()
 
@@ -113,25 +128,26 @@ private struct SettingsSidebar: View {
                     RepositoryPicker.shared.cancel()
                     NSApplication.shared.terminate(nil)
                 } label: {
-                    Label(L10n.string("app.quit"), systemImage: "power")
+                    Image(systemName: "power")
+                        .font(.title3)
                 }
                 .foregroundStyle(.secondary)
+                .help(L10n.string("app.quit"))
+                .accessibilityLabel(L10n.string("app.quit"))
             }
             .buttonStyle(.plain)
-            .padding(.horizontal, 14)
-            .frame(height: 50)
-            .background(.bar)
+            .padding(.horizontal, 18)
+            .padding(.bottom, 18)
         }
-        .background(.ultraThinMaterial)
-    }
-
-    private var selection: Binding<AppModel.SettingsSection?> {
-        Binding(
-            get: { model.selectedSettingsSection },
-            set: { newValue in
-                if let newValue { navigate(to: newValue) }
-            }
-        )
+        .background {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.92))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(.white.opacity(0.42), lineWidth: 1)
+                }
+                .shadow(color: .black.opacity(0.06), radius: 12, y: 4)
+        }
     }
 
     private func navigate(to section: AppModel.SettingsSection) {
@@ -142,9 +158,24 @@ private struct SettingsSidebar: View {
 
 private struct SettingsSidebarLabel: View {
     let section: AppModel.SettingsSection
+    let isSelected: Bool
 
     var body: some View {
-        Label(L10n.string(section.titleKey), systemImage: section.symbolName)
+        HStack(spacing: 12) {
+            Image(systemName: section.symbolName)
+                .frame(width: 20)
+            Text(L10n.string(section.titleKey))
+                .fontWeight(isSelected ? .semibold : .regular)
+            Spacer(minLength: 0)
+        }
+        .foregroundStyle(isSelected ? Color.white : Color.primary)
+        .padding(.horizontal, 14)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .background(
+            isSelected ? Color.accentColor : Color.clear,
+            in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+        )
+        .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
 
@@ -158,10 +189,9 @@ private struct SettingsDetail: View {
                     .font(.title2.weight(.semibold))
                 Spacer()
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 18)
-
-            Divider()
+            .padding(.horizontal, 28)
+            .padding(.top, 24)
+            .padding(.bottom, 14)
 
             Group {
                 switch model.selectedSettingsSection {
@@ -178,6 +208,36 @@ private struct SettingsDetail: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(Color(nsColor: .windowBackgroundColor))
+    }
+}
+
+private struct SettingsWindowConfigurator: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView {
+        SettingsWindowConfigurationView()
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) { }
+}
+
+private final class SettingsWindowConfigurationView: NSView {
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        DispatchQueue.main.async { [weak self] in
+            self?.configureWindow()
+        }
+    }
+
+    private func configureWindow() {
+        guard let window else { return }
+
+        window.titleVisibility = .hidden
+        window.titlebarAppearsTransparent = true
+        window.titlebarSeparatorStyle = .none
+        window.styleMask.insert(.fullSizeContentView)
+        window.isMovableByWindowBackground = true
+        window.isOpaque = false
+        window.backgroundColor = .clear
+        window.hasShadow = true
     }
 }
 
