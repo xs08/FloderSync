@@ -3,6 +3,65 @@ import XCTest
 @testable import obsSync
 
 final class ProcessGitClientIntegrationTests: XCTestCase {
+    func testSynchronizationStateDetectsCleanMatchingRepository() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+
+        let state = try await ProcessGitClient(timeout: 10).synchronizationState(
+            at: fixture.workURL.path,
+            remote: "origin",
+            branch: "main"
+        )
+
+        XCTAssertEqual(state, .upToDate)
+    }
+
+    func testSynchronizationStateDetectsDirtyWorkingTree() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.write("local update\n", to: fixture.workURL.appendingPathComponent("Notes.md"))
+
+        let state = try await ProcessGitClient(timeout: 10).synchronizationState(
+            at: fixture.workURL.path,
+            remote: "origin",
+            branch: "main"
+        )
+
+        XCTAssertEqual(state, .outOfSync)
+    }
+
+    func testSynchronizationStateDetectsRemoteCommit() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.pushRemoteChange("remote update\n")
+
+        let state = try await ProcessGitClient(timeout: 10).synchronizationState(
+            at: fixture.workURL.path,
+            remote: "origin",
+            branch: "main"
+        )
+
+        XCTAssertEqual(state, .outOfSync)
+    }
+
+    func testValidationRejectsNonGitFolder() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        let profile = SyncProfile(name: "Not Git", localPath: fixture.rootURL.path)
+
+        do {
+            _ = try await ProcessGitClient(timeout: 10).validateRepository(profile)
+            XCTFail("A non-Git folder must be rejected.")
+        } catch let failure as SyncFailure {
+            guard case .invalidRepository = failure else {
+                return XCTFail("Expected invalidRepository, got \(failure)")
+            }
+        }
+    }
+
     func testLocalChangeIsCommittedAndPushedToBareRemote() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }

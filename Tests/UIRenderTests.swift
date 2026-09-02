@@ -33,7 +33,7 @@ final class UIRenderTests: XCTestCase {
             SettingsRootView(model: model)
                 .environment(\.locale, Locale(identifier: "zh-Hans"))
                 .environment(\.colorScheme, .light),
-            size: CGSize(width: 720, height: 480),
+            size: CGSize(width: 960, height: 640),
             to: URL(fileURLWithPath: "/tmp/obsSync-settings-zh.png")
         )
     }

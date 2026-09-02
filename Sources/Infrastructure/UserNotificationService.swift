@@ -13,11 +13,11 @@ struct UserNotificationService: FailureNotificationSending {
 
     func sendFailure(for run: SyncRunRecord, profileName: String) async throws {
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "notification.failure.title")
+        content.title = L10n.string("notification.failure.title", table: .notifications)
         content.body = String(
-            format: String(localized: "notification.failure.body"),
+            format: L10n.string("notification.failure.body", table: .notifications),
             profileName,
-            run.failureMessage ?? String(localized: "notification.failure.unknown")
+            run.failureMessage ?? L10n.string("notification.failure.unknown", table: .notifications)
         )
         content.sound = .default
         let request = UNNotificationRequest(

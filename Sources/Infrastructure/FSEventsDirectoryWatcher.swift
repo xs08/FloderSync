@@ -99,9 +99,12 @@ enum FileWatcherError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case let .pathUnavailable(path): "The watched folder is unavailable: \(path)"
-        case .couldNotCreateStream: "Could not create a file-system event stream."
-        case .couldNotStartStream: "Could not start the file-system event stream."
+        case let .pathUnavailable(path):
+            L10n.format("error.watchedFolderUnavailable", table: .errors, path)
+        case .couldNotCreateStream:
+            L10n.string("error.couldNotCreateStream", table: .errors)
+        case .couldNotStartStream:
+            L10n.string("error.couldNotStartStream", table: .errors)
         }
     }
 }

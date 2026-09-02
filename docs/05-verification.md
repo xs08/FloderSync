@@ -1,4 +1,4 @@
-# obsSync MVP 验证记录
+# FloderSync MVP 验证记录
 
 状态：实现基线验证通过，发布验证待办  
 日期：2026-09-02
@@ -6,8 +6,10 @@
 ## 已验证
 
 - Xcode 26.6 / Swift 6.3.3 下 macOS 14 deployment target 构建成功。
-- 23 个 XCTest 单元、集成与离屏渲染测试已建立。
+- 29 个 XCTest 单元、集成、本地化目录与离屏渲染测试已通过。
 - 本地 bare remote 集成测试覆盖：
+  - 添加仓库前拒绝非 Git 文件夹。
+  - 初次同步预检可区分远端一致、本地未提交改动与远端提交领先。
   - 本地文件变化自动暂存、提交并推送。
   - 干净工作区拉取远端提交。
   - 双端冲突停止在 push 之前，远端引用保持不变。
@@ -23,10 +25,10 @@
 - 在 Developer ID 签名与 Hardened Runtime 下运行 Git、SSH 和 credential helper。
 - 真实 HTTPS + macOS Keychain、标准 SSH Keychain、自定义 ssh-agent 环境矩阵。
 - `SMAppService.mainApp` 首次注册、用户拒绝、系统设置撤销和升级后的状态。
-- 真实菜单栏 window、设置四个页签、长仓库名、VoiceOver、键盘和高对比度视觉检查。
+- 真实菜单栏 window、设置侧边栏各模块、长仓库名、VoiceOver、键盘和高对比度视觉检查。
 - 睡眠/唤醒、网络断开、外接磁盘断开和应用退出过程。
 - 公证、首次安装、升级与卸载流程。
 
 ## 已知环境限制
 
-本次自动 UI 驱动无法识别未安装的菜单栏测试 App，因此真实窗口级视觉验收保留到签名安装包阶段。SwiftUI 离屏渲染可验证菜单栏布局与本地化，但系统 `TabView` 在无窗口环境下不能作为可靠的设置窗口截图来源。
+SwiftUI 离屏渲染已验证菜单栏布局与中英文本地化；macOS `List` 在无窗口的 `ImageRenderer` 中不能可靠扁平化，因此完整设置窗口视觉验收仍保留到真实窗口与签名安装包阶段。

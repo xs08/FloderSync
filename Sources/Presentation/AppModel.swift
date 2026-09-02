@@ -3,6 +3,22 @@ import Foundation
 
 @MainActor
 final class AppModel: ObservableObject {
+    struct InitialSyncPrompt: Identifiable, Equatable {
+        let profileID: UUID
+        let profileName: String
+
+        var id: UUID { profileID }
+    }
+
+    enum SettingsSection: String, CaseIterable, Identifiable {
+        case repositories
+        case automation
+        case diagnostics
+        case general
+
+        var id: Self { self }
+    }
+
     enum OverallState {
         case ready
         case syncing
@@ -21,7 +37,11 @@ final class AppModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var launchAtLoginStatus: LoginItemStatus = .disabled
     @Published private(set) var notifyOnFailure: Bool
+    @Published private(set) var appLanguage: AppLanguage
     @Published private(set) var connectionChecks: [UUID: ConnectionCheckState] = [:]
+    @Published var selectedSettingsSection: SettingsSection = .repositories
+    @Published var selectedProfileID: UUID?
+    @Published var initialSyncPrompt: InitialSyncPrompt?
     @Published var presentedError: String?
 
     private let engine: SyncEngine
@@ -52,6 +72,7 @@ final class AppModel: ObservableObject {
         self.loginItemService = loginItemService
         self.notificationService = notificationService
         self.notifyOnFailure = UserDefaults.standard.object(forKey: "notifyOnFailure") as? Bool ?? true
+        self.appLanguage = AppLanguage.selected
     }
 
     var overallState: OverallState {
@@ -97,15 +118,39 @@ final class AppModel: ObservableObject {
         do {
             let repository = try await git.validateRepository(profile)
             guard !profiles.contains(where: { $0.localPath == repository.rootPath }) else {
-                presentedError = String(localized: "error.repositoryAlreadyAdded")
+                presentedError = L10n.string("error.repositoryAlreadyAdded", table: .settings)
                 return false
             }
             profile.localPath = repository.rootPath
             profile.name = URL(fileURLWithPath: repository.rootPath).lastPathComponent
+
+            let synchronizationState: RepositorySynchronizationState?
+            do {
+                synchronizationState = try await git.synchronizationState(
+                    at: repository.rootPath,
+                    remote: profile.remoteName,
+                    branch: repository.currentBranch
+                )
+            } catch let failure as SyncFailure {
+                synchronizationState = nil
+                presentedError = failure.displayMessage
+            } catch {
+                synchronizationState = nil
+                presentedError = error.localizedDescription
+            }
+
             profiles.append(profile)
             profiles.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+            selectedSettingsSection = .repositories
+            selectedProfileID = profile.id
             try await persistProfiles()
             configureAutomation()
+            if synchronizationState == .outOfSync {
+                initialSyncPrompt = InitialSyncPrompt(
+                    profileID: profile.id,
+                    profileName: profile.name
+                )
+            }
             return true
         } catch let failure as SyncFailure {
             presentedError = failure.displayMessage
@@ -117,6 +162,9 @@ final class AppModel: ObservableObject {
 
     func removeProfile(id: UUID) {
         profiles.removeAll(where: { $0.id == id })
+        if selectedProfileID == id {
+            selectedProfileID = profiles.first?.id
+        }
         persistProfilesInBackground()
     }
 
@@ -226,6 +274,11 @@ final class AppModel: ObservableObject {
         }
     }
 
+    func setAppLanguage(_ language: AppLanguage) {
+        UserDefaults.standard.set(language.rawValue, forKey: AppLanguage.defaultsKey)
+        appLanguage = language
+    }
+
     func syncAll() {
         for profile in profiles {
             sync(profile)
@@ -236,8 +289,21 @@ final class AppModel: ObservableObject {
         requestSync(profile, trigger: .manual)
     }
 
+    func respondToInitialSync(syncNow: Bool) {
+        guard let prompt = initialSyncPrompt else { return }
+        initialSyncPrompt = nil
+        guard syncNow,
+              let profile = profiles.first(where: { $0.id == prompt.profileID }) else { return }
+        sync(profile)
+    }
+
     func latestRun(for profile: SyncProfile) -> SyncRunRecord? {
         recentRuns.first(where: { $0.profileID == profile.id })
+    }
+
+    func needsUserAttention(_ profile: SyncProfile) -> Bool {
+        guard let result = latestRun(for: profile)?.result else { return false }
+        return result == .failed || result == .needsUserAction
     }
 
     private func persistProfiles() async throws {
@@ -319,7 +385,7 @@ final class AppModel: ObservableObject {
                     if notifyOnFailure &&
                         (record.result == .failed || record.result == .needsUserAction) {
                         let profileName = profiles.first(where: { $0.id == record.profileID })?.name
-                            ?? String(localized: "history.unknownRepository")
+                            ?? L10n.string("history.unknownRepository", table: .history)
                         Task {
                             try? await notificationService.sendFailure(
                                 for: record,

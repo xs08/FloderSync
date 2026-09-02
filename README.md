@@ -1,6 +1,6 @@
-# obsSync
+# FloderSync
 
-obsSync 是一个原生 macOS 菜单栏 Git 自动同步工具。它复用系统 Git 与现有认证，不保存 Git 密码、Token 或 SSH 私钥。
+FloderSync 是一个原生 macOS 菜单栏 Git 自动同步工具。它复用系统 Git 与现有认证，不保存 Git 密码、Token 或 SSH 私钥。
 
 当前 MVP 基线包括：
 
@@ -9,7 +9,7 @@ obsSync 是一个原生 macOS 菜单栏 Git 自动同步工具。它复用系统
 - `add/commit -> pull --rebase -> push` 的保守同步流程。
 - 冲突、进行中的 rebase/merge、detached HEAD、认证和网络错误分类。
 - 同仓库串行、重复触发合并、不同仓库最多并发 2。
-- 菜单栏状态、快捷同步、独立设置、历史诊断和登录启动。
+- 菜单栏状态、快捷同步/添加仓库、侧边栏设置、历史诊断和登录启动。
 - 失败/冲突通知，简体中文与英文 String Catalog。
 
 ## 开发环境
@@ -49,7 +49,7 @@ xcodebuild test \
 ~/Library/Application Support/dev.obssync.app/
 ```
 
-移除仓库只删除 obsSync 的配置，不删除本地工作区或 `.git` 数据。
+移除仓库只删除 FloderSync 的配置，不删除本地工作区或 `.git` 数据。
 
 ## 发布前待办
 

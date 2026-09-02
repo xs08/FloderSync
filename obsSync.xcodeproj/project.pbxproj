@@ -12,9 +12,13 @@
 		14DA9261DBF64E65AC995FC4 /* SyncEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9EABF0697691AD62B15244 /* SyncEngineTests.swift */; };
 		190A1C3CBBF6DE82AFB32B56 /* History.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E6A7B28E59319EFBFC0637D1 /* History.xcstrings */; };
 		1AB693969C5DC969B5C94829 /* FileChangeScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEFCF5BC7F70020E38169922 /* FileChangeScheduler.swift */; };
+		2F9F8DBFFF33D08018EF9345 /* LocalizationCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 921A7EE0CE48D36B4170CCBA /* LocalizationCatalogTests.swift */; };
+		37222E173840FAB98F703DDB /* RepositoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59C387539BB590F16A0AC69 /* RepositoryPicker.swift */; };
 		39F606B5FD6ECEFEAE87D004 /* Automation.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = E9903E96D182B1169AEB9DD0 /* Automation.xcstrings */; };
 		3CF4FBEE0CE55C6C9255350A /* SyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */; };
 		3FEF49C155237853AA96CC7A /* UIRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F692AF4B202E87ABE5050B76 /* UIRenderTests.swift */; };
+		4393641115A1446F629854F7 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3FB32A5023F98678FF91E9 /* Localization.swift */; };
+		44A59B4B96DC89C56D793142 /* Errors.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6EF2240985155158FD931603 /* Errors.xcstrings */; };
 		450ABF086E6FF2E7D6057B8C /* SyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4E6F2FE0A46BBB9F2409C0 /* SyncModels.swift */; };
 		4899D075BD39353DA0511FE8 /* UserNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F34C21C3F42415899CCDEFB /* UserNotificationService.swift */; };
 		5C2FC09B4F3941516E577C41 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */; };
@@ -69,10 +73,13 @@
 		4B29008BF496757BF302BECB /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		4E286961F14031EC4378F740 /* JSONRunHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRunHistoryStore.swift; sourceTree = "<group>"; };
 		5FA87E9E1BFA13130C2F9D52 /* LoginItemService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemService.swift; sourceTree = "<group>"; };
+		6E3FB32A5023F98678FF91E9 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
+		6EF2240985155158FD931603 /* Errors.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Errors.xcstrings; sourceTree = "<group>"; };
 		7A9EABF0697691AD62B15244 /* SyncEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngineTests.swift; sourceTree = "<group>"; };
 		8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRunHistoryStoreTests.swift; sourceTree = "<group>"; };
 		8D12B63143DE69FA1C1A6878 /* Notifications.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Notifications.xcstrings; sourceTree = "<group>"; };
 		8D57DFF53638C2F4B72248D4 /* CatchUpCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpCalculatorTests.swift; sourceTree = "<group>"; };
+		921A7EE0CE48D36B4170CCBA /* LocalizationCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationCatalogTests.swift; sourceTree = "<group>"; };
 		9AE444A74ACC94FC503A8600 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationScheduler.swift; sourceTree = "<group>"; };
@@ -83,6 +90,7 @@
 		C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessGitClientIntegrationTests.swift; sourceTree = "<group>"; };
 		C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileEventFilterTests.swift; sourceTree = "<group>"; };
+		C59C387539BB590F16A0AC69 /* RepositoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryPicker.swift; sourceTree = "<group>"; };
 		CB4B59959E6C8D3C08B2257B /* SystemWakeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemWakeMonitor.swift; sourceTree = "<group>"; };
 		D2BDCC3CC2CC1BAE8BEE945D /* ScheduleCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCalculatorTests.swift; sourceTree = "<group>"; };
 		E6A7B28E59319EFBFC0637D1 /* History.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = History.xcstrings; sourceTree = "<group>"; };
@@ -100,6 +108,7 @@
 			children = (
 				4B29008BF496757BF302BECB /* AppModel.swift */,
 				062F32F20AF6E12A8717C646 /* MenuBarView.swift */,
+				C59C387539BB590F16A0AC69 /* RepositoryPicker.swift */,
 				405AE485A5D0418E8D514578 /* SettingsRootView.swift */,
 			);
 			path = Presentation;
@@ -117,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				E9903E96D182B1169AEB9DD0 /* Automation.xcstrings */,
+				6EF2240985155158FD931603 /* Errors.xcstrings */,
 				E6A7B28E59319EFBFC0637D1 /* History.xcstrings */,
 				9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */,
 				8D12B63143DE69FA1C1A6878 /* Notifications.xcstrings */,
@@ -133,6 +143,7 @@
 				C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */,
 				EDA60C851105CC4DD34DF4B3 /* JSONProfileStoreTests.swift */,
 				8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */,
+				921A7EE0CE48D36B4170CCBA /* LocalizationCatalogTests.swift */,
 				C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */,
 				D2BDCC3CC2CC1BAE8BEE945D /* ScheduleCalculatorTests.swift */,
 				11535174AB588D3F4AE693E8 /* SyncCoordinatorTests.swift */,
@@ -174,6 +185,7 @@
 				AA35B94882FA01FDAF88D84A /* AutomationScheduler.swift */,
 				2302C5CD6F5B53A9271DA6B1 /* CatchUpCalculator.swift */,
 				EEFCF5BC7F70020E38169922 /* FileChangeScheduler.swift */,
+				6E3FB32A5023F98678FF91E9 /* Localization.swift */,
 				9AE444A74ACC94FC503A8600 /* ProfileStore.swift */,
 				17A698585A5FDDCF7D545E34 /* RunHistoryStore.swift */,
 				C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */,
@@ -290,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				39F606B5FD6ECEFEAE87D004 /* Automation.xcstrings in Resources */,
+				44A59B4B96DC89C56D793142 /* Errors.xcstrings in Resources */,
 				190A1C3CBBF6DE82AFB32B56 /* History.xcstrings in Resources */,
 				5C2FC09B4F3941516E577C41 /* Localizable.xcstrings in Resources */,
 				B2E6E282CD5864CC6CC53C3E /* Notifications.xcstrings in Resources */,
@@ -313,11 +326,13 @@
 				5CBC7530840C1461E79F509C /* GitClient.swift in Sources */,
 				F17E1068F31899DF625D888B /* JSONProfileStore.swift in Sources */,
 				BF173DF80B0040C83B670286 /* JSONRunHistoryStore.swift in Sources */,
+				4393641115A1446F629854F7 /* Localization.swift in Sources */,
 				E32003662F7D17BD3DAAE00A /* LoginItemService.swift in Sources */,
 				078DBD1A585DC90931CD6CD3 /* MenuBarView.swift in Sources */,
 				D927950B934BAE385ED1556F /* ObsSyncApp.swift in Sources */,
 				0C78F5790EAC0A640AD668DE /* ProcessGitClient.swift in Sources */,
 				813F90B2576A08D5BC8EFD87 /* ProfileStore.swift in Sources */,
+				37222E173840FAB98F703DDB /* RepositoryPicker.swift in Sources */,
 				89CE39A8C3FD9A53FC88AEE3 /* RunHistoryStore.swift in Sources */,
 				DBF3B2CBB0F6DE3A6E74FD98 /* SettingsRootView.swift in Sources */,
 				3CF4FBEE0CE55C6C9255350A /* SyncCoordinator.swift in Sources */,
@@ -336,6 +351,7 @@
 				DD1FEB71D1B583A3CB923D02 /* FileEventFilterTests.swift in Sources */,
 				5F52C6864D914B1A64A1E731 /* JSONProfileStoreTests.swift in Sources */,
 				D4922A5BAA939FA73CBE0F6D /* JSONRunHistoryStoreTests.swift in Sources */,
+				2F9F8DBFFF33D08018EF9345 /* LocalizationCatalogTests.swift in Sources */,
 				AB6777E8761671F3F4C54804 /* ProcessGitClientIntegrationTests.swift in Sources */,
 				91206E439D4921AE433976D4 /* ScheduleCalculatorTests.swift in Sources */,
 				9E87D58633FC751B934B39B0 /* SyncCoordinatorTests.swift in Sources */,
@@ -364,7 +380,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = obsSync;
+				INFOPLIST_KEY_CFBundleDisplayName = FloderSync;
 				INFOPLIST_KEY_LSUIElement = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -372,7 +388,8 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.app;
-				PRODUCT_NAME = obsSync;
+				PRODUCT_MODULE_NAME = obsSync;
+				PRODUCT_NAME = FloderSync;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -391,7 +408,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.tests;
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/obsSync.app/Contents/MacOS/obsSync";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloderSync.app/Contents/MacOS/FloderSync";
 			};
 			name = Release;
 		};
@@ -465,7 +482,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.tests;
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/obsSync.app/Contents/MacOS/obsSync";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloderSync.app/Contents/MacOS/FloderSync";
 			};
 			name = Debug;
 		};
@@ -478,7 +495,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = obsSync;
+				INFOPLIST_KEY_CFBundleDisplayName = FloderSync;
 				INFOPLIST_KEY_LSUIElement = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -486,7 +503,8 @@
 				);
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.app;
-				PRODUCT_NAME = obsSync;
+				PRODUCT_MODULE_NAME = obsSync;
+				PRODUCT_NAME = FloderSync;
 				SDKROOT = macosx;
 			};
 			name = Debug;

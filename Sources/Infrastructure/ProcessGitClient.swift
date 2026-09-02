@@ -11,7 +11,9 @@ struct ProcessGitClient: GitClient, Sendable {
 
     func validateRepository(_ profile: SyncProfile) async throws -> RepositoryInfo {
         guard FileManager.default.isExecutableFile(atPath: gitExecutable) else {
-            throw SyncFailure.gitUnavailable("Git executable was not found at \(gitExecutable).")
+            throw SyncFailure.gitUnavailable(
+                L10n.format("error.gitUnavailable", table: .errors, gitExecutable)
+            )
         }
 
         let root: String
@@ -19,7 +21,9 @@ struct ProcessGitClient: GitClient, Sendable {
             root = try await run(arguments: ["-C", profile.localPath, "rev-parse", "--show-toplevel"])
                 .standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
-            throw SyncFailure.invalidRepository("The selected folder is not a readable Git repository.")
+            throw SyncFailure.invalidRepository(
+                L10n.string("error.invalidRepository", table: .errors)
+            )
         }
 
         let gitDirectory = try await run(
@@ -27,7 +31,7 @@ struct ProcessGitClient: GitClient, Sendable {
         ).standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
         if Self.hasOperationInProgress(gitDirectory: gitDirectory) {
             throw SyncFailure.conflict(
-                "A Git merge, rebase, cherry-pick, or conflict is already in progress. Resolve or abort it before syncing again."
+                L10n.string("error.operationInProgress", table: .errors)
             )
         }
 
@@ -44,7 +48,9 @@ struct ProcessGitClient: GitClient, Sendable {
             remoteURL = try await run(arguments: ["-C", root, "remote", "get-url", profile.remoteName])
                 .standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
-            throw SyncFailure.remoteMissing("Remote '\(profile.remoteName)' is not configured.")
+            throw SyncFailure.remoteMissing(
+                L10n.format("error.remoteMissing", table: .errors, profile.remoteName)
+            )
         }
 
         return RepositoryInfo(rootPath: root, currentBranch: branch, remoteURL: remoteURL)
@@ -63,6 +69,29 @@ struct ProcessGitClient: GitClient, Sendable {
             hasUnmergedPaths: hasUnmergedPaths,
             hasOperationInProgress: hasOperationInProgress
         )
+    }
+
+    func synchronizationState(
+        at path: String,
+        remote: String,
+        branch: String
+    ) async throws -> RepositorySynchronizationState {
+        let status = try await workingTreeStatus(at: path)
+        if status.hasChanges || status.hasUnmergedPaths || status.hasOperationInProgress {
+            return .outOfSync
+        }
+
+        let localHead = try await run(
+            arguments: ["-C", path, "rev-parse", "HEAD"]
+        ).standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let remoteOutput = try await run(
+            arguments: ["-C", path, "ls-remote", "--heads", remote, "refs/heads/\(branch)"]
+        ).standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let remoteHead = remoteOutput.split(whereSeparator: { $0.isWhitespace }).first else {
+            return .outOfSync
+        }
+        return localHead == String(remoteHead) ? .upToDate : .outOfSync
     }
 
     func checkRemoteAccess(at path: String, remote: String) async throws {
@@ -153,7 +182,7 @@ struct ProcessGitClient: GitClient, Sendable {
     ) throws -> CommandResult {
         let fileManager = FileManager.default
         let temporaryDirectory = fileManager.temporaryDirectory
-            .appendingPathComponent("obsSync-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("FloderSync-\(UUID().uuidString)", isDirectory: true)
         try fileManager.createDirectory(at: temporaryDirectory, withIntermediateDirectories: true)
         defer { try? fileManager.removeItem(at: temporaryDirectory) }
 

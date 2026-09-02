@@ -1,34 +1,482 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "history.duration" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Duration" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "耗时" } } } },
-    "history.duration.seconds" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "%.1f seconds" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "%.1f 秒" } } } },
-    "history.empty.message" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Completed sync runs will appear here." } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "完成的同步记录将显示在这里。" } } } },
-    "history.empty.title" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "No Sync History" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂无同步历史" } } } },
-    "history.error" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Error" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "错误" } } } },
-    "history.repository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "仓库" } } } },
-    "history.result" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Result" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "结果" } } } },
-    "history.result.cancelled" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancelled" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已取消" } } } },
-    "history.result.failed" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Failed" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "失败" } } } },
-    "history.result.needsUserAction" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Needs Attention" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "需要处理" } } } },
-    "history.result.succeeded" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Succeeded" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "成功" } } } },
-    "history.select.title" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Select a Sync Run" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择同步记录" } } } },
-    "history.started" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Started" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "开始时间" } } } },
-    "history.step.committing" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Created commit" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "创建提交" } } } },
-    "history.step.pulling" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Pulled with rebase" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "以 rebase 方式拉取" } } } },
-    "history.step.pushing" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Pushed current branch" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "推送当前分支" } } } },
-    "history.step.staging" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Staged changes" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "暂存更改" } } } },
-    "history.step.status" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Checked working tree" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "检查工作区" } } } },
-    "history.step.validation" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Validated repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "验证仓库" } } } },
-    "history.steps" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Completed Steps" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已完成步骤" } } } },
-    "history.summary" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Summary" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "摘要" } } } },
-    "history.trigger" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Trigger" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "触发方式" } } } },
-    "history.trigger.fileChanges" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "File changes" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "文件变化" } } } },
-    "history.trigger.interval" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Interval" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "固定间隔" } } } },
-    "history.trigger.manual" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Manual" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "手动" } } } },
-    "history.trigger.scheduled" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Scheduled time" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "指定时间" } } } },
-    "history.trigger.wakeCatchUp" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Wake catch-up" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "唤醒补偿" } } } },
-    "history.unknownRepository" : { "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Removed Repository" } }, "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已移除仓库" } } } }
+    "history.duration" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duration"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "耗时"
+          }
+        }
+      }
+    },
+    "history.duration.seconds" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.1f seconds"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.1f 秒"
+          }
+        }
+      }
+    },
+    "history.empty.message" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed sync runs will appear here."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完成的同步记录将显示在这里。"
+          }
+        }
+      }
+    },
+    "history.empty.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Sync History"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂无同步历史"
+          }
+        }
+      }
+    },
+    "history.error" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "错误"
+          }
+        }
+      }
+    },
+    "history.repository" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "仓库"
+          }
+        }
+      }
+    },
+    "history.result" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Result"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "结果"
+          }
+        }
+      }
+    },
+    "history.result.cancelled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelled"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已取消"
+          }
+        }
+      }
+    },
+    "history.result.failed" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "失败"
+          }
+        }
+      }
+    },
+    "history.result.needsUserAction" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs Attention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要处理"
+          }
+        }
+      }
+    },
+    "history.result.succeeded" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Succeeded"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "成功"
+          }
+        }
+      }
+    },
+    "history.select.title" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a Sync Run"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "选择同步记录"
+          }
+        }
+      }
+    },
+    "history.started" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Started"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始时间"
+          }
+        }
+      }
+    },
+    "history.step.committing" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created commit"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "创建提交"
+          }
+        }
+      }
+    },
+    "history.step.pulling" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulled with rebase"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "以 rebase 方式拉取"
+          }
+        }
+      }
+    },
+    "history.step.pushing" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pushed current branch"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "推送当前分支"
+          }
+        }
+      }
+    },
+    "history.step.staging" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Staged changes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂存更改"
+          }
+        }
+      }
+    },
+    "history.step.status" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checked working tree"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查工作区"
+          }
+        }
+      }
+    },
+    "history.step.validation" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Validated repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "验证仓库"
+          }
+        }
+      }
+    },
+    "history.steps" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completed Steps"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已完成步骤"
+          }
+        }
+      }
+    },
+    "history.summary" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "摘要"
+          }
+        }
+      }
+    },
+    "history.trigger" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trigger"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "触发方式"
+          }
+        }
+      }
+    },
+    "history.trigger.fileChanges" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File changes"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "文件变化"
+          }
+        }
+      }
+    },
+    "history.trigger.interval" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interval"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "固定间隔"
+          }
+        }
+      }
+    },
+    "history.trigger.manual" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "手动"
+          }
+        }
+      }
+    },
+    "history.trigger.scheduled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scheduled time"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "指定时间"
+          }
+        }
+      }
+    },
+    "history.trigger.wakeCatchUp" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wake catch-up"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "唤醒补偿"
+          }
+        }
+      }
+    },
+    "history.unknownRepository" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed Repository"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已移除仓库"
+          }
+        }
+      }
+    }
   },
   "version" : "1.0"
 }

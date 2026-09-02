@@ -5,22 +5,38 @@ struct SettingsRootView: View {
     @ObservedObject var model: AppModel
 
     var body: some View {
-        TabView {
-            RepositorySettingsView(model: model)
-                .tabItem { Label("settings.repositories", systemImage: "externaldrive") }
-            AutomationSettingsView(model: model)
-                .tabItem { Label("settings.automation", systemImage: "clock") }
-            GeneralSettingsView(model: model)
-                .tabItem { Label("settings.general", systemImage: "gearshape") }
-            HistorySettingsView(model: model)
-                .tabItem { Label("settings.diagnostics", systemImage: "waveform.path.ecg") }
+        HStack(spacing: 0) {
+            SettingsSidebar(model: model)
+                .frame(width: 220)
+            Divider()
+            SettingsDetail(model: model)
         }
-        .frame(width: 720, height: 480)
+        .frame(minWidth: 900, idealWidth: 960, minHeight: 560, idealHeight: 640)
         .task { model.start() }
-        .alert("error.title", isPresented: errorIsPresented) {
-            Button("action.ok", role: .cancel) { model.presentedError = nil }
+        .onDisappear { RepositoryPicker.shared.cancel() }
+        .alert(L10n.string("error.title", table: .settings), isPresented: errorIsPresented) {
+            Button(L10n.string("action.ok", table: .settings), role: .cancel) {
+                model.presentedError = nil
+            }
         } message: {
             Text(model.presentedError ?? "")
+        }
+        .confirmationDialog(
+            initialSyncTitle,
+            isPresented: initialSyncIsPresented,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.string("repository.initialSync.now", table: .repositoryActions)) {
+                model.respondToInitialSync(syncNow: true)
+            }
+            Button(
+                L10n.string("repository.initialSync.later", table: .repositoryActions),
+                role: .cancel
+            ) {
+                model.respondToInitialSync(syncNow: false)
+            }
+        } message: {
+            Text(L10n.string("repository.initialSync.message", table: .repositoryActions))
         }
     }
 
@@ -30,88 +46,285 @@ struct SettingsRootView: View {
             set: { if !$0 { model.presentedError = nil } }
         )
     }
+
+    private var initialSyncIsPresented: Binding<Bool> {
+        Binding(
+            get: { model.initialSyncPrompt != nil },
+            set: { if !$0 { model.respondToInitialSync(syncNow: false) } }
+        )
+    }
+
+    private var initialSyncTitle: String {
+        L10n.format(
+            "repository.initialSync.title",
+            table: .repositoryActions,
+            model.initialSyncPrompt?.profileName ?? ""
+        )
+    }
+}
+
+private struct SettingsSidebar: View {
+    @ObservedObject var model: AppModel
+
+    private let primarySections: [AppModel.SettingsSection] = [
+        .repositories,
+        .automation,
+        .diagnostics
+    ]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(L10n.string("app.name"))
+                    .font(.headline)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .frame(height: 52)
+
+            List(selection: selection) {
+                Section {
+                    ForEach(primarySections) { section in
+                        SettingsSidebarLabel(section: section)
+                            .tag(section)
+                    }
+                }
+            }
+            .listStyle(.sidebar)
+
+            Divider()
+
+            HStack {
+                Button {
+                    navigate(to: .general)
+                } label: {
+                    Label(
+                        L10n.string("settings.general"),
+                        systemImage: AppModel.SettingsSection.general.symbolName
+                    )
+                }
+                .foregroundStyle(
+                    model.selectedSettingsSection == .general ? Color.accentColor : .secondary
+                )
+
+                Spacer()
+
+                Button {
+                    RepositoryPicker.shared.cancel()
+                    NSApplication.shared.terminate(nil)
+                } label: {
+                    Label(L10n.string("app.quit"), systemImage: "power")
+                }
+                .foregroundStyle(.secondary)
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 14)
+            .frame(height: 50)
+            .background(.bar)
+        }
+        .background(.ultraThinMaterial)
+    }
+
+    private var selection: Binding<AppModel.SettingsSection?> {
+        Binding(
+            get: { model.selectedSettingsSection },
+            set: { newValue in
+                if let newValue { navigate(to: newValue) }
+            }
+        )
+    }
+
+    private func navigate(to section: AppModel.SettingsSection) {
+        RepositoryPicker.shared.cancel()
+        model.selectedSettingsSection = section
+    }
+}
+
+private struct SettingsSidebarLabel: View {
+    let section: AppModel.SettingsSection
+
+    var body: some View {
+        Label(L10n.string(section.titleKey), systemImage: section.symbolName)
+    }
+}
+
+private struct SettingsDetail: View {
+    @ObservedObject var model: AppModel
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(L10n.string(model.selectedSettingsSection.titleKey))
+                    .font(.title2.weight(.semibold))
+                Spacer()
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
+
+            Divider()
+
+            Group {
+                switch model.selectedSettingsSection {
+                case .repositories:
+                    RepositorySettingsView(model: model)
+                case .automation:
+                    AutomationSettingsView(model: model)
+                case .diagnostics:
+                    HistorySettingsView(model: model)
+                case .general:
+                    GeneralSettingsView(model: model)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+}
+
+private extension AppModel.SettingsSection {
+    var titleKey: String {
+        switch self {
+        case .repositories: "settings.repositories"
+        case .automation: "settings.automation"
+        case .diagnostics: "settings.diagnostics"
+        case .general: "settings.general"
+        }
+    }
+
+    var symbolName: String {
+        switch self {
+        case .repositories: "externaldrive"
+        case .automation: "clock"
+        case .diagnostics: "waveform.path.ecg"
+        case .general: "gearshape"
+        }
+    }
 }
 
 private struct RepositorySettingsView: View {
     @ObservedObject var model: AppModel
-    @State private var selection: UUID?
     @State private var pendingRemoval: SyncProfile?
 
+    @ViewBuilder
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selection) {
-                ForEach(model.profiles) { profile in
-                    HStack(spacing: 8) {
-                        Image(systemName: profile.isEnabled ? "externaldrive.fill" : "externaldrive")
-                            .foregroundStyle(profile.isEnabled ? Color.accentColor : .secondary)
-                        Text(profile.name)
-                            .lineLimit(1)
-                    }
-                    .tag(profile.id)
+        if model.profiles.isEmpty {
+            ContentUnavailableView {
+                Label(
+                    L10n.string("repositories.empty.title"),
+                    systemImage: "externaldrive.badge.plus"
+                )
+            } description: {
+                Text(L10n.string("repositories.settings.empty.message"))
+            } actions: {
+                Button(L10n.string("repository.add", table: .settings)) {
+                    chooseRepository()
                 }
+                .buttonStyle(.borderedProminent)
             }
-            .navigationTitle("settings.repositories")
-            .safeAreaInset(edge: .bottom) {
-                HStack(spacing: 12) {
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            repositoryEditor
+        }
+    }
+
+    private var repositoryEditor: some View {
+        HStack(spacing: 0) {
+            VStack(spacing: 0) {
+                List(selection: $model.selectedProfileID) {
+                    ForEach(model.profiles) { profile in
+                        HStack(spacing: 8) {
+                            Image(systemName: repositorySymbol(for: profile))
+                                .foregroundStyle(repositoryColor(for: profile))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(profile.name)
+                                    .lineLimit(1)
+                                Text(repositorySubtitle(for: profile))
+                                    .font(.caption)
+                                    .foregroundStyle(
+                                        model.needsUserAttention(profile) ? Color.orange : .secondary
+                                    )
+                                    .lineLimit(1)
+                            }
+                        }
+                        .tag(profile.id)
+                    }
+                }
+                .listStyle(.sidebar)
+
+                Divider()
+
+                HStack(spacing: 14) {
                     Button(action: chooseRepository) {
                         Image(systemName: "plus")
                     }
-                    .accessibilityLabel(Text("repository.add"))
+                    .help(L10n.string("repository.add", table: .settings))
+                    .accessibilityLabel(L10n.string("repository.add", table: .settings))
+
                     Button(action: removeSelection) {
                         Image(systemName: "minus")
                     }
-                    .disabled(selection == nil)
-                    .accessibilityLabel(Text("repository.remove"))
+                    .help(L10n.string("repository.remove", table: .settings))
+                    .disabled(selectedProfile == nil)
+                    .accessibilityLabel(L10n.string("repository.remove", table: .settings))
+
                     Spacer()
                 }
                 .buttonStyle(.borderless)
-                .padding(10)
+                .padding(.horizontal, 12)
+                .frame(height: 38)
                 .background(.bar)
             }
-            .frame(minWidth: 220)
-            .alert("repository.remove.confirm.title", isPresented: removalIsPresented) {
-                Button("action.cancel", role: .cancel) { pendingRemoval = nil }
-                Button("repository.remove", role: .destructive) {
-                    guard let pendingRemoval else { return }
-                    model.removeProfile(id: pendingRemoval.id)
-                    selection = nil
-                    self.pendingRemoval = nil
-                }
-            } message: {
-                Text("repository.remove.confirm.message")
-            }
-        } detail: {
-            if let profile = selectedProfile {
-                RepositoryDetailView(profile: profile, model: model)
-            } else {
-                ContentUnavailableView {
-                    Label("repository.select.title", systemImage: "sidebar.left")
-                } description: {
-                    Text("repository.select.message")
+            .frame(width: 260)
+
+            Divider()
+
+            Group {
+                if let profile = selectedProfile {
+                    RepositoryDetailView(profile: profile, model: model)
+                } else {
+                    ContentUnavailableView {
+                        Label(
+                            L10n.string("repository.select.title", table: .settings),
+                            systemImage: "externaldrive.badge.plus"
+                        )
+                    } description: {
+                        Text(L10n.string("repository.select.message", table: .settings))
+                    }
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .onAppear {
+            if model.selectedProfileID == nil {
+                model.selectedProfileID = model.profiles.first?.id
+            }
+        }
+        .alert(
+            L10n.string("repository.remove.confirm.title", table: .repositoryActions),
+            isPresented: removalIsPresented
+        ) {
+            Button(L10n.string("action.cancel", table: .repositoryActions), role: .cancel) {
+                pendingRemoval = nil
+            }
+            Button(L10n.string("repository.remove", table: .settings), role: .destructive) {
+                guard let pendingRemoval else { return }
+                model.removeProfile(id: pendingRemoval.id)
+                self.pendingRemoval = nil
+            }
+        } message: {
+            Text(L10n.string("repository.remove.confirm.message", table: .repositoryActions))
         }
     }
 
     private var selectedProfile: SyncProfile? {
-        guard let selection else { return nil }
-        return model.profiles.first(where: { $0.id == selection })
+        guard let id = model.selectedProfileID else { return nil }
+        return model.profiles.first(where: { $0.id == id })
     }
 
     private func chooseRepository() {
-        let panel = NSOpenPanel()
-        panel.title = String(localized: "repository.picker.title")
-        panel.prompt = String(localized: "repository.picker.action")
-        panel.canChooseDirectories = true
-        panel.canChooseFiles = false
-        panel.allowsMultipleSelection = false
-        panel.canCreateDirectories = false
-
-        guard panel.runModal() == .OK, let url = panel.url else { return }
         Task {
-            if await model.addRepository(at: url) {
-                selection = model.profiles.first(where: { $0.localPath == url.path })?.id
-            }
+            guard let url = await RepositoryPicker.shared.chooseRepository() else { return }
+            _ = await model.addRepository(at: url)
         }
     }
 
@@ -125,6 +338,28 @@ private struct RepositorySettingsView: View {
             set: { if !$0 { pendingRemoval = nil } }
         )
     }
+
+    private func repositorySymbol(for profile: SyncProfile) -> String {
+        if model.syncingProfileIDs.contains(profile.id) {
+            return "arrow.triangle.2.circlepath"
+        }
+        if model.needsUserAttention(profile) {
+            return "exclamationmark.triangle.fill"
+        }
+        return profile.isEnabled ? "externaldrive.fill" : "externaldrive"
+    }
+
+    private func repositoryColor(for profile: SyncProfile) -> Color {
+        if model.needsUserAttention(profile) { return .orange }
+        return profile.isEnabled ? .accentColor : .secondary
+    }
+
+    private func repositorySubtitle(for profile: SyncProfile) -> String {
+        if model.needsUserAttention(profile) {
+            return L10n.string("repository.status.needsAttention", table: .repositoryActions)
+        }
+        return profile.localPath
+    }
 }
 
 private struct RepositoryDetailView: View {
@@ -133,75 +368,117 @@ private struct RepositoryDetailView: View {
 
     var body: some View {
         Form {
-            Section("repository.section.identity") {
-                LabeledContent("repository.name") {
+            if model.needsUserAttention(profile) {
+                Section {
+                    Label(
+                        L10n.string("repository.failure.title", table: .repositoryActions),
+                        systemImage: "exclamationmark.triangle.fill"
+                    )
+                    .foregroundStyle(.orange)
+
+                    if let failureMessage = model.latestRun(for: profile)?.failureMessage,
+                       !failureMessage.isEmpty {
+                        Text(failureMessage)
+                            .textSelection(.enabled)
+                    }
+
+                    Text(L10n.string("repository.failure.instruction", table: .repositoryActions))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Section {
+                LabeledContent {
                     TextField(
-                        "repository.name",
+                        L10n.string("repository.name", table: .settings),
                         text: Binding(
                             get: { profile.name },
                             set: { model.setProfileName(id: profile.id, name: $0) }
                         )
                     )
                     .labelsHidden()
+                } label: {
+                    Text(L10n.string("repository.name", table: .settings))
                 }
-                LabeledContent("repository.path") {
+
+                LabeledContent {
                     Text(profile.localPath)
                         .textSelection(.enabled)
                         .lineLimit(2)
+                } label: {
+                    Text(L10n.string("repository.path", table: .settings))
                 }
-                LabeledContent("repository.remote") {
+
+                LabeledContent {
                     TextField(
-                        "repository.remote",
+                        L10n.string("repository.remote", table: .settings),
                         text: Binding(
                             get: { profile.remoteName },
                             set: { model.setRemoteName(id: profile.id, remoteName: $0) }
                         )
                     )
                     .labelsHidden()
+                } label: {
+                    Text(L10n.string("repository.remote", table: .settings))
                 }
+            } header: {
+                Text(L10n.string("repository.section.identity", table: .settings))
             }
 
-            Section("repository.section.behavior") {
+            Section {
                 Toggle(
-                    "repository.enabled",
+                    L10n.string("repository.enabled", table: .settings),
                     isOn: Binding(
                         get: { profile.isEnabled },
                         set: { model.setProfileEnabled(id: profile.id, enabled: $0) }
                     )
                 )
-                LabeledContent("repository.branchPolicy", value: String(localized: "repository.currentBranch"))
-                LabeledContent("repository.commitTemplate") {
+
+                LabeledContent(
+                    L10n.string("repository.branchPolicy", table: .settings),
+                    value: L10n.string("repository.currentBranch", table: .settings)
+                )
+
+                LabeledContent {
                     TextField(
-                        "repository.commitTemplate",
+                        L10n.string("repository.commitTemplate", table: .repositoryActions),
                         text: Binding(
                             get: { profile.commitMessageTemplate },
                             set: { model.setCommitMessageTemplate(id: profile.id, template: $0) }
                         )
                     )
                     .labelsHidden()
+                } label: {
+                    Text(L10n.string("repository.commitTemplate", table: .repositoryActions))
                 }
+            } header: {
+                Text(L10n.string("repository.section.behavior", table: .settings))
             }
 
             Section {
-                HStack {
-                    Button("sync.repository") { model.sync(profile) }
+                HStack(spacing: 12) {
+                    Button(L10n.string("sync.repository")) { model.sync(profile) }
                         .disabled(model.syncingProfileIDs.contains(profile.id))
-                    Button("repository.checkConnection") { model.checkConnection(for: profile) }
-                        .disabled(
-                            profile.remoteName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-                            model.connectionChecks[profile.id] == .checking
-                        )
+                    Button(L10n.string("repository.checkConnection", table: .repositoryActions)) {
+                        model.checkConnection(for: profile)
+                    }
+                    .disabled(
+                        profile.remoteName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                        model.connectionChecks[profile.id] == .checking
+                    )
                     if model.connectionChecks[profile.id] == .succeeded {
-                        Label("repository.connection.succeeded", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                            .font(.caption)
+                        Label(
+                            L10n.string("repository.connection.succeeded", table: .repositoryActions),
+                            systemImage: "checkmark.circle.fill"
+                        )
+                        .foregroundStyle(.green)
+                        .font(.caption)
                     }
                 }
             }
         }
         .formStyle(.grouped)
         .padding(20)
-        .navigationTitle(profile.name)
     }
 }
 
@@ -210,9 +487,9 @@ private struct GeneralSettingsView: View {
 
     var body: some View {
         Form {
-            Section("general.startup.section") {
+            Section {
                 Toggle(
-                    "general.launchAtLogin",
+                    L10n.string("general.launchAtLogin", table: .settings),
                     isOn: Binding(
                         get: { model.launchAtLoginStatus == .enabled },
                         set: { enabled in model.setLaunchAtLogin(enabled) }
@@ -220,33 +497,62 @@ private struct GeneralSettingsView: View {
                 )
                 if model.launchAtLoginStatus == .requiresApproval {
                     LabeledContent {
-                        Button("general.openLoginItems") { model.openLoginItemsSettings() }
+                        Button(L10n.string("general.openLoginItems", table: .settings)) {
+                            model.openLoginItemsSettings()
+                        }
                     } label: {
-                        Label("general.approvalRequired", systemImage: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
+                        Label(
+                            L10n.string("general.approvalRequired", table: .settings),
+                            systemImage: "exclamationmark.triangle.fill"
+                        )
+                        .foregroundStyle(.orange)
                     }
                 }
+            } header: {
+                Text(L10n.string("general.startup.section", table: .settings))
             }
 
-            Section("general.notifications.section") {
+            Section {
                 Toggle(
-                    "general.notifyOnFailure",
+                    L10n.string("general.notifyOnFailure", table: .notifications),
                     isOn: Binding(
                         get: { model.notifyOnFailure },
                         set: { enabled in model.setNotifyOnFailure(enabled) }
                     )
                 )
+            } header: {
+                Text(L10n.string("general.notifications.section", table: .notifications))
             }
 
-            Section("general.language.section") {
-                LabeledContent("general.language") {
-                    Text("general.language.system")
-                        .foregroundStyle(.secondary)
+            Section {
+                Picker(
+                    L10n.string("general.language", table: .settings),
+                    selection: Binding(
+                        get: { model.appLanguage },
+                        set: { model.setAppLanguage($0) }
+                    )
+                ) {
+                    ForEach(AppLanguage.allCases) { language in
+                        Text(languageTitle(language)).tag(language)
+                    }
                 }
+            } header: {
+                Text(L10n.string("general.language.section", table: .settings))
             }
         }
         .formStyle(.grouped)
         .padding(24)
+    }
+
+    private func languageTitle(_ language: AppLanguage) -> String {
+        switch language {
+        case .system:
+            L10n.string("general.language.system", table: .settings)
+        case .english:
+            L10n.string("general.language.english", table: .settings)
+        case .simplifiedChinese:
+            L10n.string("general.language.simplifiedChinese", table: .settings)
+        }
     }
 }
 
@@ -256,9 +562,12 @@ private struct AutomationSettingsView: View {
     var body: some View {
         if model.profiles.isEmpty {
             ContentUnavailableView {
-                Label("repositories.empty.title", systemImage: "clock.badge.exclamationmark")
+                Label(
+                    L10n.string("repositories.empty.title"),
+                    systemImage: "clock.badge.exclamationmark"
+                )
             } description: {
-                Text("automation.empty.message")
+                Text(L10n.string("automation.empty.message", table: .automation))
             }
             .padding(24)
         } else {
@@ -284,7 +593,7 @@ private struct AutomationProfileCard: View {
         GroupBox {
             Form {
                 Toggle(
-                    "automation.fileChanges",
+                    L10n.string("automation.fileChanges", table: .automation),
                     isOn: Binding(
                         get: { profile.watchesFileChanges },
                         set: { model.setFileChangeSync(id: profile.id, enabled: $0) }
@@ -292,7 +601,7 @@ private struct AutomationProfileCard: View {
                 )
 
                 Picker(
-                    "automation.interval",
+                    L10n.string("automation.interval", table: .automation),
                     selection: Binding(
                         get: { profile.intervalSeconds },
                         set: { model.setIntervalSync(id: profile.id, seconds: $0) }
@@ -314,7 +623,7 @@ private struct AutomationProfileCard: View {
                 Label(profile.name, systemImage: "externaldrive.fill")
                 Spacer()
                 if !profile.isEnabled {
-                    Text("automation.repositoryDisabled")
+                    Text(L10n.string("automation.repositoryDisabled", table: .automation))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -324,12 +633,14 @@ private struct AutomationProfileCard: View {
     }
 
     private func intervalLabel(_ interval: TimeInterval?) -> String {
-        guard let interval else { return String(localized: "automation.interval.off") }
+        guard let interval else {
+            return L10n.string("automation.interval.off", table: .automation)
+        }
         let minutes = Int(interval / 60)
         if minutes < 60 {
-            return String(format: String(localized: "automation.interval.minutes"), minutes)
+            return L10n.format("automation.interval.minutes", table: .automation, minutes)
         }
-        return String(format: String(localized: "automation.interval.hours"), minutes / 60)
+        return L10n.format("automation.interval.hours", table: .automation, minutes / 60)
     }
 }
 
@@ -340,25 +651,28 @@ private struct DailyTimesEditor: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("automation.daily")
+                Text(L10n.string("automation.daily", table: .automation))
                 Spacer()
                 Button {
                     addTime()
                 } label: {
-                    Label("automation.daily.add", systemImage: "plus")
+                    Label(
+                        L10n.string("automation.daily.add", table: .automation),
+                        systemImage: "plus"
+                    )
                 }
                 .buttonStyle(.borderless)
             }
 
             if times.isEmpty {
-                Text("automation.daily.off")
+                Text(L10n.string("automation.daily.off", table: .automation))
                     .foregroundStyle(.secondary)
                     .font(.caption)
             } else {
                 ForEach(Array(times.enumerated()), id: \.offset) { index, time in
                     HStack {
                         DatePicker(
-                            "automation.daily.time",
+                            L10n.string("automation.daily.time", table: .automation),
                             selection: Binding(
                                 get: { date(for: time) },
                                 set: { replaceTime(at: index, with: $0) }
@@ -373,7 +687,9 @@ private struct DailyTimesEditor: View {
                             Image(systemName: "minus.circle")
                         }
                         .buttonStyle(.borderless)
-                        .accessibilityLabel(Text("automation.daily.remove"))
+                        .accessibilityLabel(
+                            L10n.string("automation.daily.remove", table: .automation)
+                        )
                     }
                 }
             }
@@ -416,13 +732,16 @@ private struct HistorySettingsView: View {
     var body: some View {
         if model.recentRuns.isEmpty {
             ContentUnavailableView {
-                Label("history.empty.title", systemImage: "clock.arrow.circlepath")
+                Label(
+                    L10n.string("history.empty.title", table: .history),
+                    systemImage: "clock.arrow.circlepath"
+                )
             } description: {
-                Text("history.empty.message")
+                Text(L10n.string("history.empty.message", table: .history))
             }
             .padding(24)
         } else {
-            NavigationSplitView {
+            HSplitView {
                 List(model.recentRuns, selection: $selection) { run in
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
@@ -437,14 +756,22 @@ private struct HistorySettingsView: View {
                     }
                     .tag(run.id)
                 }
-                .navigationTitle("settings.diagnostics")
-                .frame(minWidth: 250)
-            } detail: {
-                if let run = selectedRun {
-                    SyncRunDetailView(run: run, profileName: profileName(for: run))
-                } else {
-                    ContentUnavailableView("history.select.title", systemImage: "sidebar.left")
+                .frame(minWidth: 240, idealWidth: 270, maxWidth: 320)
+
+                Group {
+                    if let run = selectedRun {
+                        SyncRunDetailView(run: run, profileName: profileName(for: run))
+                    } else {
+                        ContentUnavailableView(
+                            L10n.string("history.select.title", table: .history),
+                            systemImage: "sidebar.left"
+                        )
+                    }
                 }
+                .frame(minWidth: 430, maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .onAppear {
+                if selection == nil { selection = model.recentRuns.first?.id }
             }
         }
     }
@@ -456,7 +783,7 @@ private struct HistorySettingsView: View {
 
     private func profileName(for run: SyncRunRecord) -> String {
         model.profiles.first(where: { $0.id == run.profileID })?.name
-            ?? String(localized: "history.unknownRepository")
+            ?? L10n.string("history.unknownRepository", table: .history)
     }
 }
 
@@ -466,34 +793,41 @@ private struct SyncRunDetailView: View {
 
     var body: some View {
         Form {
-            Section("history.summary") {
-                LabeledContent("history.repository", value: profileName)
-                LabeledContent("history.result", value: resultText(run.result))
-                LabeledContent("history.trigger", value: triggerText(run.trigger))
-                LabeledContent("history.started", value: run.startedAt.formatted())
-                LabeledContent("history.duration", value: durationText)
+            Section {
+                LabeledContent(L10n.string("history.repository", table: .history), value: profileName)
+                LabeledContent(L10n.string("history.result", table: .history), value: resultText(run.result))
+                LabeledContent(L10n.string("history.trigger", table: .history), value: triggerText(run.trigger))
+                LabeledContent(L10n.string("history.started", table: .history), value: run.startedAt.formatted())
+                LabeledContent(L10n.string("history.duration", table: .history), value: durationText)
+            } header: {
+                Text(L10n.string("history.summary", table: .history))
             }
-            Section("history.steps") {
+
+            Section {
                 ForEach(run.steps, id: \.step) { record in
                     Label(stepText(record.step), systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                 }
+            } header: {
+                Text(L10n.string("history.steps", table: .history))
             }
+
             if let message = run.failureMessage {
-                Section("history.error") {
+                Section {
                     Text(message)
                         .textSelection(.enabled)
+                } header: {
+                    Text(L10n.string("history.error", table: .history))
                 }
             }
         }
         .formStyle(.grouped)
         .padding(20)
-        .navigationTitle(profileName)
     }
 
     private var durationText: String {
         let duration = run.finishedAt.timeIntervalSince(run.startedAt)
-        return String(format: String(localized: "history.duration.seconds"), duration)
+        return L10n.format("history.duration.seconds", table: .history, duration)
     }
 }
 
@@ -517,30 +851,30 @@ private func resultColor(_ result: SyncRunResult) -> Color {
 
 private func resultText(_ result: SyncRunResult) -> String {
     switch result {
-    case .succeeded: String(localized: "history.result.succeeded")
-    case .failed: String(localized: "history.result.failed")
-    case .needsUserAction: String(localized: "history.result.needsUserAction")
-    case .cancelled: String(localized: "history.result.cancelled")
+    case .succeeded: L10n.string("history.result.succeeded", table: .history)
+    case .failed: L10n.string("history.result.failed", table: .history)
+    case .needsUserAction: L10n.string("history.result.needsUserAction", table: .history)
+    case .cancelled: L10n.string("history.result.cancelled", table: .history)
     }
 }
 
 private func triggerText(_ trigger: SyncTrigger) -> String {
     switch trigger {
-    case .manual: String(localized: "history.trigger.manual")
-    case .scheduled: String(localized: "history.trigger.scheduled")
-    case .interval: String(localized: "history.trigger.interval")
-    case .fileChanges: String(localized: "history.trigger.fileChanges")
-    case .wakeCatchUp: String(localized: "history.trigger.wakeCatchUp")
+    case .manual: L10n.string("history.trigger.manual", table: .history)
+    case .scheduled: L10n.string("history.trigger.scheduled", table: .history)
+    case .interval: L10n.string("history.trigger.interval", table: .history)
+    case .fileChanges: L10n.string("history.trigger.fileChanges", table: .history)
+    case .wakeCatchUp: L10n.string("history.trigger.wakeCatchUp", table: .history)
     }
 }
 
 private func stepText(_ step: SyncStep) -> String {
     switch step {
-    case .validation: String(localized: "history.step.validation")
-    case .status: String(localized: "history.step.status")
-    case .staging: String(localized: "history.step.staging")
-    case .committing: String(localized: "history.step.committing")
-    case .pulling: String(localized: "history.step.pulling")
-    case .pushing: String(localized: "history.step.pushing")
+    case .validation: L10n.string("history.step.validation", table: .history)
+    case .status: L10n.string("history.step.status", table: .history)
+    case .staging: L10n.string("history.step.staging", table: .history)
+    case .committing: L10n.string("history.step.committing", table: .history)
+    case .pulling: L10n.string("history.step.pulling", table: .history)
+    case .pushing: L10n.string("history.step.pushing", table: .history)
     }
 }

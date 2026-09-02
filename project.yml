@@ -20,12 +20,13 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.obssync.app
-        PRODUCT_NAME: obsSync
+        PRODUCT_NAME: FloderSync
+        PRODUCT_MODULE_NAME: obsSync
         MARKETING_VERSION: 0.1.0
         CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_LSUIElement: YES
-        INFOPLIST_KEY_CFBundleDisplayName: obsSync
+        INFOPLIST_KEY_CFBundleDisplayName: FloderSync
         CODE_SIGN_STYLE: Automatic
         ENABLE_APP_SANDBOX: NO
   obsSyncTests:
@@ -40,6 +41,8 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: dev.obssync.tests
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGNING_ALLOWED: NO
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/FloderSync.app/Contents/MacOS/FloderSync"
+        BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
   obsSync:
     build:

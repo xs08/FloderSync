@@ -71,7 +71,7 @@ enum ProfileStoreError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case let .unsupportedSchema(version):
-            "Unsupported configuration schema version: \(version)."
+            L10n.format("error.unsupportedSchema", table: .errors, version)
         }
     }
 }

@@ -2,39 +2,224 @@
   "sourceLanguage" : "en",
   "strings" : {
     "action.cancel" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
+          }
+        }
       }
     },
     "repository.checkConnection" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Check Connection" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "检查连接" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Connection"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查连接"
+          }
+        }
       }
     },
     "repository.commitTemplate" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Commit Message" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提交信息" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commit Message"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提交信息"
+          }
+        }
       }
     },
     "repository.connection.succeeded" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connected" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "连接正常" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connected"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接正常"
+          }
+        }
+      }
+    },
+    "repository.failure.instruction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resolve the Git issue manually, then run sync again. FloderSync will not overwrite unresolved changes."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请手动解决 Git 问题后再次同步。FloderSync 不会覆盖尚未解决的更改。"
+          }
+        }
+      }
+    },
+    "repository.failure.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync Needs Attention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "同步需要处理"
+          }
+        }
+      }
+    },
+    "repository.initialSync.later" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍后"
+          }
+        }
+      }
+    },
+    "repository.initialSync.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The working tree or its current commit differs from the remote branch. Sync now?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前工作区或提交与远端分支不一致，是否立即同步？"
+          }
+        }
+      }
+    },
+    "repository.initialSync.now" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sync Now"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即同步"
+          }
+        }
+      }
+    },
+    "repository.initialSync.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\u201c%@\u201d Isn\u2019t Synchronized"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\u201c%@\u201d尚未同步"
+          }
+        }
+      }
+    },
+    "repository.status.needsAttention" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs manual attention"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "需要手动处理"
+          }
+        }
       }
     },
     "repository.remove.confirm.message" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Only the obsSync configuration is removed. Sync history is retained, and local files and Git data are not deleted." } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "只会移除 obsSync 配置；同步历史会保留，也不会删除本地文件或 Git 数据。" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the FloderSync configuration is removed. Sync history is retained, and local files and Git data are not deleted."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只会移除 FloderSync 配置；同步历史会保留，也不会删除本地文件或 Git 数据。"
+          }
+        }
       }
     },
     "repository.remove.confirm.title" : {
+      "extractionState" : "stale",
       "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Remove This Repository?" } },
-        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "要移除此仓库吗？" } }
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove This Repository?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "要移除此仓库吗？"
+          }
+        }
       }
     }
   },
