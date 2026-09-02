@@ -22,7 +22,7 @@
 - 设置窗口样式测试确认文字标题隐藏、标题栏透明、分隔线移除、内容延伸到标题栏且窗口背景支持圆角透明裁剪。
 - 主题偏好测试确认深浅色选择可即时写入模型并持久化，非法或缺失配置回退为跟随系统。
 - 编译产物已经包含 `en.lproj` 和 `zh-Hans.lproj` 的全部 String Catalog 输出。
-- `MenuBarIcon` 已由 Asset Catalog 成功编译并以 template artwork 加载；README 品牌 PNG 为带透明通道的 1254×1254 图像，英文与简体中文入口互链。
+- `MenuBarIcon` 已由 Asset Catalog 成功编译并以 original color artwork 加载；README 品牌 PNG 为带透明通道的 1254×1254 图像，英文与简体中文入口互链。
 
 ## Xcode 环境诊断
 
