@@ -5,10 +5,10 @@ import XCTest
 
 @MainActor
 final class UIRenderTests: XCTestCase {
-    func testMenuBarIconIsAvailableAsTemplateArtwork() throws {
+    func testMenuBarIconIsAvailableAsOriginalColorArtwork() throws {
         let icon = try XCTUnwrap(NSImage(named: "MenuBarIcon"))
 
-        XCTAssertTrue(icon.isTemplate)
+        XCTAssertFalse(icon.isTemplate)
         XCTAssertGreaterThan(icon.size.width, 0)
         XCTAssertGreaterThan(icon.size.height, 0)
     }

@@ -12,7 +12,7 @@ struct FloderSyncApp: App {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 Image("MenuBarIcon")
-                    .renderingMode(.template)
+                    .renderingMode(.original)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 18, height: 18)

@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-  <g fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M3.25 7.7V5.9c0-.91.74-1.65 1.65-1.65h3.45l2.15 2.35h8.6c.91 0 1.65.74 1.65 1.65v9.85c0 .91-.74 1.65-1.65 1.65H4.9c-.91 0-1.65-.74-1.65-1.65V7.7Z"/>
-    <path d="M7.65 11.1a4.5 4.5 0 0 1 7.55-2.05"/>
-    <path d="M13.05 9.05h2.15V6.9"/>
-    <path d="M16.35 13.9a4.5 4.5 0 0 1-7.55 2.05"/>
-    <path d="M10.95 15.95H8.8v2.15"/>
+  <defs>
+    <linearGradient id="brandGradient" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#075BFF"/>
+      <stop offset="0.52" stop-color="#098DFF"/>
+      <stop offset="1" stop-color="#12D8E8"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#brandGradient)" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="1.25" d="M5 9V5.2c0-.88.72-1.6 1.6-1.6h3.05l2.1 2.35h5.65c.88 0 1.6.72 1.6 1.6V18.8c0 .88-.72 1.6-1.6 1.6H6.6c-.88 0-1.6-.72-1.6-1.6V9Z"/>
+    <path stroke-width="1.4" d="M3.85 13.3c3.35-2.38 7.75-3.31 13.9-2.51"/>
+    <path stroke-width="1.4" d="m15.8 8.98 2.35 1.89-2.46 1.48"/>
+    <path stroke-width="1.4" d="M20.15 13.7c-3.47 2.43-7.9 3.34-13.85 2.49"/>
+    <path stroke-width="1.4" d="m8.25 17.96-2.4-1.85 2.44-1.51"/>
   </g>
 </svg>
