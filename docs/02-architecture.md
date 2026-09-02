@@ -163,9 +163,9 @@ GUI 应用通常不继承交互式 shell 的环境。架构中应显式解析 Gi
 
 语言偏好存入 `UserDefaults`。视图注入对应 `Locale`，动态字符串查找器按用户选择加载 `en.lproj`、`zh-Hans.lproj` 或系统首选资源，因此不需要重启应用。
 
-设置窗口由 `SettingsWindowConfigurator` 在获得 `NSWindow` 后统一配置：隐藏标题文字、启用透明标题栏和 full-size content view，同时保留标准窗口控制、阴影、拖动和缩放行为。SwiftUI 根视图负责 28pt continuous 外观裁剪；侧边栏不使用 `List`，改为固定宽度的语义按钮栈，以精确控制圆角选中态，并避免系统分栏背景侵入内容区。侧边栏卡片与主内容之间使用留白和表面色区分，不再使用硬分割线。
+实际窗口验证表明，SwiftUI 管理的 `Settings` 场景会先创建并显示原生 titlebar backing view，再由嵌入内容中的 `NSViewRepresentable` 异步修改 `NSWindow`；这会保留顶部安全区，并在强制主题切换时产生独立的标题栏首帧。设置窗口因此改由 `SettingsWindowController` 在展示前同步创建：初始化时一次性组合 `.titled` 与 `.fullSizeContentView`，关闭标题和标题栏背景、移除 toolbar，再挂载 `NSHostingController`。`.titled` 只用于保留标准窗口按钮，SwiftUI 内容负责绘制完整窗口背景和 28pt continuous 外观裁剪。应用菜单通过 `.appSettings` command group 保留 `⌘,` 入口。
 
-Settings 场景直接应用 `HiddenTitleBarWindowStyle`，由 SwiftUI 移除标题栏布局占位；AppKit 配置器只补充透明背景、分隔线和窗口拖动行为。侧边栏以 `FocusState` 作为键盘焦点来源：焦点移动到导航项时写回当前模块，按钮关闭系统 focus effect，使鼠标与 Tab 始终共享同一个蓝色填充选中态。主题偏好使用版本稳定的 `AppTheme` 枚举和 `UserDefaults` 持久化，在两个 Scene 根视图注入对应 `preferredColorScheme`。
+侧边栏不使用 `List`，改为固定宽度的语义按钮栈，以精确控制圆角选中态，并避免系统分栏背景侵入内容区。侧边栏以 `FocusState` 作为键盘焦点来源：焦点移动到导航项时写回当前模块，按钮关闭系统 focus effect，使鼠标与 Tab 始终共享同一个蓝色填充选中态。主题偏好使用版本稳定的 `AppTheme` 枚举和 `UserDefaults` 持久化，在菜单栏和设置窗口的 SwiftUI 根视图注入对应 `preferredColorScheme`。
 
 UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间距和原生控件为准；支持键盘快捷键（至少 `⌘,` 设置、手动同步命令）和所有关键状态（空、加载、同步中、失败、权限不足、路径失效）。
 
@@ -181,6 +181,7 @@ UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间�
 | 006 数据存储 | 版本化 JSON 配置 + 有界历史存储 | 已确认 |
 | 007 最低系统 | macOS 14+，新版视觉按可用性渐进增强 | 已确认 |
 | 008 本地化 | String Catalog 管理简体中文与英文，英文为开发语言 | 已确认 |
+| 009 设置窗口 | AppKit 展示前配置 full-size content，再嵌入 SwiftUI | 已确认 |
 
 ## 9. 官方设计与 API 基线
 

@@ -2,7 +2,6 @@ import SwiftUI
 
 struct MenuBarView: View {
     @ObservedObject var model: AppModel
-    @Environment(\.openSettings) private var openSettings
 
     var body: some View {
         VStack(spacing: 0) {
@@ -74,7 +73,7 @@ struct MenuBarView: View {
         HStack {
             Button {
                 RepositoryPicker.shared.cancel()
-                openSettings()
+                SettingsWindowController.shared.show(model: model)
             } label: {
                 Label("settings.open", systemImage: "gearshape")
             }
@@ -126,7 +125,7 @@ struct MenuBarView: View {
         Task {
             guard let url = await RepositoryPicker.shared.chooseRepository() else { return }
             if await model.addRepository(at: url) {
-                openSettings()
+                SettingsWindowController.shared.show(model: model)
             }
         }
     }

@@ -1,5 +1,6 @@
 name: obsSync
 options:
+  xcodeVersion: "26.6"
   bundleIdPrefix: dev.obssync
   deploymentTarget:
     macOS: "14.0"
@@ -9,6 +10,11 @@ settings:
     SWIFT_VERSION: "6.0"
     MACOSX_DEPLOYMENT_TARGET: "14.0"
     CLANG_ENABLE_MODULES: YES
+    ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
+    CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED: YES
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
 targets:
   obsSync:
     type: application

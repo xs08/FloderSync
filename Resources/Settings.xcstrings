@@ -544,6 +544,23 @@
           }
         }
       }
+    },
+    "settings.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FloderSync Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "FloderSync 设置"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

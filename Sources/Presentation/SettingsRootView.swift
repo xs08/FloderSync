@@ -3,12 +3,6 @@ import SwiftUI
 
 struct SettingsRootView: View {
     @ObservedObject var model: AppModel
-    private let configuresWindow: Bool
-
-    init(model: AppModel, configuresWindow: Bool = true) {
-        self.model = model
-        self.configuresWindow = configuresWindow
-    }
 
     var body: some View {
         ZStack {
@@ -23,11 +17,6 @@ struct SettingsRootView: View {
         }
         .frame(minWidth: 900, idealWidth: 960, minHeight: 560, idealHeight: 640)
         .clipShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
-        .background {
-            if configuresWindow {
-                SettingsWindowConfigurator()
-            }
-        }
         .ignoresSafeArea(.container, edges: .top)
         .task { model.start() }
         .onDisappear { RepositoryPicker.shared.cancel() }
@@ -218,36 +207,6 @@ private struct SettingsDetail: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(Color(nsColor: .windowBackgroundColor))
-    }
-}
-
-private struct SettingsWindowConfigurator: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSView {
-        SettingsWindowConfigurationView()
-    }
-
-    func updateNSView(_ nsView: NSView, context: Context) { }
-}
-
-private final class SettingsWindowConfigurationView: NSView {
-    override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow()
-        DispatchQueue.main.async { [weak self] in
-            self?.configureWindow()
-        }
-    }
-
-    private func configureWindow() {
-        guard let window else { return }
-
-        window.titleVisibility = .hidden
-        window.titlebarAppearsTransparent = true
-        window.titlebarSeparatorStyle = .none
-        window.styleMask.insert(.fullSizeContentView)
-        window.isMovableByWindowBackground = true
-        window.isOpaque = false
-        window.backgroundColor = .clear
-        window.hasShadow = true
     }
 }
 
