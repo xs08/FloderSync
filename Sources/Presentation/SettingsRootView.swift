@@ -180,6 +180,15 @@ private struct SettingsSidebar: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            Image("MenuBarIcon")
+                .resizable()
+                .renderingMode(.original)
+                .scaledToFit()
+                .frame(width: 48, height: 48)
+                .accessibilityHidden(true)
+                .padding(.top, 30)
+                .padding(.bottom, 14)
+
             VStack(spacing: 6) {
                 ForEach(primarySections) { section in
                     Button {
@@ -197,7 +206,6 @@ private struct SettingsSidebar: View {
                 }
             }
             .padding(.horizontal, 10)
-            .padding(.top, 72)
 
             Spacer(minLength: 24)
 

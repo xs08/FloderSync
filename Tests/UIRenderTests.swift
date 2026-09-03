@@ -20,6 +20,34 @@ final class UIRenderTests: XCTestCase {
         XCTAssertGreaterThan(icon.size.height, 0)
     }
 
+    func testEveryAppIconSlotUsesOpaquePureWhiteCorners() throws {
+        let projectRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let iconDirectory = projectRoot
+            .appendingPathComponent("Resources/Assets.xcassets/AppIcon.appiconset")
+        let iconURLs = try FileManager.default.contentsOfDirectory(
+            at: iconDirectory,
+            includingPropertiesForKeys: nil
+        ).filter { $0.pathExtension == "png" }
+
+        XCTAssertEqual(iconURLs.count, 10)
+        for iconURL in iconURLs {
+            let image = try XCTUnwrap(
+                NSBitmapImageRep(data: Data(contentsOf: iconURL)),
+                iconURL.lastPathComponent
+            )
+            let corner = try XCTUnwrap(
+                image.colorAt(x: 0, y: 0)?.usingColorSpace(.deviceRGB),
+                iconURL.lastPathComponent
+            )
+            XCTAssertGreaterThanOrEqual(corner.redComponent, 0.999)
+            XCTAssertGreaterThanOrEqual(corner.greenComponent, 0.999)
+            XCTAssertGreaterThanOrEqual(corner.blueComponent, 0.999)
+            XCTAssertEqual(corner.alphaComponent, 1, accuracy: 0.001)
+        }
+    }
+
     func testSettingsWindowUsesImmersiveChrome() throws {
         let defaults = UserDefaults.standard
         let originalTheme = defaults.string(forKey: AppTheme.defaultsKey)
