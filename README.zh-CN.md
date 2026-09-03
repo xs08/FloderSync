@@ -50,6 +50,39 @@ xcodebuild test \
 
 也可以打开 `obsSync.xcodeproj` 后直接运行 `obsSync` scheme。FloderSync 使用 `LSUIElement`，启动后只显示在系统菜单栏，不显示 Dock 图标。
 
+### 安装到 Applications
+
+先退出正在运行的 FloderSync，然后执行：
+
+```bash
+./scripts/install-local.sh
+```
+
+脚本会执行 Release 构建，将 `FloderSync.app` 安装到 `/Applications`，然后启动安装后的应用。首次安装或替换开发构建后，请在安装后的应用中关闭并重新开启“登录时启动”，确保 macOS 登录项指向 `/Applications/FloderSync.app`，而不是 Xcode 的 DerivedData 目录。
+
+若希望重建后的登录项在不同版本间保持稳定，请在 Xcode 的 FloderSync target 中打开 **Signing & Capabilities**，启用自动签名并选择自己的 Team。
+
+### 无 Developer ID 的测试分发
+
+可以生成供可信测试用户使用的未公证 ZIP：
+
+```bash
+./scripts/package-unsigned.sh
+```
+
+产物位于 `dist/FloderSync-<版本>-macOS-universal-unsigned.zip`，包含 Apple Silicon 与 Intel 两种架构，并使用 ad-hoc 签名保证 App 在传输后可进行完整性校验。这不是 Developer ID 签名，也无法通过 Apple 公证或 Gatekeeper 的首次下载检查。
+
+用户应先解压并将 `FloderSync.app` 移到 `/Applications`，然后只移除隔离属性并启动：
+
+```bash
+xattr -dr com.apple.quarantine /Applications/FloderSync.app
+open /Applications/FloderSync.app
+```
+
+也可以使用 `xattr -cr /Applications/FloderSync.app`，但它会递归清除所有扩展属性，范围比删除 `com.apple.quarantine` 更大。不要对 `/Applications` 或其他宽泛目录执行这类命令。
+
+由于 ad-hoc 签名的应用身份会随每次构建变化，用户升级后可能需要关闭并重新开启“登录时启动”，系统权限也可能再次询问。要获得无终端命令、可公证且升级身份稳定的正式分发体验，仍然需要 Apple Developer Program 提供的 Developer ID Application 证书。
+
 ## Git 与认证
 
 FloderSync 按顺序查找 `/usr/bin/git`、Apple Silicon Homebrew Git 和 Intel Homebrew Git，并复用现有的 Git、SSH 与 credential helper 配置。

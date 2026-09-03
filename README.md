@@ -50,6 +50,39 @@ xcodebuild test \
 
 You can also open `obsSync.xcodeproj` and run the `obsSync` scheme. FloderSync is an `LSUIElement` app, so it appears only in the system menu bar and does not show a Dock icon.
 
+### Install in Applications
+
+Quit any running copy of FloderSync, then run:
+
+```bash
+./scripts/install-local.sh
+```
+
+The script creates a Release build, installs `FloderSync.app` in `/Applications`, and launches the installed app. After the first install, or after replacing a development build, turn **Launch at Login** off and on again from the installed app so the macOS login item points to `/Applications/FloderSync.app` instead of Xcode's DerivedData directory.
+
+For a login item whose code identity remains stable between builds, open **Signing & Capabilities** for the FloderSync target in Xcode, enable automatic signing, and select your Team.
+
+### Test distribution without a Developer ID
+
+You can create an unnotarized ZIP for trusted testers:
+
+```bash
+./scripts/package-unsigned.sh
+```
+
+The output is `dist/FloderSync-<version>-macOS-universal-unsigned.zip`. It includes both Apple Silicon and Intel architectures and uses an ad-hoc signature so the app bundle can be checked for damage after packaging. This is not a Developer ID signature and does not pass Gatekeeper's first-download assessment or qualify for Apple notarization.
+
+After extracting the ZIP, move `FloderSync.app` to `/Applications`, remove only its quarantine attribute, and launch it:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/FloderSync.app
+open /Applications/FloderSync.app
+```
+
+`xattr -cr /Applications/FloderSync.app` also works, but recursively clears every extended attribute rather than only `com.apple.quarantine`. Never run either command against `/Applications` itself or another broad directory.
+
+An ad-hoc identity changes with each build. After an upgrade, users may need to turn **Launch at Login** off and on again, and macOS may ask for permissions again. A Developer ID Application certificate from the Apple Developer Program is still required for notarization, stable identity across releases, and a normal installation experience without Terminal commands.
+
 ## Git and authentication
 
 FloderSync searches for Git at `/usr/bin/git`, the Apple Silicon Homebrew path, and the Intel Homebrew path, in that order. It reuses your existing Git, SSH, and credential-helper configuration.
