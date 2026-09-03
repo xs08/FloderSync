@@ -27,6 +27,7 @@ FloderSync uses the Git installation and authentication already configured on yo
 - Receive notifications for failures and conflicts.
 - Switch between English and Simplified Chinese without restarting the app.
 - Follow the system appearance or select a light or dark theme.
+- Export all repositories, automation rules, and app preferences to one versioned JSON file, or import one after validation and confirmation.
 
 ## Requirements
 
@@ -99,6 +100,8 @@ Configuration and the 100 most recent sync summaries are stored in:
 ```
 
 Removing a repository from FloderSync deletes only its app configuration. It does not delete the local working tree or any `.git` data.
+
+The Settings page can export repositories, shared automation rules, notification, language, appearance, and launch-at-login intent as JSON. Import replaces the current configuration only after the file passes validation and you confirm the displayed repository and rule counts. Sync history and Git credentials are never included.
 
 ## Before release
 

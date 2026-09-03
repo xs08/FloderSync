@@ -13,6 +13,7 @@ final class RepositoryPicker {
 
     func chooseRepository() async -> URL? {
         cancel()
+        ConfigurationFilePicker.shared.cancel()
 
         return await withCheckedContinuation { continuation in
             let panel = makePanel()

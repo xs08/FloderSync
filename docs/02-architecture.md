@@ -163,7 +163,7 @@ GUI 应用通常不继承交互式 shell 的环境。架构中应显式解析 Gi
 - 仓库
 - 自动化
 - 历史与诊断
-- 底部固定通用与退出
+- 底部固定设置与退出
 
 仓库模块内部采用主从布局：左侧同步任务列表及底部新增/删除操作，右侧展示详情。状态不能只依赖颜色，必须同时使用 SF Symbol、文字和可访问性标签。
 
@@ -172,6 +172,8 @@ GUI 应用通常不继承交互式 shell 的环境。架构中应显式解析 Gi
 添加仓库的只读预检先调用 `rev-parse` 验证工作区、当前分支与远端，再用本地 `HEAD` 和 `ls-remote` 返回的远端分支哈希判断是否同步。哈希不一致只触发确认，不自动修改仓库；仅在用户确认后进入正常同步引擎。
 
 语言偏好存入 `UserDefaults`。视图注入对应 `Locale`，动态字符串查找器按用户选择加载 `en.lproj`、`zh-Hans.lproj` 或系统首选资源，因此不需要重启应用。
+
+配置导入导出使用独立于内部存储 schema 的 `ConfigurationArchive` JSON 格式。Application 层定义归档模型和完整性校验，Infrastructure 层只负责带 ISO 8601 时间、稳定 key 排序和原子写入的 JSON 编解码；Presentation 通过单一文件面板协调器选择目标文件。导入流程为“读取并完整校验 → 展示替换确认 → 持久化仓库与规则 → 应用偏好与系统登录项 → 重新配置调度”，确认前不修改运行状态；同步进行中时拒绝替换，历史记录不参与迁移。
 
 实际窗口验证表明，SwiftUI 管理的 `Settings` 场景会先创建并显示原生 titlebar backing view，再由嵌入内容中的 `NSViewRepresentable` 异步修改 `NSWindow`；这会保留顶部安全区，并在强制主题切换时产生独立的标题栏首帧。设置窗口因此改由 `SettingsWindowController` 在展示前同步创建：初始化时一次性组合 `.titled` 与 `.fullSizeContentView`，关闭标题和标题栏背景、移除 toolbar，再挂载 `NSHostingController`。`.titled` 只用于保留标准窗口按钮，SwiftUI 内容负责绘制完整窗口背景和 28pt continuous 外观裁剪。应用菜单通过 `.appSettings` command group 保留 `⌘,` 入口。
 

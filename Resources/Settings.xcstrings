@@ -545,6 +545,96 @@
         }
       }
     },
+    "configuration.description" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Export repositories, automation rules, and app preferences as JSON. Import replaces the current configuration after validation and confirmation. Sync history and Git credentials are not included." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "将仓库、自动化规则和应用偏好导出为 JSON。导入会在校验与确认后替换当前配置，不包含同步历史和 Git 凭据。" } }
+      }
+    },
+    "configuration.export.action" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Export…" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "导出…" } }
+      }
+    },
+    "configuration.export.picker.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose where to save the FloderSync configuration JSON file." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择 FloderSync 配置 JSON 文件的保存位置。" } }
+      }
+    },
+    "configuration.export.picker.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Export Configuration" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "导出配置" } }
+      }
+    },
+    "configuration.export.succeeded" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Exported to %@" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已导出到 %@" } }
+      }
+    },
+    "configuration.import.action" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import…" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "导入…" } }
+      }
+    },
+    "configuration.import.cancel" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Cancel" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "取消" } }
+      }
+    },
+    "configuration.import.confirm" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Replace Configuration" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "替换配置" } }
+      }
+    },
+    "configuration.import.confirm.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This replaces all current repositories, automation rules, and app preferences. This action cannot be undone from within FloderSync." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "这会替换当前全部仓库、自动化规则和应用偏好，无法在 FloderSync 内撤销。" } }
+      }
+    },
+    "configuration.import.confirm.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import %d repositories and %d automation rules?" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "导入 %d 个仓库和 %d 条自动化规则？" } }
+      }
+    },
+    "configuration.import.picker.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose a FloderSync configuration JSON file." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "选择 FloderSync 配置 JSON 文件。" } }
+      }
+    },
+    "configuration.import.picker.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Import Configuration" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "导入配置" } }
+      }
+    },
+    "configuration.import.succeeded" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Imported %d repositories and %d automation rules." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "已导入 %d 个仓库和 %d 条自动化规则。" } }
+      }
+    },
+    "configuration.inProgress" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Processing configuration…" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "正在处理配置…" } }
+      }
+    },
+    "configuration.section" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Configuration Import & Export" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置导入与导出" } }
+      }
+    },
     "settings.title" : {
       "extractionState" : "manual",
       "localizations" : {

@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-enum AppTheme: String, CaseIterable, Identifiable, Sendable {
+enum AppTheme: String, Codable, CaseIterable, Identifiable, Sendable {
     case system
     case light
     case dark
@@ -21,6 +21,12 @@ enum AppTheme: String, CaseIterable, Identifiable, Sendable {
 
 @MainActor
 final class AppModel: ObservableObject {
+    struct PendingConfigurationImport: Identifiable, Equatable {
+        let archive: ConfigurationArchive
+
+        var id: Date { archive.exportedAt }
+    }
+
     struct InitialSyncPrompt: Identifiable, Equatable {
         let profileID: UUID
         let profileName: String
@@ -32,7 +38,7 @@ final class AppModel: ObservableObject {
         case repositories
         case automation
         case diagnostics
-        case general
+        case settings
 
         var id: Self { self }
     }
@@ -63,7 +69,10 @@ final class AppModel: ObservableObject {
     @Published var selectedProfileID: UUID?
     @Published var selectedAutomationRuleID: UUID?
     @Published var initialSyncPrompt: InitialSyncPrompt?
+    @Published var pendingConfigurationImport: PendingConfigurationImport?
     @Published var presentedError: String?
+    @Published private(set) var configurationTransferMessage: String?
+    @Published private(set) var isTransferringConfiguration = false
 
     private let engine: SyncEngine
     private let coordinator: SyncCoordinator
@@ -72,6 +81,7 @@ final class AppModel: ObservableObject {
     private let historyStore: any RunHistoryStore
     private let loginItemService: any LoginItemManaging
     private let notificationService: any FailureNotificationSending
+    private let configurationArchiveCoder: any ConfigurationArchiveCoding
     private let automationScheduler = AutomationScheduler()
     private let commitChangeScheduler: CommitChangeScheduler
     private let wakeMonitor = SystemWakeMonitor()
@@ -84,6 +94,7 @@ final class AppModel: ObservableObject {
         historyStore: any RunHistoryStore = JSONRunHistoryStore.live(),
         loginItemService: any LoginItemManaging = LoginItemService(),
         notificationService: any FailureNotificationSending = UserNotificationService(),
+        configurationArchiveCoder: any ConfigurationArchiveCoding = JSONConfigurationArchiveCoder(),
         initialConfiguration: AppConfiguration? = nil
     ) {
         self.git = git
@@ -93,6 +104,7 @@ final class AppModel: ObservableObject {
         self.historyStore = historyStore
         self.loginItemService = loginItemService
         self.notificationService = notificationService
+        self.configurationArchiveCoder = configurationArchiveCoder
         self.commitChangeScheduler = CommitChangeScheduler(git: git)
         self.notifyOnFailure = UserDefaults.standard.object(forKey: "notifyOnFailure") as? Bool ?? true
         self.appLanguage = AppLanguage.selected
@@ -414,6 +426,131 @@ final class AppModel: ObservableObject {
     func setAppTheme(_ theme: AppTheme) {
         UserDefaults.standard.set(theme.rawValue, forKey: AppTheme.defaultsKey)
         appTheme = theme
+    }
+
+    func exportConfiguration(to url: URL) async {
+        guard !isTransferringConfiguration else { return }
+        guard !isLoading else {
+            presentedError = L10n.string("configuration.error.loading", table: .errors)
+            return
+        }
+        isTransferringConfiguration = true
+        configurationTransferMessage = nil
+        defer { isTransferringConfiguration = false }
+        let archive = ConfigurationArchive(
+            profiles: profiles,
+            automationRules: automationRules,
+            settings: ArchivedAppSettings(
+                launchAtLogin: launchAtLoginStatus == .enabled ||
+                    launchAtLoginStatus == .requiresApproval,
+                notifyOnFailure: notifyOnFailure,
+                language: appLanguage,
+                theme: appTheme
+            )
+        )
+        do {
+            try await configurationArchiveCoder.write(try archive.validated(), to: url)
+            configurationTransferMessage = L10n.format(
+                "configuration.export.succeeded",
+                table: .settings,
+                url.lastPathComponent
+            )
+        } catch {
+            presentedError = error.localizedDescription
+        }
+    }
+
+    func prepareConfigurationImport(from url: URL) async {
+        guard !isTransferringConfiguration else { return }
+        guard !isLoading else {
+            presentedError = L10n.string("configuration.error.loading", table: .errors)
+            return
+        }
+        guard syncingProfileIDs.isEmpty else {
+            presentedError = L10n.string("configuration.error.syncInProgress", table: .errors)
+            return
+        }
+        isTransferringConfiguration = true
+        configurationTransferMessage = nil
+        defer { isTransferringConfiguration = false }
+        do {
+            let decodedArchive = try await configurationArchiveCoder.read(from: url)
+            let archive = try decodedArchive.validated()
+            pendingConfigurationImport = PendingConfigurationImport(archive: archive)
+        } catch {
+            presentedError = error.localizedDescription
+        }
+    }
+
+    func cancelConfigurationImport() {
+        pendingConfigurationImport = nil
+    }
+
+    func confirmConfigurationImport() async {
+        guard let pendingConfigurationImport else { return }
+        guard syncingProfileIDs.isEmpty else {
+            self.pendingConfigurationImport = nil
+            presentedError = L10n.string("configuration.error.syncInProgress", table: .errors)
+            return
+        }
+        guard !isTransferringConfiguration else { return }
+        isTransferringConfiguration = true
+        configurationTransferMessage = nil
+        self.pendingConfigurationImport = nil
+        defer { isTransferringConfiguration = false }
+
+        let archive = pendingConfigurationImport.archive
+        let previousLaunchAtLogin = launchAtLoginStatus == .enabled ||
+            launchAtLoginStatus == .requiresApproval
+        let shouldChangeLoginItem = archive.settings.launchAtLogin != previousLaunchAtLogin
+        do {
+            configurationSaveTask?.cancel()
+            await configurationSaveTask?.value
+            configurationSaveTask = nil
+            if shouldChangeLoginItem {
+                try await loginItemService.setEnabled(archive.settings.launchAtLogin)
+            }
+            do {
+                try await profileStore.saveConfiguration(
+                    AppConfiguration(
+                        profiles: archive.profiles,
+                        automationRules: archive.automationRules
+                    )
+                )
+            } catch {
+                if shouldChangeLoginItem {
+                    try? await loginItemService.setEnabled(previousLaunchAtLogin)
+                }
+                throw error
+            }
+
+            profiles = archive.profiles
+            automationRules = archive.automationRules
+            selectedProfileID = profiles.first?.id
+            selectedAutomationRuleID = automationRules.first?.id
+            connectionChecks = [:]
+            initialSyncPrompt = nil
+            notifyOnFailure = archive.settings.notifyOnFailure
+            appLanguage = archive.settings.language
+            appTheme = archive.settings.theme
+            UserDefaults.standard.set(notifyOnFailure, forKey: "notifyOnFailure")
+            UserDefaults.standard.set(appLanguage.rawValue, forKey: AppLanguage.defaultsKey)
+            UserDefaults.standard.set(appTheme.rawValue, forKey: AppTheme.defaultsKey)
+            configureAutomation()
+            await refreshLaunchAtLoginStatus()
+            if notifyOnFailure, !profiles.isEmpty {
+                _ = try? await notificationService.requestAuthorization()
+            }
+            configurationTransferMessage = L10n.format(
+                "configuration.import.succeeded",
+                table: .settings,
+                profiles.count,
+                automationRules.count
+            )
+        } catch {
+            await refreshLaunchAtLoginStatus()
+            presentedError = error.localizedDescription
+        }
     }
 
     func syncAll() {

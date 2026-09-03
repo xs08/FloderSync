@@ -45,10 +45,10 @@ final class LocalizationCatalogTests: XCTestCase {
         }
 
         defaults.set(AppLanguage.english.rawValue, forKey: AppLanguage.defaultsKey)
-        XCTAssertEqual(L10n.string("settings.general"), "General")
+        XCTAssertEqual(L10n.string("settings.settings"), "Settings")
 
         defaults.set(AppLanguage.simplifiedChinese.rawValue, forKey: AppLanguage.defaultsKey)
-        XCTAssertEqual(L10n.string("settings.general"), "通用")
+        XCTAssertEqual(L10n.string("settings.settings"), "设置")
     }
 
     func testLanguagePickerUsesEachLanguagesOwnName() {

@@ -79,7 +79,10 @@ struct SettingsRootView: View {
         }
         .ignoresSafeArea(.container, edges: .top)
         .task { model.start() }
-        .onDisappear { RepositoryPicker.shared.cancel() }
+        .onDisappear {
+            RepositoryPicker.shared.cancel()
+            ConfigurationFilePicker.shared.cancel()
+        }
         .alert(L10n.string("error.title", table: .settings), isPresented: errorIsPresented) {
             Button(L10n.string("action.ok", table: .settings), role: .cancel) {
                 model.presentedError = nil
@@ -104,6 +107,23 @@ struct SettingsRootView: View {
         } message: {
             Text(L10n.string("repository.initialSync.message", table: .repositoryActions))
         }
+        .confirmationDialog(
+            configurationImportTitle,
+            isPresented: configurationImportIsPresented,
+            titleVisibility: .visible
+        ) {
+            Button(
+                L10n.string("configuration.import.confirm", table: .settings),
+                role: .destructive
+            ) {
+                Task { await model.confirmConfigurationImport() }
+            }
+            Button(L10n.string("configuration.import.cancel", table: .settings), role: .cancel) {
+                model.cancelConfigurationImport()
+            }
+        } message: {
+            Text(L10n.string("configuration.import.confirm.message", table: .settings))
+        }
     }
 
     private var errorIsPresented: Binding<Bool> {
@@ -125,6 +145,22 @@ struct SettingsRootView: View {
             "repository.initialSync.title",
             table: .repositoryActions,
             model.initialSyncPrompt?.profileName ?? ""
+        )
+    }
+
+    private var configurationImportIsPresented: Binding<Bool> {
+        Binding(
+            get: { model.pendingConfigurationImport != nil },
+            set: { if !$0 { model.cancelConfigurationImport() } }
+        )
+    }
+
+    private var configurationImportTitle: String {
+        L10n.format(
+            "configuration.import.confirm.title",
+            table: .settings,
+            model.pendingConfigurationImport?.archive.profiles.count ?? 0,
+            model.pendingConfigurationImport?.archive.automationRules.count ?? 0
         )
     }
 }
@@ -167,19 +203,19 @@ private struct SettingsSidebar: View {
 
             HStack {
                 Button {
-                    navigate(to: .general)
+                    navigate(to: .settings)
                 } label: {
-                    Image(systemName: AppModel.SettingsSection.general.symbolName)
+                    Image(systemName: AppModel.SettingsSection.settings.symbolName)
                         .font(.title3)
                 }
                 .foregroundStyle(
-                    model.selectedSettingsSection == .general
+                    model.selectedSettingsSection == .settings
                         ? palette.selectionBackground
                         : palette.secondaryText
                 )
-                .help(L10n.string("settings.general"))
-                .accessibilityLabel(L10n.string("settings.general"))
-                .focused($focusedSection, equals: .general)
+                .help(L10n.string("settings.settings"))
+                .accessibilityLabel(L10n.string("settings.settings"))
+                .focused($focusedSection, equals: .settings)
                 .focusEffectDisabled()
 
                 Spacer()
@@ -217,6 +253,7 @@ private struct SettingsSidebar: View {
 
     private func navigate(to section: AppModel.SettingsSection) {
         RepositoryPicker.shared.cancel()
+        ConfigurationFilePicker.shared.cancel()
         model.selectedSettingsSection = section
     }
 }
@@ -274,8 +311,8 @@ private struct SettingsDetail: View {
                     AutomationSettingsView(model: model)
                 case .diagnostics:
                     HistorySettingsView(model: model)
-                case .general:
-                    GeneralSettingsView(model: model)
+                case .settings:
+                    AppSettingsView(model: model)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -290,7 +327,7 @@ private extension AppModel.SettingsSection {
         case .repositories: "settings.repositories"
         case .automation: "settings.automation"
         case .diagnostics: "settings.diagnostics"
-        case .general: "settings.general"
+        case .settings: "settings.settings"
         }
     }
 
@@ -299,7 +336,7 @@ private extension AppModel.SettingsSection {
         case .repositories: "externaldrive"
         case .automation: "clock"
         case .diagnostics: "waveform.path.ecg"
-        case .general: "gearshape"
+        case .settings: "gearshape"
         }
     }
 }
@@ -641,7 +678,7 @@ private struct RepositoryDetailView: View {
     }
 }
 
-private struct GeneralSettingsView: View {
+private struct AppSettingsView: View {
     @ObservedObject var model: AppModel
     @Environment(\.colorScheme) private var colorScheme
 
@@ -717,6 +754,32 @@ private struct GeneralSettingsView: View {
             } header: {
                 Text(L10n.string("general.theme.section", table: .settings))
             }
+
+            Section {
+                Text(L10n.string("configuration.description", table: .settings))
+                    .foregroundStyle(palette.secondaryText)
+                HStack {
+                    Button(L10n.string("configuration.export.action", table: .settings)) {
+                        exportConfiguration()
+                    }
+                    Button(L10n.string("configuration.import.action", table: .settings)) {
+                        importConfiguration()
+                    }
+                }
+                .disabled(model.isTransferringConfiguration || model.isLoading)
+                if model.isTransferringConfiguration {
+                    Label(
+                        L10n.string("configuration.inProgress", table: .settings),
+                        systemImage: "arrow.triangle.2.circlepath"
+                    )
+                    .foregroundStyle(palette.secondaryText)
+                } else if let message = model.configurationTransferMessage {
+                    Label(message, systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
+            } header: {
+                Text(L10n.string("configuration.section", table: .settings))
+            }
         }
         .formStyle(.grouped)
         .scrollContentBackground(.hidden)
@@ -735,6 +798,21 @@ private struct GeneralSettingsView: View {
             L10n.string("general.theme.light", table: .settings)
         case .dark:
             L10n.string("general.theme.dark", table: .settings)
+        }
+    }
+
+    private func exportConfiguration() {
+        Task {
+            guard let url = await ConfigurationFilePicker.shared
+                .chooseExportDestination() else { return }
+            await model.exportConfiguration(to: url)
+        }
+    }
+
+    private func importConfiguration() {
+        Task {
+            guard let url = await ConfigurationFilePicker.shared.chooseImportFile() else { return }
+            await model.prepareConfigurationImport(from: url)
         }
     }
 }

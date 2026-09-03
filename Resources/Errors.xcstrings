@@ -192,6 +192,72 @@
         }
       }
     },
+    "configuration.error.duplicateIdentifier" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The configuration contains duplicate identifiers." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置中包含重复的唯一标识。" } }
+      }
+    },
+    "configuration.error.duplicateRepositoryPath" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The configuration contains the same repository path more than once." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置中包含重复的仓库路径。" } }
+      }
+    },
+    "configuration.error.duplicateRuleName" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The configuration contains duplicate automation rule names." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置中包含重名的自动化规则。" } }
+      }
+    },
+    "configuration.error.fileTooLarge" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The configuration file is larger than the 10 MB limit." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置文件超过 10 MB 限制。" } }
+      }
+    },
+    "configuration.error.invalidAutomation" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The configuration contains an invalid automation policy." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置中包含无效的自动化策略。" } }
+      }
+    },
+    "configuration.error.invalidFile" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The selected file is not a valid FloderSync configuration archive." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "所选文件不是有效的 FloderSync 配置归档。" } }
+      }
+    },
+    "configuration.error.loading" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Wait for FloderSync to finish loading before importing or exporting configuration." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请等待 FloderSync 加载完成后再导入或导出配置。" } }
+      }
+    },
+    "configuration.error.missingAutomationRule" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "A repository references an automation rule that is not included." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "某个仓库引用了未包含在配置中的自动化规则。" } }
+      }
+    },
+    "configuration.error.missingRequiredValue" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The configuration is missing a required repository or automation value." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "配置缺少仓库或自动化规则的必填内容。" } }
+      }
+    },
+    "configuration.error.syncInProgress" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Wait for the current sync to finish before importing configuration." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "请等待当前同步完成后再导入配置。" } }
+      }
+    },
+    "configuration.error.unsupportedSchema" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unsupported configuration archive version: %d." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "不支持的配置归档版本：%d。" } }
+      }
+    },
     "error.watchedFolderUnavailable" : {
       "extractionState" : "stale",
       "localizations" : {
