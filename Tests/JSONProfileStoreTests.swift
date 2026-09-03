@@ -54,7 +54,7 @@ final class JSONProfileStoreTests: XCTestCase {
 
         XCTAssertTrue(loaded.automationRules.isEmpty)
         XCTAssertEqual(loaded.profiles.first?.automationRuleID, nil)
-        XCTAssertEqual(loaded.profiles.first?.fileChangeDebounceSeconds, 5)
+        XCTAssertEqual(loaded.profiles.first?.watchesNewCommits, true)
         XCTAssertEqual(loaded.profiles.first?.intervalSeconds, 600)
         XCTAssertEqual(loaded.profiles.first?.integrationStrategy, .rebase)
         XCTAssertEqual(loaded.profiles.first?.automaticCommit.isEnabled, true)
@@ -120,5 +120,58 @@ final class JSONProfileStoreTests: XCTestCase {
         let rule = try XCTUnwrap(loaded.automationRules.first)
         XCTAssertTrue(rule.configuration.automaticCommit.isEnabled)
         XCTAssertEqual(rule.configuration.automaticCommit.messageTemplate, "Rule ${time}")
+    }
+
+    func testSchemaV3FileChangesMigrateToNewCommitDetection() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("floderSync-v3-store-test-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let url = directory.appendingPathComponent("configuration.json")
+        let profileID = UUID()
+        let json = """
+        {
+          "schemaVersion": 3,
+          "profiles": [{
+            "id": "\(profileID.uuidString)",
+            "name": "Notes",
+            "localPath": "/tmp/Notes",
+            "remoteName": "origin",
+            "customAutomationConfiguration": {
+              "policies": [{"fileChanges": {"debounceSeconds": 10}}],
+              "integrationStrategy": "rebase",
+              "automaticCommit": {
+                "isEnabled": true,
+                "messageTemplate": "Sync"
+              }
+            },
+            "isEnabled": true
+          }],
+          "automationRules": []
+        }
+        """
+        try Data(json.utf8).write(to: url)
+
+        let loaded = try await JSONProfileStore(fileURL: url).loadConfiguration()
+
+        XCTAssertEqual(loaded.profiles.first?.watchesNewCommits, true)
+    }
+
+    func testCurrentSchemaWritesVersionFourAndNewCommitPolicy() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("floderSync-v4-store-test-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent("configuration.json")
+        let store = JSONProfileStore(fileURL: url)
+
+        try await store.saveConfiguration(AppConfiguration(
+            profiles: [SyncProfile(name: "Notes", localPath: "/tmp/Notes")],
+            automationRules: []
+        ))
+        let json = try String(contentsOf: url, encoding: .utf8)
+
+        XCTAssertTrue(json.contains("\"schemaVersion\" : 4"))
+        XCTAssertTrue(json.contains("\"newCommits\""))
+        XCTAssertFalse(json.contains("\"fileChanges\""))
     }
 }

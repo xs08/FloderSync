@@ -1,8 +1,13 @@
 import Foundation
 
 actor JSONProfileStore: ProfileStore {
-    private struct StoredConfigurationV3: Codable {
+    private struct StoredConfigurationV4: Codable {
         let schemaVersion: Int
+        let profiles: [SyncProfile]
+        let automationRules: [AutomationRule]
+    }
+
+    private struct StoredConfigurationV3: Decodable {
         let profiles: [SyncProfile]
         let automationRules: [AutomationRule]
     }
@@ -150,7 +155,7 @@ actor JSONProfileStore: ProfileStore {
             switch self {
             case let .daily(times): .daily(times: times)
             case let .interval(seconds): .interval(seconds: seconds)
-            case .fileChanges: .fileChanges(debounceSeconds: 5)
+            case .fileChanges: .newCommits
             }
         }
     }
@@ -197,8 +202,8 @@ actor JSONProfileStore: ProfileStore {
             try fileManager.copyItem(at: fileURL, to: backupURL)
         }
 
-        let storedConfiguration = StoredConfigurationV3(
-            schemaVersion: 3,
+        let storedConfiguration = StoredConfigurationV4(
+            schemaVersion: 4,
             profiles: configuration.profiles,
             automationRules: configuration.automationRules
         )
@@ -224,6 +229,9 @@ actor JSONProfileStore: ProfileStore {
             return stored.migrated()
         case 3:
             let stored = try decoder.decode(StoredConfigurationV3.self, from: data)
+            return AppConfiguration(profiles: stored.profiles, automationRules: stored.automationRules)
+        case 4:
+            let stored = try decoder.decode(StoredConfigurationV4.self, from: data)
             return AppConfiguration(profiles: stored.profiles, automationRules: stored.automationRules)
         default:
             throw ProfileStoreError.unsupportedSchema(header.schemaVersion)

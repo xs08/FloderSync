@@ -15,12 +15,67 @@ struct DailyTime: Codable, Hashable, Sendable, Comparable {
     static func < (lhs: DailyTime, rhs: DailyTime) -> Bool {
         (lhs.hour, lhs.minute) < (rhs.hour, rhs.minute)
     }
+
+    static func suggestedAfter(_ previous: DailyTime?) throws -> DailyTime {
+        let previousMinutes = previous.map { $0.hour * 60 + $0.minute } ?? -60
+        let nextMinutes = min(previousMinutes + 60, 23 * 60)
+        return try DailyTime(hour: nextMinutes / 60, minute: nextMinutes % 60)
+    }
 }
 
 enum SyncPolicy: Codable, Hashable, Sendable {
     case daily(times: [DailyTime])
     case interval(seconds: TimeInterval)
-    case fileChanges(debounceSeconds: TimeInterval)
+    case newCommits
+
+    private enum CodingKeys: String, CodingKey {
+        case daily
+        case interval
+        case newCommits
+        case fileChanges
+    }
+
+    private struct DailyPayload: Codable {
+        let times: [DailyTime]
+    }
+
+    private struct IntervalPayload: Codable {
+        let seconds: TimeInterval
+    }
+
+    private struct EmptyPayload: Codable { }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        if container.contains(.daily) {
+            self = .daily(times: try container.decode(DailyPayload.self, forKey: .daily).times)
+        } else if container.contains(.interval) {
+            self = .interval(
+                seconds: try container.decode(IntervalPayload.self, forKey: .interval).seconds
+            )
+        } else if container.contains(.newCommits) {
+            self = .newCommits
+        } else if container.contains(.fileChanges) {
+            // schema v1-v3 compatibility: the retired file-change trigger becomes commit detection.
+            self = .newCommits
+        } else {
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: decoder.codingPath, debugDescription: "Unknown sync policy")
+            )
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case let .daily(times):
+            try container.encode(DailyPayload(times: times), forKey: .daily)
+        case let .interval(seconds):
+            try container.encode(IntervalPayload(seconds: seconds), forKey: .interval)
+        case .newCommits:
+            try container.encode(EmptyPayload(), forKey: .newCommits)
+        }
+    }
 }
 
 enum SyncIntegrationStrategy: String, Codable, CaseIterable, Identifiable, Sendable {
@@ -93,7 +148,7 @@ struct AutomationConfiguration: Codable, Hashable, Sendable {
     var automaticCommit: AutomaticCommitConfiguration
 
     init(
-        policies: [SyncPolicy] = [.fileChanges(debounceSeconds: 5)],
+        policies: [SyncPolicy] = [.newCommits],
         integrationStrategy: SyncIntegrationStrategy = .rebase,
         automaticCommit: AutomaticCommitConfiguration = AutomaticCommitConfiguration()
     ) {
@@ -102,15 +157,8 @@ struct AutomationConfiguration: Codable, Hashable, Sendable {
         self.automaticCommit = automaticCommit
     }
 
-    var watchesFileChanges: Bool {
-        fileChangeDebounceSeconds != nil
-    }
-
-    var fileChangeDebounceSeconds: TimeInterval? {
-        policies.compactMap { policy in
-            if case let .fileChanges(debounceSeconds) = policy { return debounceSeconds }
-            return nil
-        }.first
+    var watchesNewCommits: Bool {
+        policies.contains(.newCommits)
     }
 
     var intervalSeconds: TimeInterval? {
@@ -125,6 +173,19 @@ struct AutomationConfiguration: Codable, Hashable, Sendable {
             if case let .daily(times) = policy { return times }
             return nil
         }.first ?? []
+    }
+
+    func normalizedForSaving() throws -> AutomationConfiguration {
+        var normalized = self
+        normalized.policies = try policies.map { policy in
+            guard case let .daily(times) = policy else { return policy }
+            let sortedTimes = times.sorted()
+            guard Set(sortedTimes).count == sortedTimes.count else {
+                throw SyncConfigurationError.duplicateDailyTime
+            }
+            return .daily(times: sortedTimes)
+        }
+        return normalized
     }
 }
 
@@ -159,7 +220,7 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
         localPath: String,
         remoteName: String = "origin",
         commitMessageTemplate: String? = nil,
-        policies: [SyncPolicy] = [.fileChanges(debounceSeconds: 5)],
+        policies: [SyncPolicy] = [.newCommits],
         integrationStrategy: SyncIntegrationStrategy = .rebase,
         automaticCommit: AutomaticCommitConfiguration = AutomaticCommitConfiguration(),
         automationRuleID: UUID? = nil,
@@ -182,12 +243,8 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
         self.isEnabled = isEnabled
     }
 
-    var watchesFileChanges: Bool {
-        customAutomationConfiguration.watchesFileChanges
-    }
-
-    var fileChangeDebounceSeconds: TimeInterval? {
-        customAutomationConfiguration.fileChangeDebounceSeconds
+    var watchesNewCommits: Bool {
+        customAutomationConfiguration.watchesNewCommits
     }
 
     var intervalSeconds: TimeInterval? {
@@ -224,8 +281,21 @@ enum SyncTrigger: String, Codable, Sendable {
     case manual
     case scheduled
     case interval
-    case fileChanges
+    case newCommit
     case wakeCatchUp
+
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        if value == "fileChanges" {
+            self = .newCommit
+        } else if let trigger = Self(rawValue: value) {
+            self = trigger
+        } else {
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: decoder.codingPath, debugDescription: "Unknown sync trigger")
+            )
+        }
+    }
 }
 
 enum SyncStep: String, Codable, CaseIterable, Sendable {
@@ -310,6 +380,14 @@ struct RepositoryInfo: Equatable, Sendable {
     let rootPath: String
     let currentBranch: String
     let remoteURL: String
+    let gitDirectory: String
+
+    init(rootPath: String, currentBranch: String, remoteURL: String, gitDirectory: String? = nil) {
+        self.rootPath = rootPath
+        self.currentBranch = currentBranch
+        self.remoteURL = remoteURL
+        self.gitDirectory = gitDirectory ?? rootPath + "/.git"
+    }
 }
 
 enum RepositorySynchronizationState: Equatable, Sendable {
@@ -335,6 +413,7 @@ struct GitWorkingTreeStatus: Equatable, Sendable {
 
 enum SyncConfigurationError: Error, Equatable {
     case invalidDailyTime
+    case duplicateDailyTime
 }
 
 enum SyncFailure: Error, Equatable, Sendable {

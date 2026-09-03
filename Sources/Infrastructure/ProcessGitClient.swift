@@ -60,7 +60,12 @@ struct ProcessGitClient: GitClient, Sendable {
             )
         }
 
-        return RepositoryInfo(rootPath: root, currentBranch: branch, remoteURL: remoteURL)
+        return RepositoryInfo(
+            rootPath: root,
+            currentBranch: branch,
+            remoteURL: remoteURL,
+            gitDirectory: gitDirectory
+        )
     }
 
     func workingTreeStatus(at path: String) async throws -> GitWorkingTreeStatus {
@@ -76,6 +81,11 @@ struct ProcessGitClient: GitClient, Sendable {
             hasUnmergedPaths: hasUnmergedPaths,
             hasOperationInProgress: hasOperationInProgress
         )
+    }
+
+    func currentRevision(at path: String) async throws -> String {
+        try await run(arguments: ["-C", path, "rev-parse", "--verify", "HEAD"])
+            .standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     func synchronizationState(

@@ -104,7 +104,7 @@ final class UIRenderTests: XCTestCase {
             name: "Rule 1",
             configuration: AutomationConfiguration(
                 policies: [
-                    .fileChanges(debounceSeconds: 10),
+                    .newCommits,
                     .daily(times: [try DailyTime(hour: 8, minute: 0)])
                 ],
                 integrationStrategy: .rebase

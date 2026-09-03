@@ -9,7 +9,7 @@
 - 设置窗口：AppKit `NSWindowController` 在首帧前配置窗口 chrome，再用 `NSHostingController` 承载 SwiftUI 内容。
 - Git：通过 Foundation `Process` 调用系统 Git CLI，不链接或实现 Git 协议。
 - 登录启动：macOS 13+ 的 `SMAppService`；MVP 注册主应用为 login item，不引入特权 helper。
-- 文件监听：FSEvents 封装为基础设施适配器。
+- Commit 监听：FSEvents 只用于唤醒 Git 引用检查，实际触发由 `HEAD` revision 变化确认。
 - 并发：Swift Concurrency；每个仓库由 actor 串行化，调度器只发出意图。
 - 发布：默认按 Developer ID 签名、公证、直接分发设计。若要求 Mac App Store，需要重新评估 sandbox、目录授权和 Git/SSH 访问。
 
@@ -28,7 +28,7 @@ Domain
   SyncProfile / SyncPolicy / SyncRun / SyncStateMachine / DomainErrors
           ↑ adapters
 Infrastructure
-  ProcessGitClient / FSEventsWatcher / ConfigStore / HistoryStore
+  ProcessGitClient / GitMetadataWatcher / ConfigStore / HistoryStore
   LoginItemService / NotificationService / Clock / OSLog
 ```
 
@@ -40,7 +40,7 @@ Infrastructure
 
 - `ProfileService`：配置的增删改查、预检与启停。
 - `SyncCoordinator`：合并触发、控制并发、创建 run、驱动同步用例。
-- `Scheduler`：把时间、间隔、文件变化、唤醒补偿统一转换为 `SyncTrigger`。
+- `Scheduler`：把时间、间隔、新增 commit、唤醒补偿统一转换为 `SyncTrigger`。
 - `StatusProjection`：把领域状态投影为菜单栏和设置窗口可消费的只读状态。
 
 ### Domain
@@ -52,7 +52,7 @@ Infrastructure
 ### Infrastructure
 
 - `ProcessGitClient`：安全构造参数数组、设置工作目录与非交互环境、捕获 stdout/stderr、超时与退出码；取消/超时使用 TERM 后有限等待并升级到 KILL；不通过 shell 拼接命令。
-- `FSEventsWatcher`：目录事件、`.git` 过滤、去抖和事件合并。
+- `GitMetadataWatcher`：监听 `HEAD`、当前分支 ref 与 reflog 事件，去抖后比较 revision；普通工作区文件变化不会触发。
 - `ConfigStore`：在 Application Support 中原子保存版本化配置；不保存认证秘密。
 - `HistoryStore`：保存有限数量的同步摘要和脱敏步骤日志。
 - `LoginItemService`：注册、注销并读取 `SMAppService` 状态。
@@ -76,11 +76,10 @@ AutomaticCommitConfiguration
   isEnabled, authorName?, authorEmail?, messageTemplate
 
 SyncPolicy
-  manual | daily(times, weekdays?) | interval(duration) |
-  fileChanges(debounce)
+  daily(times) | interval(duration) | newCommits
 
 SyncTrigger
-  manual | scheduled | interval | fileChanges | wakeCatchUp
+  manual | scheduled | interval | newCommit | wakeCatchUp
 
 SyncRun
   id, profileID, trigger, startedAt, finishedAt,
@@ -114,7 +113,8 @@ Trigger Source ──→ Scheduler ──→ SyncCoordinator
 - 运行期间的新触发被合并为一个 pending run，避免事件风暴。
 - 不同仓库可以有限并发；MVP 默认全局并发 2，后续可配置。
 - 应用退出时不强杀正在写入 Git 的子进程；先请求取消并等待安全边界，超时后明确记录中止状态。
-- 文件事件只表示“可能变化”；真正是否同步由 `git status --porcelain=v2` 判定。
+- Git 元数据事件只表示“revision 可能变化”；比较当前 `HEAD` 与已记录 revision 后才生成新增 commit 触发。
+- 同步协调器开始处理仓库前暂停其 commit 检测，任务完全空闲后读取最新 `HEAD` 作为新基线，再恢复检测，避免自动 commit、pull、rebase 或 merge 造成重触发。
 
 ## 5. Git 适配器边界
 

@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8C4576B632D753E2229515E5"
+               BlueprintIdentifier = "8E7574DEE7BCAC7C32F639FB"
                BuildableName = "FloderSync.app"
                BlueprintName = "floderSync"
                ReferencedContainer = "container:floderSync.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F8E401F1C6C94A173E54BA6"
+               BlueprintIdentifier = "ABA5CA7BE24678F74249718B"
                BuildableName = "floderSyncTests.xctest"
                BlueprintName = "floderSyncTests"
                ReferencedContainer = "container:floderSync.xcodeproj">
@@ -44,7 +44,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8C4576B632D753E2229515E5"
+            BlueprintIdentifier = "8E7574DEE7BCAC7C32F639FB"
             BuildableName = "FloderSync.app"
             BlueprintName = "floderSync"
             ReferencedContainer = "container:floderSync.xcodeproj">
@@ -56,7 +56,7 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F8E401F1C6C94A173E54BA6"
+               BlueprintIdentifier = "ABA5CA7BE24678F74249718B"
                BuildableName = "floderSyncTests.xctest"
                BlueprintName = "floderSyncTests"
                ReferencedContainer = "container:floderSync.xcodeproj">
@@ -78,7 +78,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8C4576B632D753E2229515E5"
+            BlueprintIdentifier = "8E7574DEE7BCAC7C32F639FB"
             BuildableName = "FloderSync.app"
             BlueprintName = "floderSync"
             ReferencedContainer = "container:floderSync.xcodeproj">
@@ -95,7 +95,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8C4576B632D753E2229515E5"
+            BlueprintIdentifier = "8E7574DEE7BCAC7C32F639FB"
             BuildableName = "FloderSync.app"
             BlueprintName = "floderSync"
             ReferencedContainer = "container:floderSync.xcodeproj">

@@ -409,19 +409,19 @@
         }
       }
     },
-    "history.trigger.fileChanges" : {
+    "history.trigger.newCommit" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "File changes"
+            "value" : "New commit"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文件变化"
+            "value" : "新增 Commit"
           }
         }
       }

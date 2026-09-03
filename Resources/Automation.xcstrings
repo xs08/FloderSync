@@ -170,53 +170,19 @@
         }
       }
     },
-    "automation.delay.1minute" : {
+    "automation.daily.saveInvalid" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 minute"
+            "value" : "Daily sync times must be unique before the rule can be saved."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 分钟"
-          }
-        }
-      }
-    },
-    "automation.delay.5seconds" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "5 seconds"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "5 秒"
-          }
-        }
-      }
-    },
-    "automation.delay.10seconds" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "10 seconds"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "10 秒"
+            "value" : "每日同步时间不能重复，请调整后再保存规则。"
           }
         }
       }
@@ -255,53 +221,19 @@
         }
       }
     },
-    "automation.fileChanges" : {
+    "automation.newCommits" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sync after file changes"
+            "value" : "Sync after a new commit"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文件变化同步"
-          }
-        }
-      }
-    },
-    "automation.fileChanges.customSeconds" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiet for %d seconds"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "静默 %d 秒"
-          }
-        }
-      }
-    },
-    "automation.fileChanges.delay" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quiet period"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "静默延迟"
+            "value" : "新增 Commit 后同步"
           }
         }
       }
@@ -1020,19 +952,19 @@
         }
       }
     },
-    "automation.summary.fileChanges" : {
+    "automation.summary.newCommits" : {
       "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "File changes after %d seconds"
+            "value" : "After a new commit"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "文件停止变化 %d 秒后"
+            "value" : "新增 Commit 后"
           }
         }
       }

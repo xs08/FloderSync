@@ -36,23 +36,6 @@ struct SyncEngine: Sendable {
                 )
             }
 
-            if trigger == .fileChanges, !status.hasChanges {
-                return SyncRunRecord(
-                    id: runID,
-                    profileID: profile.id,
-                    trigger: trigger,
-                    startedAt: startedAt,
-                    finishedAt: now(),
-                    result: .succeeded,
-                    steps: completedSteps,
-                    failureCategory: nil,
-                    failureMessage: nil,
-                    hadLocalChanges: false,
-                    integrationStrategy: profile.integrationStrategy,
-                    automationRuleName: automationRuleName
-                )
-            }
-
             if status.hasChanges {
                 guard profile.automaticCommit.isEnabled else {
                     throw SyncFailure.configuration(

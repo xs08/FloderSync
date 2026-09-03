@@ -9,6 +9,7 @@ protocol GitClient: Sendable {
     ) async throws -> RepositorySynchronizationState
     func checkRemoteAccess(at path: String, remote: String) async throws
     func workingTreeStatus(at path: String) async throws -> GitWorkingTreeStatus
+    func currentRevision(at path: String) async throws -> String
     func commitIdentity(at path: String) async throws -> GitCommitIdentity
     func stageAll(at path: String) async throws
     func commit(at path: String, message: String) async throws

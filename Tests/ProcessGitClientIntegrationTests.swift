@@ -4,6 +4,20 @@ import XCTest
 @testable import floderSync
 
 final class ProcessGitClientIntegrationTests: XCTestCase {
+    func testCurrentRevisionReturnsRepositoryHead() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+
+        let revision = try await ProcessGitClient(timeout: 10)
+            .currentRevision(at: fixture.workURL.path)
+
+        XCTAssertEqual(
+            revision,
+            try fixture.git(["-C", fixture.workURL.path, "rev-parse", "HEAD"])
+        )
+    }
+
     func testSynchronizationStateDetectsCleanMatchingRepository() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }
@@ -189,7 +203,7 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertEqual(remoteHeadAfterSync, remoteHeadBeforeSync)
 
         let retry = await SyncEngine(git: ProcessGitClient(timeout: 10))
-            .synchronize(profile: profile, trigger: .fileChanges)
+            .synchronize(profile: profile, trigger: .newCommit)
         XCTAssertEqual(retry.result, .needsUserAction)
         XCTAssertEqual(retry.failureCategory, .conflict)
         XCTAssertTrue(retry.steps.isEmpty, "A conflicted repository must stop before any write step.")

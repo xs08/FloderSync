@@ -31,7 +31,7 @@ struct CatchUpCalculator {
                         return true
                     }
                 }
-            case .fileChanges:
+            case .newCommits:
                 continue
             }
         }

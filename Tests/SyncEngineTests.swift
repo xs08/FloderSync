@@ -56,7 +56,7 @@ final class SyncEngineTests: XCTestCase {
         let engine = SyncEngine(git: git)
         let profile = SyncProfile(name: "Notes", localPath: "/tmp/notes")
 
-        let record = await engine.synchronize(profile: profile, trigger: .fileChanges)
+        let record = await engine.synchronize(profile: profile, trigger: .newCommit)
         let calls = await git.calls
 
         XCTAssertEqual(record.result, .needsUserAction)
@@ -65,16 +65,16 @@ final class SyncEngineTests: XCTestCase {
         XCTAssertFalse(calls.contains("push"))
     }
 
-    func testFileChangeTriggerWithCleanTreeAvoidsNetworkOperations() async throws {
+    func testNewCommitTriggerWithCleanTreeIntegratesAndPushes() async throws {
         let git = FakeGitClient(hasChanges: false)
         let engine = SyncEngine(git: git)
         let profile = SyncProfile(name: "Notes", localPath: "/tmp/notes")
 
-        let record = await engine.synchronize(profile: profile, trigger: .fileChanges)
+        let record = await engine.synchronize(profile: profile, trigger: .newCommit)
         let calls = await git.calls
 
         XCTAssertEqual(record.result, .succeeded)
-        XCTAssertEqual(calls, ["validate", "status"])
+        XCTAssertEqual(calls, ["validate", "status", "pull:rebase", "push"])
     }
 
     func testExistingConflictStopsBeforeStaging() async throws {
@@ -89,7 +89,7 @@ final class SyncEngineTests: XCTestCase {
         let engine = SyncEngine(git: git)
         let profile = SyncProfile(name: "Notes", localPath: "/tmp/notes")
 
-        let record = await engine.synchronize(profile: profile, trigger: .fileChanges)
+        let record = await engine.synchronize(profile: profile, trigger: .newCommit)
         let calls = await git.calls
 
         XCTAssertEqual(record.result, .needsUserAction)
@@ -190,6 +190,8 @@ private actor FakeGitClient: GitClient {
         calls.append("status")
         return status ?? GitWorkingTreeStatus(hasChanges: hasChanges)
     }
+
+    func currentRevision(at path: String) async throws -> String { "revision" }
 
     func checkRemoteAccess(at path: String, remote: String) async throws { }
 

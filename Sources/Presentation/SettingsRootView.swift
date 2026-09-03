@@ -986,8 +986,8 @@ private struct AutomationConfigurationSummary: View {
 
     private var triggerSummary: String {
         var parts: [String] = []
-        if let seconds = configuration.fileChangeDebounceSeconds {
-            parts.append(L10n.format("automation.summary.fileChanges", table: .automation, Int(seconds)))
+        if configuration.watchesNewCommits {
+            parts.append(L10n.string("automation.summary.newCommits", table: .automation))
         }
         if let seconds = configuration.intervalSeconds {
             parts.append(L10n.format("automation.summary.interval", table: .automation, Int(seconds / 60)))
@@ -1006,14 +1006,6 @@ private struct AutomationConfigurationEditor: View {
     let configuration: AutomationConfiguration
     let onChange: (AutomationConfiguration) -> Void
 
-    private enum FileDelayChoice: Int, CaseIterable, Identifiable {
-        case fiveSeconds = 5
-        case tenSeconds = 10
-        case oneMinute = 60
-        case custom = -1
-        var id: Self { self }
-    }
-
     private enum IntervalChoice: Int, CaseIterable, Identifiable {
         case fiveMinutes = 300
         case tenMinutes = 600
@@ -1024,36 +1016,12 @@ private struct AutomationConfigurationEditor: View {
 
     var body: some View {
         Toggle(
-            L10n.string("automation.fileChanges", table: .automation),
+            L10n.string("automation.newCommits", table: .automation),
             isOn: Binding(
-                get: { configuration.watchesFileChanges },
-                set: { setFileChangesEnabled($0) }
+                get: { configuration.watchesNewCommits },
+                set: { setNewCommitsEnabled($0) }
             )
         )
-
-        if let seconds = configuration.fileChangeDebounceSeconds {
-            Picker(
-                L10n.string("automation.fileChanges.delay", table: .automation),
-                selection: Binding(
-                    get: { fileDelayChoice(seconds) },
-                    set: { setFileDelayChoice($0) }
-                )
-            ) {
-                ForEach(FileDelayChoice.allCases) { choice in
-                    Text(fileDelayTitle(choice)).tag(choice)
-                }
-            }
-            if fileDelayChoice(seconds) == .custom {
-                Stepper(
-                    L10n.format("automation.fileChanges.customSeconds", table: .automation, Int(seconds)),
-                    value: Binding(
-                        get: { Int(seconds) },
-                        set: { setFileDelay(TimeInterval($0)) }
-                    ),
-                    in: 1...3_600
-                )
-            }
-        }
 
         Toggle(
             L10n.string("automation.interval", table: .automation),
@@ -1171,17 +1139,10 @@ private struct AutomationConfigurationEditor: View {
             .foregroundStyle(.secondary)
     }
 
-    private func setFileChangesEnabled(_ enabled: Bool) {
+    private func setNewCommitsEnabled(_ enabled: Bool) {
         var updated = configuration
-        updated.policies.removeAll { if case .fileChanges = $0 { true } else { false } }
-        if enabled { updated.policies.append(.fileChanges(debounceSeconds: 5)) }
-        onChange(updated)
-    }
-
-    private func setFileDelay(_ seconds: TimeInterval) {
-        var updated = configuration
-        updated.policies.removeAll { if case .fileChanges = $0 { true } else { false } }
-        updated.policies.append(.fileChanges(debounceSeconds: min(max(seconds, 1), 3_600)))
+        updated.policies.removeAll { $0 == .newCommits }
+        if enabled { updated.policies.append(.newCommits) }
         onChange(updated)
     }
 
@@ -1202,7 +1163,7 @@ private struct AutomationConfigurationEditor: View {
     private func setDailyTimes(_ times: [DailyTime]) {
         var updated = configuration
         updated.policies.removeAll { if case .daily = $0 { true } else { false } }
-        if !times.isEmpty { updated.policies.append(.daily(times: times.sorted())) }
+        if !times.isEmpty { updated.policies.append(.daily(times: times)) }
         onChange(updated)
     }
 
@@ -1228,23 +1189,6 @@ private struct AutomationConfigurationEditor: View {
         var updated = configuration
         updated.automaticCommit.messageTemplate = template
         onChange(updated)
-    }
-
-    private func fileDelayChoice(_ seconds: TimeInterval) -> FileDelayChoice {
-        FileDelayChoice(rawValue: Int(seconds)) ?? .custom
-    }
-
-    private func setFileDelayChoice(_ choice: FileDelayChoice) {
-        setFileDelay(TimeInterval(choice == .custom ? 30 : choice.rawValue))
-    }
-
-    private func fileDelayTitle(_ choice: FileDelayChoice) -> String {
-        switch choice {
-        case .fiveSeconds: L10n.string("automation.delay.5seconds", table: .automation)
-        case .tenSeconds: L10n.string("automation.delay.10seconds", table: .automation)
-        case .oneMinute: L10n.string("automation.delay.1minute", table: .automation)
-        case .custom: L10n.string("automation.duration.custom", table: .automation)
-        }
     }
 
     private func intervalChoice(_ seconds: TimeInterval) -> IntervalChoice {
@@ -1332,11 +1276,8 @@ private struct DailyTimesEditor: View {
     }
 
     private func addTime() {
-        let candidates = [(9, 0), (12, 0), (18, 0), (21, 0)]
-        guard let candidate = candidates.first(where: { hour, minute in
-            !times.contains(where: { $0.hour == hour && $0.minute == minute })
-        }), let time = try? DailyTime(hour: candidate.0, minute: candidate.1) else { return }
-        onChange((times + [time]).sorted())
+        guard let time = try? DailyTime.suggestedAfter(times.last) else { return }
+        onChange(times + [time])
     }
 
     private func removeTime(at index: Int) {
@@ -1352,7 +1293,7 @@ private struct DailyTimesEditor: View {
               let replacement = try? DailyTime(hour: hour, minute: minute) else { return }
         var updated = times
         updated[index] = replacement
-        onChange(Array(Set(updated)).sorted())
+        onChange(updated)
     }
 
     private func date(for time: DailyTime) -> Date {
@@ -1522,7 +1463,7 @@ private func triggerText(_ trigger: SyncTrigger) -> String {
     case .manual: L10n.string("history.trigger.manual", table: .history)
     case .scheduled: L10n.string("history.trigger.scheduled", table: .history)
     case .interval: L10n.string("history.trigger.interval", table: .history)
-    case .fileChanges: L10n.string("history.trigger.fileChanges", table: .history)
+    case .newCommit: L10n.string("history.trigger.newCommit", table: .history)
     case .wakeCatchUp: L10n.string("history.trigger.wakeCatchUp", table: .history)
     }
 }

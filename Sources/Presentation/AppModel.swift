@@ -73,7 +73,7 @@ final class AppModel: ObservableObject {
     private let loginItemService: any LoginItemManaging
     private let notificationService: any FailureNotificationSending
     private let automationScheduler = AutomationScheduler()
-    private let fileChangeScheduler = FileChangeScheduler()
+    private let commitChangeScheduler: CommitChangeScheduler
     private let wakeMonitor = SystemWakeMonitor()
     private var hasStarted = false
     private var configurationSaveTask: Task<Void, Never>?
@@ -93,6 +93,7 @@ final class AppModel: ObservableObject {
         self.historyStore = historyStore
         self.loginItemService = loginItemService
         self.notificationService = notificationService
+        self.commitChangeScheduler = CommitChangeScheduler(git: git)
         self.notifyOnFailure = UserDefaults.standard.object(forKey: "notifyOnFailure") as? Bool ?? true
         self.appLanguage = AppLanguage.selected
         self.appTheme = AppTheme.selected
@@ -256,9 +257,17 @@ final class AppModel: ObservableObject {
             )
             return false
         }
+        let normalizedConfiguration: AutomationConfiguration
+        do {
+            normalizedConfiguration = try rule.configuration.normalizedForSaving()
+        } catch {
+            presentedError = L10n.string("automation.daily.saveInvalid", table: .automation)
+            return false
+        }
         guard let index = automationRules.firstIndex(where: { $0.id == rule.id }) else { return false }
         var savedRule = rule
         savedRule.name = trimmedName
+        savedRule.configuration = normalizedConfiguration
         automationRules[index] = savedRule
         automationRules.sort { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         persistProfilesInBackground()
@@ -472,7 +481,16 @@ final class AppModel: ObservableObject {
                 guard let self else { return }
                 await self.enqueueAndWait(profile: profile, trigger: trigger)
             }
-            let watcherFailures = await fileChangeScheduler.configure(profiles: snapshot) { [weak self] profile, trigger in
+            var synchronizingProfileIDs: Set<UUID> = []
+            for profile in snapshot {
+                if await coordinator.isActive(profileID: profile.id) {
+                    synchronizingProfileIDs.insert(profile.id)
+                }
+            }
+            let watcherFailures = await commitChangeScheduler.configure(
+                profiles: snapshot,
+                synchronizingProfileIDs: synchronizingProfileIDs
+            ) { [weak self] profile, trigger in
                 guard let self else { return }
                 await self.enqueueAndWait(profile: profile, trigger: trigger)
             }
@@ -484,22 +502,27 @@ final class AppModel: ObservableObject {
 
     private func enqueueAndWait(profile: SyncProfile, trigger: SyncTrigger) async {
         let ruleName = automationRule(id: profile.automationRuleID)?.name
+        await commitChangeScheduler.beginSynchronization(profileID: profile.id)
         await coordinator.enqueue(
             profile: profile,
             trigger: trigger,
             automationRuleName: ruleName
         )
         await coordinator.waitUntilIdle(profileID: profile.id)
+        await commitChangeScheduler.endSynchronization(profile: profile)
     }
 
     private func requestSync(_ profile: SyncProfile, trigger: SyncTrigger) {
         let ruleName = automationRule(id: profile.automationRuleID)?.name
         Task {
+            await commitChangeScheduler.beginSynchronization(profileID: profile.id)
             await coordinator.enqueue(
                 profile: profile,
                 trigger: trigger,
                 automationRuleName: ruleName
             )
+            await coordinator.waitUntilIdle(profileID: profile.id)
+            await commitChangeScheduler.endSynchronization(profile: profile)
         }
     }
 

@@ -9,12 +9,12 @@
 - GUI/登录启动环境中的系统 Git 路径、PATH、SSH_AUTH_SOCK 与 credential helper。
 - `MenuBarExtra` + 设置窗口生命周期。
 - `SMAppService.mainApp` 的注册与状态同步。
-- FSEvents 监听、去抖和 `.git` 排除。
+- Git 元数据 FSEvents 监听、去抖和 `HEAD` revision 比较。
 - Developer ID + Hardened Runtime 下启动 Git/SSH 的行为。
 
 退出条件：发布方式、最低系统、认证兼容矩阵和后台模型有证据支持。
 
-进度：系统 Git、菜单栏 scene、登录项 API、FSEvents 和非沙盒构建已完成代码/编译探针；Developer ID 与真实认证矩阵留到发布阶段。
+进度：系统 Git、菜单栏 scene、登录项 API、Git 元数据 FSEvents 和非沙盒构建已完成代码/编译探针；Developer ID 与真实认证矩阵留到发布阶段。
 
 ## Phase 1：领域核心与测试夹具
 
@@ -34,17 +34,17 @@
 
 退出条件：CLI 级测试覆盖无变化、本地变化、远端变化、冲突和失败路径。
 
-进度：已完成 MVP 范围；配置存储已升级到 schema v3，覆盖自动化规则库、可配置自动提交与 schema v1/v2 迁移。本地 bare remote 集成测试通过；Git 子进程取消/超时具备 TERM→KILL 的有限等待。
+进度：已完成 MVP 范围；配置存储已升级到 schema v4，覆盖自动化规则库、可配置自动提交、旧文件变化策略到 commit 检测的迁移与 schema v1/v2/v3 兼容。本地 bare remote 集成测试通过；Git 子进程取消/超时具备 TERM→KILL 的有限等待。
 
 ## Phase 3：调度与系统集成
 
-- 时间、间隔、文件变化和唤醒补偿。
+- 时间、间隔、新增 commit 和唤醒补偿。
 - 登录启动、通知、网络/睡眠生命周期。
 - 并发限制与状态投影。
 
 退出条件：自动触发稳定且不重复、不并发破坏同一仓库。
 
-进度：实现与确定性测试已完成；共享规则解析、可配置文件静默延迟、Rebase/Merge 调度已接入，睡眠和真实登录启动系统测试留到发布验证。
+进度：实现与确定性测试已完成；共享规则解析、commit revision 检测与同步期抑制、Rebase/Merge 调度已接入，睡眠和真实登录启动系统测试留到发布验证。
 
 ## Phase 4：UI 实现
 

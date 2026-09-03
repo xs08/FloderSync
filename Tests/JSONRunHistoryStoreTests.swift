@@ -2,6 +2,12 @@ import XCTest
 @testable import floderSync
 
 final class JSONRunHistoryStoreTests: XCTestCase {
+    func testLegacyFileChangeTriggerDecodesAsNewCommit() throws {
+        let trigger = try JSONDecoder().decode(SyncTrigger.self, from: Data("\"fileChanges\"".utf8))
+
+        XCTAssertEqual(trigger, .newCommit)
+    }
+
     func testAppendKeepsNewestRunsWithinLimit() async throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("floderSync-history-test-\(UUID().uuidString)", isDirectory: true)

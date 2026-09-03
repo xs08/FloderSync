@@ -48,7 +48,7 @@ actor AutomationScheduler {
                     tasks.append(Task {
                         await Self.runInterval(profile: profile, seconds: seconds, onTrigger: onTrigger)
                     })
-                case .fileChanges:
+                case .newCommits:
                     break
                 }
             }

@@ -7,7 +7,7 @@ final class SyncCoordinatorTests: XCTestCase {
         let coordinator = SyncCoordinator(engine: SyncEngine(git: git))
         let profile = SyncProfile(name: "Notes", localPath: "/tmp/Notes")
 
-        await coordinator.enqueue(profile: profile, trigger: .fileChanges)
+        await coordinator.enqueue(profile: profile, trigger: .newCommit)
         await coordinator.enqueue(profile: profile, trigger: .scheduled)
         await coordinator.enqueue(profile: profile, trigger: .manual)
         await coordinator.waitUntilIdle(profileID: profile.id)
@@ -52,6 +52,8 @@ private actor DelayedGitClient: GitClient {
     func workingTreeStatus(at path: String) async throws -> GitWorkingTreeStatus {
         GitWorkingTreeStatus(hasChanges: false)
     }
+
+    func currentRevision(at path: String) async throws -> String { "revision" }
 
     func checkRemoteAccess(at path: String, remote: String) async throws { }
 
