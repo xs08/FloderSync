@@ -1,6 +1,7 @@
 import Foundation
+import Darwin
 import XCTest
-@testable import obsSync
+@testable import floderSync
 
 final class ProcessGitClientIntegrationTests: XCTestCase {
     func testSynchronizationStateDetectsCleanMatchingRepository() async throws {
@@ -82,6 +83,48 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertEqual(localHead, remoteHead)
     }
 
+    func testCommitUsesConfiguredIdentityWithoutChangingRepositoryConfiguration() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.write("identity update\n", to: fixture.workURL.appendingPathComponent("Notes.md"))
+        let client = ProcessGitClient(timeout: 10)
+
+        try await client.stageAll(at: fixture.workURL.path)
+        try await client.commit(
+            at: fixture.workURL.path,
+            message: "Configured message",
+            identity: GitCommitIdentity(name: "Floder User", email: "floder@example.com")
+        )
+
+        let metadata = try fixture.git([
+            "-C", fixture.workURL.path, "log", "-1", "--format=%an%n%ae%n%s"
+        ]).split(separator: "\n").map(String.init)
+        XCTAssertEqual(metadata, ["Floder User", "floder@example.com", "Configured message"])
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "config", "user.name"]),
+            "floderSync Tests"
+        )
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "config", "user.email"]),
+            "tests@flodersync.dev"
+        )
+    }
+
+    func testCommitIdentityReadsEffectiveGitConfiguration() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+
+        let identity = try await ProcessGitClient(timeout: 10)
+            .commitIdentity(at: fixture.workURL.path)
+
+        XCTAssertEqual(
+            identity,
+            GitCommitIdentity(name: "floderSync Tests", email: "tests@flodersync.dev")
+        )
+    }
+
     func testRemoteChangeIsPulledIntoCleanWorkingTree() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }
@@ -151,6 +194,116 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertEqual(retry.failureCategory, .conflict)
         XCTAssertTrue(retry.steps.isEmpty, "A conflicted repository must stop before any write step.")
     }
+
+    func testTimeoutForceKillsCommandThatIgnoresTermination() async throws {
+        let fixture = try HangingCommandFixture()
+        defer { fixture.remove() }
+        let client = ProcessGitClient(
+            gitExecutable: fixture.executableURL.path,
+            timeout: 1
+        )
+        let startedAt = ProcessInfo.processInfo.systemUptime
+
+        do {
+            try await client.checkRemoteAccess(at: "/", remote: "origin")
+            XCTFail("A hanging command must time out.")
+        } catch let failure as SyncFailure {
+            XCTAssertEqual(failure, .timedOut)
+        }
+
+        XCTAssertLessThan(ProcessInfo.processInfo.systemUptime - startedAt, 3)
+        let pid = try await fixture.waitForPID()
+        let processDidExit = await fixture.waitUntilProcessExits(pid: pid)
+        XCTAssertTrue(processDidExit)
+    }
+
+    func testTaskCancellationForceKillsCommandThatIgnoresTermination() async throws {
+        let fixture = try HangingCommandFixture()
+        defer { fixture.remove() }
+        let client = ProcessGitClient(
+            gitExecutable: fixture.executableURL.path,
+            timeout: 10
+        )
+        let task = Task {
+            try await client.checkRemoteAccess(at: "/", remote: "origin")
+        }
+        let pid = try await fixture.waitForPID()
+        let cancelledAt = ProcessInfo.processInfo.systemUptime
+
+        task.cancel()
+
+        do {
+            try await task.value
+            XCTFail("A cancelled command must throw CancellationError.")
+        } catch is CancellationError {
+            // Expected.
+        } catch {
+            XCTFail("Expected CancellationError, got \(error)")
+        }
+
+        XCTAssertLessThan(ProcessInfo.processInfo.systemUptime - cancelledAt, 2)
+        let processDidExit = await fixture.waitUntilProcessExits(pid: pid)
+        XCTAssertTrue(processDidExit)
+    }
+}
+
+private final class HangingCommandFixture {
+    let executableURL: URL
+    private let rootURL: URL
+    private let pidURL: URL
+
+    init() throws {
+        rootURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FloderSync-Lifecycle-\(UUID().uuidString)", isDirectory: true)
+        executableURL = rootURL.appendingPathComponent("hang.sh")
+        pidURL = rootURL.appendingPathComponent("pid")
+        try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+
+        let script = """
+        #!/bin/sh
+        trap '' TERM
+        printf '%s' "$$" > '\(pidURL.path)'
+        while :; do
+            sleep 1
+        done
+        """
+        try Data(script.utf8).write(to: executableURL, options: .atomic)
+        try FileManager.default.setAttributes(
+            [.posixPermissions: 0o755],
+            ofItemAtPath: executableURL.path
+        )
+    }
+
+    func remove() {
+        try? FileManager.default.removeItem(at: rootURL)
+    }
+
+    func waitForPID(timeout: TimeInterval = 2) async throws -> pid_t {
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            if let contents = try? String(contentsOf: pidURL, encoding: .utf8),
+               let pid = pid_t(contents.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                return pid
+            }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        throw HangingCommandFixtureError.pidWasNotWritten
+    }
+
+    func waitUntilProcessExits(pid: pid_t, timeout: TimeInterval = 2) async -> Bool {
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        while ProcessInfo.processInfo.systemUptime < deadline {
+            if Darwin.kill(pid, 0) == -1 && errno == ESRCH {
+                return true
+            }
+            try? await Task.sleep(for: .milliseconds(10))
+        }
+        return Darwin.kill(pid, 0) == -1 && errno == ESRCH
+    }
+}
+
+private enum HangingCommandFixtureError: Error {
+    case pidWasNotWritten
 }
 
 private final class GitFixture {
@@ -165,7 +318,7 @@ private final class GitFixture {
             throw XCTSkip("System Git is unavailable")
         }
         rootURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("obsSync Git ✓ \(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("floderSync Git ✓ \(UUID().uuidString)", isDirectory: true)
         workURL = rootURL.appendingPathComponent("Working Copy", isDirectory: true)
         remoteURL = rootURL.appendingPathComponent("Remote.git", isDirectory: true)
         peerURL = rootURL.appendingPathComponent("Remote Peer", isDirectory: true)
@@ -227,8 +380,8 @@ private final class GitFixture {
     }
 
     private func configureIdentity(at repositoryURL: URL) throws {
-        _ = try git(["-C", repositoryURL.path, "config", "user.name", "obsSync Tests"])
-        _ = try git(["-C", repositoryURL.path, "config", "user.email", "tests@obssync.dev"])
+        _ = try git(["-C", repositoryURL.path, "config", "user.name", "floderSync Tests"])
+        _ = try git(["-C", repositoryURL.path, "config", "user.email", "tests@flodersync.dev"])
     }
 }
 

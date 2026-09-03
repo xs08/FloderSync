@@ -1,4 +1,5 @@
 import Foundation
+import Darwin
 
 struct ProcessGitClient: GitClient, Sendable {
     private let gitExecutable: String
@@ -20,6 +21,8 @@ struct ProcessGitClient: GitClient, Sendable {
         do {
             root = try await run(arguments: ["-C", profile.localPath, "rev-parse", "--show-toplevel"])
                 .standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        } catch is CancellationError {
+            throw CancellationError()
         } catch {
             throw SyncFailure.invalidRepository(
                 L10n.string("error.invalidRepository", table: .errors)
@@ -39,6 +42,8 @@ struct ProcessGitClient: GitClient, Sendable {
         do {
             branch = try await run(arguments: ["-C", root, "symbolic-ref", "--short", "HEAD"])
                 .standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        } catch is CancellationError {
+            throw CancellationError()
         } catch {
             throw SyncFailure.detachedHead
         }
@@ -47,6 +52,8 @@ struct ProcessGitClient: GitClient, Sendable {
         do {
             remoteURL = try await run(arguments: ["-C", root, "remote", "get-url", profile.remoteName])
                 .standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        } catch is CancellationError {
+            throw CancellationError()
         } catch {
             throw SyncFailure.remoteMissing(
                 L10n.format("error.remoteMissing", table: .errors, profile.remoteName)
@@ -105,8 +112,35 @@ struct ProcessGitClient: GitClient, Sendable {
         _ = try await run(arguments: ["-C", path, "add", "--all"], step: .staging)
     }
 
+    func commitIdentity(at path: String) async throws -> GitCommitIdentity {
+        async let name = configuredValue("user.name", at: path)
+        async let email = configuredValue("user.email", at: path)
+        return try await GitCommitIdentity(name: name, email: email)
+    }
+
     func commit(at path: String, message: String) async throws {
         _ = try await run(arguments: ["-C", path, "commit", "-m", message], step: .committing)
+    }
+
+    func commit(
+        at path: String,
+        message: String,
+        identity: GitCommitIdentity
+    ) async throws {
+        guard let name = identity.name, let email = identity.email else {
+            throw SyncFailure.configuration(
+                L10n.string("error.commitIdentityMissing", table: .errors)
+            )
+        }
+        _ = try await run(
+            arguments: [
+                "-c", "user.name=\(name)",
+                "-c", "user.email=\(email)",
+                "-C", path,
+                "commit", "-m", message
+            ],
+            step: .committing
+        )
     }
 
     func integrateRemote(
@@ -135,19 +169,41 @@ struct ProcessGitClient: GitClient, Sendable {
         )
     }
 
+    private func configuredValue(_ key: String, at path: String) async throws -> String? {
+        let result: CommandResult
+        do {
+            result = try await run(arguments: ["-C", path, "config", "--get", key])
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch {
+            return nil
+        }
+        let value = result.standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : value
+    }
+
     private func run(arguments: [String], step: SyncStep = .validation) async throws -> CommandResult {
         let executable = gitExecutable
         let commandTimeout = timeout
         let result: CommandResult
 
+        let worker = Task.detached(priority: .utility) {
+            try Self.runSynchronously(
+                executable: executable,
+                arguments: arguments,
+                timeout: commandTimeout,
+                isCancelled: { Task<Never, Never>.isCancelled }
+            )
+        }
+
         do {
-            result = try await Task.detached(priority: .utility) {
-                try Self.runSynchronously(
-                    executable: executable,
-                    arguments: arguments,
-                    timeout: commandTimeout
-                )
-            }.value
+            result = try await withTaskCancellationHandler {
+                try await worker.value
+            } onCancel: {
+                worker.cancel()
+            }
+        } catch is CancellationError {
+            throw CancellationError()
         } catch let failure as SyncFailure {
             throw failure
         } catch {
@@ -190,8 +246,13 @@ struct ProcessGitClient: GitClient, Sendable {
     private static func runSynchronously(
         executable: String,
         arguments: [String],
-        timeout: TimeInterval
+        timeout: TimeInterval,
+        isCancelled: @Sendable () -> Bool
     ) throws -> CommandResult {
+        if isCancelled() {
+            throw CancellationError()
+        }
+
         let fileManager = FileManager.default
         let temporaryDirectory = fileManager.temporaryDirectory
             .appendingPathComponent("FloderSync-\(UUID().uuidString)", isDirectory: true)
@@ -223,14 +284,17 @@ struct ProcessGitClient: GitClient, Sendable {
         process.environment = environment
 
         try process.run()
-        let deadline = Date().addingTimeInterval(timeout)
+        let deadline = ProcessInfo.processInfo.systemUptime + max(0, timeout)
         while process.isRunning {
-            if Date() >= deadline {
-                process.terminate()
-                process.waitUntilExit()
+            if isCancelled() {
+                stop(process)
+                throw CancellationError()
+            }
+            if ProcessInfo.processInfo.systemUptime >= deadline {
+                stop(process)
                 throw SyncFailure.timedOut
             }
-            Thread.sleep(forTimeInterval: 0.05)
+            Thread.sleep(forTimeInterval: 0.02)
         }
 
         try stdoutHandle.synchronize()
@@ -243,6 +307,25 @@ struct ProcessGitClient: GitClient, Sendable {
             standardOutput: standardOutput,
             standardError: standardError
         )
+    }
+
+    private static func stop(_ process: Process) {
+        guard process.isRunning else { return }
+
+        process.terminate()
+        waitForExit(process, timeout: 0.25)
+
+        if process.isRunning {
+            _ = Darwin.kill(process.processIdentifier, SIGKILL)
+            waitForExit(process, timeout: 1)
+        }
+    }
+
+    private static func waitForExit(_ process: Process, timeout: TimeInterval) {
+        let deadline = ProcessInfo.processInfo.systemUptime + timeout
+        while process.isRunning && ProcessInfo.processInfo.systemUptime < deadline {
+            Thread.sleep(forTimeInterval: 0.01)
+        }
     }
 
     private static func discoverGitExecutable() -> String {

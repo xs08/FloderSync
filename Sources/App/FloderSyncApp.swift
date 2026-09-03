@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @main
@@ -22,6 +23,13 @@ struct FloderSyncApp: App {
             .frame(width: 20, height: 18)
                 .accessibilityLabel(Text("app.name"))
                 .task { model.start() }
+                .onReceive(
+                    NotificationCenter.default.publisher(
+                        for: NSApplication.didBecomeActiveNotification
+                    )
+                ) { _ in
+                    Task { await model.refreshLaunchAtLoginStatus() }
+                }
         }
         .menuBarExtraStyle(.window)
 

@@ -1,6 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "error.autoCommitDisabled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Uncommitted changes were found, but automatic commit is disabled. Commit them manually or enable automatic commit." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "检测到未提交的变更，但自动提交已关闭。请手动提交，或开启自动提交。" } }
+      }
+    },
     "error.cancelled" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -50,6 +57,20 @@
             "value" : "无法启动文件系统变化监控。"
           }
         }
+      }
+    },
+    "error.commitIdentityMissing" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No complete Git author identity is available. Configure an author name and email here or in Git." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "没有可用的完整 Git 提交者身份。请在此处或 Git 中配置名称和邮箱。" } }
+      }
+    },
+    "error.commitMessageMissing" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The automatic commit message is empty. Update the automatic commit configuration." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "自动提交信息为空，请更新自动提交配置。" } }
       }
     },
     "error.detachedHead" : {

@@ -1,6 +1,90 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "automation.autoCommit" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Automatic Commit" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "自动提交" } }
+      }
+    },
+    "automation.autoCommit.disabled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Off" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "关闭" } }
+      }
+    },
+    "automation.autoCommit.email" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Author Email" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提交者邮箱" } }
+      }
+    },
+    "automation.autoCommit.email.placeholder" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Use Git configuration" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "使用 Git 配置" } }
+      }
+    },
+    "automation.autoCommit.enabled" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "On" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "开启" } }
+      }
+    },
+    "automation.autoCommit.identity.help" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Leave blank to use the repository or global Git user.name and user.email." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "留空时使用仓库或 Git 全局配置中的 user.name 与 user.email。" } }
+      }
+    },
+    "automation.autoCommit.message" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Commit Message" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提交信息" } }
+      }
+    },
+    "automation.autoCommit.message.help" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Use fixed text or insert ${user}, ${email}, and ${time}." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "可使用固定文本，或插入 ${user}、${email}、${time}。" } }
+      }
+    },
+    "automation.autoCommit.message.placeholder" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "FloderSync: automatic sync at ${time}" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "FloderSync：${time} 自动同步" } }
+      }
+    },
+    "automation.autoCommit.messageRequired" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Enter a commit message before enabling automatic commit." } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "开启自动提交前，请填写提交信息。" } }
+      }
+    },
+    "automation.autoCommit.user" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Author Name" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "提交者名称" } }
+      }
+    },
+    "automation.autoCommit.user.placeholder" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Use Git configuration" } },
+        "zh-Hans" : { "stringUnit" : { "state" : "translated", "value" : "使用 Git 配置" } }
+      }
+    },
     "automation.daily" : {
       "extractionState" : "stale",
       "localizations" : {

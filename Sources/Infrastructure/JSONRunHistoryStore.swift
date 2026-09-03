@@ -20,7 +20,7 @@ actor JSONRunHistoryStore: RunHistoryStore {
             in: .userDomainMask
         ).first ?? FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Application Support", isDirectory: true)
-        let directory = applicationSupport.appendingPathComponent("dev.obssync.app", isDirectory: true)
+        let directory = applicationSupport.appendingPathComponent("dev.flodersync.app", isDirectory: true)
         return JSONRunHistoryStore(fileURL: directory.appendingPathComponent("history.json"))
     }
 

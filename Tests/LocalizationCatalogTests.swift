@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import obsSync
+@testable import floderSync
 
 final class LocalizationCatalogTests: XCTestCase {
     @MainActor

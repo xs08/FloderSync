@@ -558,18 +558,6 @@ private struct RepositoryDetailView: View {
                     value: L10n.string("repository.currentBranch", table: .settings)
                 )
 
-                LabeledContent {
-                    TextField(
-                        L10n.string("repository.commitTemplate", table: .repositoryActions),
-                        text: Binding(
-                            get: { profile.commitMessageTemplate },
-                            set: { model.setCommitMessageTemplate(id: profile.id, template: $0) }
-                        )
-                    )
-                    .labelsHidden()
-                } label: {
-                    Text(L10n.string("repository.commitTemplate", table: .repositoryActions))
-                }
             } header: {
                 Text(L10n.string("repository.section.behavior", table: .settings))
             }
@@ -734,6 +722,9 @@ private struct GeneralSettingsView: View {
         .scrollContentBackground(.hidden)
         .background(palette.contentBackground)
         .padding(24)
+        .task {
+            await model.refreshLaunchAtLoginStatus()
+        }
     }
 
     private func themeTitle(_ theme: AppTheme) -> String {
@@ -982,6 +973,15 @@ private struct AutomationConfigurationSummary: View {
             L10n.string("automation.integration", table: .automation),
             value: integrationTitle(configuration.integrationStrategy)
         )
+        LabeledContent(
+            L10n.string("automation.autoCommit", table: .automation),
+            value: L10n.string(
+                configuration.automaticCommit.isEnabled
+                    ? "automation.autoCommit.enabled"
+                    : "automation.autoCommit.disabled",
+                table: .automation
+            )
+        )
     }
 
     private var triggerSummary: String {
@@ -1092,6 +1092,64 @@ private struct AutomationConfigurationEditor: View {
             onChange: setDailyTimes
         )
 
+        Toggle(
+            L10n.string("automation.autoCommit", table: .automation),
+            isOn: Binding(
+                get: { configuration.automaticCommit.isEnabled },
+                set: { setAutomaticCommitEnabled($0) }
+            )
+        )
+
+        if configuration.automaticCommit.isEnabled {
+            LabeledContent {
+                TextField(
+                    L10n.string("automation.autoCommit.user.placeholder", table: .automation),
+                    text: Binding(
+                        get: { configuration.automaticCommit.authorName ?? "" },
+                        set: { setAutomaticCommitAuthorName($0) }
+                    )
+                )
+                .labelsHidden()
+            } label: {
+                Text(L10n.string("automation.autoCommit.user", table: .automation))
+            }
+
+            LabeledContent {
+                TextField(
+                    L10n.string("automation.autoCommit.email.placeholder", table: .automation),
+                    text: Binding(
+                        get: { configuration.automaticCommit.authorEmail ?? "" },
+                        set: { setAutomaticCommitAuthorEmail($0) }
+                    )
+                )
+                .labelsHidden()
+            } label: {
+                Text(L10n.string("automation.autoCommit.email", table: .automation))
+            }
+
+            Text(L10n.string("automation.autoCommit.identity.help", table: .automation))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            LabeledContent {
+                TextField(
+                    L10n.string("automation.autoCommit.message.placeholder", table: .automation),
+                    text: Binding(
+                        get: { configuration.automaticCommit.messageTemplate },
+                        set: { setAutomaticCommitMessageTemplate($0) }
+                    )
+                )
+                .labelsHidden()
+            } label: {
+                Text(L10n.string("automation.autoCommit.message", table: .automation))
+            }
+
+            Text(L10n.string("automation.autoCommit.message.help", table: .automation))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+        }
+
         Picker(
             L10n.string("automation.integration", table: .automation),
             selection: Binding(
@@ -1145,6 +1203,30 @@ private struct AutomationConfigurationEditor: View {
         var updated = configuration
         updated.policies.removeAll { if case .daily = $0 { true } else { false } }
         if !times.isEmpty { updated.policies.append(.daily(times: times.sorted())) }
+        onChange(updated)
+    }
+
+    private func setAutomaticCommitEnabled(_ enabled: Bool) {
+        var updated = configuration
+        updated.automaticCommit.isEnabled = enabled
+        onChange(updated)
+    }
+
+    private func setAutomaticCommitAuthorName(_ name: String) {
+        var updated = configuration
+        updated.automaticCommit.authorName = name
+        onChange(updated)
+    }
+
+    private func setAutomaticCommitAuthorEmail(_ email: String) {
+        var updated = configuration
+        updated.automaticCommit.authorEmail = email
+        onChange(updated)
+    }
+
+    private func setAutomaticCommitMessageTemplate(_ template: String) {
+        var updated = configuration
+        updated.automaticCommit.messageTemplate = template
         onChange(updated)
     }
 

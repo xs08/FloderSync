@@ -19,6 +19,7 @@ FloderSync uses the Git installation and authentication already configured on yo
 - Manage multiple existing local Git repositories and verify their remote connections.
 - Reuse automation rules across repositories or keep an independent configuration for one repository.
 - Sync manually, at multiple daily times, on a fixed interval, or after file changes with a configurable quiet period.
+- Automatically commit detected changes with a fixed or dynamic message (`${user}`, `${email}`, `${time}`); author fields can fall back to repository/global Git configuration.
 - Choose Rebase or Merge for remote integration; Rebase is the conservative default.
 - Detect conflicts, in-progress rebases or merges, detached HEAD, authentication errors, and network failures.
 - Serialize operations for the same repository, coalesce repeated triggers, and sync up to two different repositories concurrently.
@@ -39,16 +40,16 @@ FloderSync uses the Git installation and authentication already configured on yo
 ```bash
 xcodegen generate
 xcodebuild build \
-  -project obsSync.xcodeproj \
-  -scheme obsSync \
+  -project floderSync.xcodeproj \
+  -scheme floderSync \
   -destination 'platform=macOS'
 xcodebuild test \
-  -project obsSync.xcodeproj \
-  -scheme obsSync \
+  -project floderSync.xcodeproj \
+  -scheme floderSync \
   -destination 'platform=macOS'
 ```
 
-You can also open `obsSync.xcodeproj` and run the `obsSync` scheme. FloderSync is an `LSUIElement` app, so it appears only in the system menu bar and does not show a Dock icon.
+You can also open `floderSync.xcodeproj` and run the `floderSync` scheme. FloderSync is an `LSUIElement` app, so it appears only in the system menu bar and does not show a Dock icon.
 
 ### Install in Applications
 
@@ -94,14 +95,14 @@ Automatic sync runs with `GIT_TERMINAL_PROMPT=0`. If authentication cannot compl
 Configuration and the 100 most recent sync summaries are stored in:
 
 ```text
-~/Library/Application Support/dev.obssync.app/
+~/Library/Application Support/dev.flodersync.app/
 ```
 
 Removing a repository from FloderSync deletes only its app configuration. It does not delete the local working tree or any `.git` data.
 
 ## Before release
 
-- Replace the development bundle identifier `dev.obssync.app` with the final reverse-domain identifier.
+- Replace the development bundle identifier `dev.flodersync.app` with the final reverse-domain identifier.
 - Configure Developer ID signing, Hardened Runtime, notarization, and an update channel.
 - Validate real SSH, HTTPS Keychain, launch-at-login, and the complete window appearance matrix in a signed build.
 

@@ -20,7 +20,7 @@
 
 | 问题表现 | 根因 | 最终方案 | 防回归约束 |
 | --- | --- | --- | --- |
-| 应用名称不统一 | Target、Bundle Display Name 和 UI 文案分别维护 | 用户可见名称统一为 `FloderSync`，Swift 模块名继续使用 `obsSync` | 构建设置、String Catalog、README 和窗口文案必须同步检查 |
+| 应用名称不统一 | Target、Bundle Display Name 和 UI 文案分别维护 | 用户可见名称统一为 `FloderSync`，Swift 模块名继续使用 `floderSync` | 构建设置、String Catalog、README 和窗口文案必须同步检查 |
 | 菜单栏空状态重复展示“打开设置” | 空状态和固定底栏都提供同一入口 | 空状态只说明暂无仓库；底栏固定保留设置与添加仓库 | 同一视图层级不重复主操作 |
 | 菜单栏有仓库但列表区域消失 | 非空 `ScrollView` 只有最大高度，`MenuBarExtra` 首次测量时将其压缩为零；懒容器随后也没有稳定视口 | 按仓库行数计算明确高度并限制为 360pt，使用普通 `VStack` 确保首帧创建行内容 | 0、1、3 和大量仓库的高度边界必须由测试覆盖 |
 | 菜单栏“退出”占用高频入口 | 退出不是同步工作流的常用动作 | 菜单栏底栏改为“打开设置 + 添加仓库”；退出只保留在设置侧栏底部 | 菜单栏只放高频操作 |
@@ -260,7 +260,7 @@ Tab 导航仍然可用，但不会产生“蓝色填充在新模块、蓝色外�
 
 ## 9. 实现落点
 
-- 应用入口、菜单栏和设置命令：[`Sources/App/ObsSyncApp.swift`](../Sources/App/ObsSyncApp.swift)
+- 应用入口、菜单栏和设置命令：[`Sources/App/FloderSyncApp.swift`](../Sources/App/FloderSyncApp.swift)
 - AppKit 设置窗口生命周期：[`Sources/App/SettingsWindowController.swift`](../Sources/App/SettingsWindowController.swift)
 - 设置侧栏、模块与主题 UI：[`Sources/Presentation/SettingsRootView.swift`](../Sources/Presentation/SettingsRootView.swift)
 - 菜单栏状态与快捷操作：[`Sources/Presentation/MenuBarView.swift`](../Sources/Presentation/MenuBarView.swift)

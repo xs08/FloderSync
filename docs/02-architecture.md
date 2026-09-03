@@ -51,7 +51,7 @@ Infrastructure
 
 ### Infrastructure
 
-- `ProcessGitClient`：安全构造参数数组、设置工作目录与非交互环境、捕获 stdout/stderr、超时与退出码；不通过 shell 拼接命令。
+- `ProcessGitClient`：安全构造参数数组、设置工作目录与非交互环境、捕获 stdout/stderr、超时与退出码；取消/超时使用 TERM 后有限等待并升级到 KILL；不通过 shell 拼接命令。
 - `FSEventsWatcher`：目录事件、`.git` 过滤、去抖和事件合并。
 - `ConfigStore`：在 Application Support 中原子保存版本化配置；不保存认证秘密。
 - `HistoryStore`：保存有限数量的同步摘要和脱敏步骤日志。
@@ -63,14 +63,17 @@ Infrastructure
 ```text
 SyncProfile
   id, name, localPath, remoteName, branchPolicy,
-  commitMessageTemplate, customAutomationConfiguration,
+  customAutomationConfiguration,
   automationRuleID?, isEnabled
 
 AutomationRule
   id, name, configuration
 
 AutomationConfiguration
-  policies[], integrationStrategy(rebase | merge)
+  policies[], integrationStrategy(rebase | merge), automaticCommit
+
+AutomaticCommitConfiguration
+  isEnabled, authorName?, authorEmail?, messageTemplate
 
 SyncPolicy
   manual | daily(times, weekdays?) | interval(duration) |

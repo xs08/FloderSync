@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8C4576B632D753E2229515E5"
                BuildableName = "FloderSync.app"
-               BlueprintName = "obsSync"
-               ReferencedContainer = "container:obsSync.xcodeproj">
+               BlueprintName = "floderSync"
+               ReferencedContainer = "container:floderSync.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9F8E401F1C6C94A173E54BA6"
-               BuildableName = "obsSyncTests.xctest"
-               BlueprintName = "obsSyncTests"
-               ReferencedContainer = "container:obsSync.xcodeproj">
+               BuildableName = "floderSyncTests.xctest"
+               BlueprintName = "floderSyncTests"
+               ReferencedContainer = "container:floderSync.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -46,8 +46,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8C4576B632D753E2229515E5"
             BuildableName = "FloderSync.app"
-            BlueprintName = "obsSync"
-            ReferencedContainer = "container:obsSync.xcodeproj">
+            BlueprintName = "floderSync"
+            ReferencedContainer = "container:floderSync.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -57,9 +57,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9F8E401F1C6C94A173E54BA6"
-               BuildableName = "obsSyncTests.xctest"
-               BlueprintName = "obsSyncTests"
-               ReferencedContainer = "container:obsSync.xcodeproj">
+               BuildableName = "floderSyncTests.xctest"
+               BlueprintName = "floderSyncTests"
+               ReferencedContainer = "container:floderSync.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -80,8 +80,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8C4576B632D753E2229515E5"
             BuildableName = "FloderSync.app"
-            BlueprintName = "obsSync"
-            ReferencedContainer = "container:obsSync.xcodeproj">
+            BlueprintName = "floderSync"
+            ReferencedContainer = "container:floderSync.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -97,8 +97,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8C4576B632D753E2229515E5"
             BuildableName = "FloderSync.app"
-            BlueprintName = "obsSync"
-            ReferencedContainer = "container:obsSync.xcodeproj">
+            BlueprintName = "floderSync"
+            ReferencedContainer = "container:floderSync.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

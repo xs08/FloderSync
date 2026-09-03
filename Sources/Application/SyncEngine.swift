@@ -54,6 +54,36 @@ struct SyncEngine: Sendable {
             }
 
             if status.hasChanges {
+                guard profile.automaticCommit.isEnabled else {
+                    throw SyncFailure.configuration(
+                        L10n.string("error.autoCommitDisabled", table: .errors)
+                    )
+                }
+
+                let configuredIdentity = GitCommitIdentity(
+                    name: profile.automaticCommit.authorName,
+                    email: profile.automaticCommit.authorEmail
+                )
+                let fallbackIdentity = configuredIdentity.isComplete
+                    ? GitCommitIdentity()
+                    : try await git.commitIdentity(at: repository.rootPath)
+                let commitIdentity = profile.automaticCommit.resolvedIdentity(
+                    fallingBackTo: fallbackIdentity
+                )
+                guard commitIdentity.isComplete else {
+                    throw SyncFailure.configuration(
+                        L10n.string("error.commitIdentityMissing", table: .errors)
+                    )
+                }
+                let commitMessage = profile.automaticCommit
+                    .resolvedMessage(identity: commitIdentity, at: startedAt)
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !commitMessage.isEmpty else {
+                    throw SyncFailure.configuration(
+                        L10n.string("error.commitMessageMissing", table: .errors)
+                    )
+                }
+
                 activeStep = .staging
                 try Task.checkCancellation()
                 try await git.stageAll(at: repository.rootPath)
@@ -63,7 +93,8 @@ struct SyncEngine: Sendable {
                 try Task.checkCancellation()
                 try await git.commit(
                     at: repository.rootPath,
-                    message: profile.commitMessage(at: startedAt)
+                    message: commitMessage,
+                    identity: commitIdentity
                 )
                 completedSteps.append(.init(step: .committing, completedAt: now()))
             }

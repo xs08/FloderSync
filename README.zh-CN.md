@@ -19,6 +19,7 @@ FloderSync 使用 Mac 中已经安装和认证的 Git，不保存 Git 密码、�
 - 管理多个已有本地 Git 仓库，并检查远端连接。
 - 可让多个仓库复用同一条自动化规则，也可以为单个仓库保留独立配置。
 - 支持手动同步、每日多个时间点、固定间隔，以及文件变化后的可配置静默延迟。
+- 可自动提交检测到的变更，提交信息支持固定文本或 `${user}`、`${email}`、`${time}` 动态变量；提交者留空时沿用仓库或 Git 全局配置。
 - 远端整合支持 Rebase 或 Merge，默认采用较保守的 Rebase。
 - 识别冲突、进行中的 rebase 或 merge、detached HEAD、认证错误和网络故障。
 - 同一仓库串行执行、合并重复触发，不同仓库最多并发同步两个。
@@ -39,16 +40,16 @@ FloderSync 使用 Mac 中已经安装和认证的 Git，不保存 Git 密码、�
 ```bash
 xcodegen generate
 xcodebuild build \
-  -project obsSync.xcodeproj \
-  -scheme obsSync \
+  -project floderSync.xcodeproj \
+  -scheme floderSync \
   -destination 'platform=macOS'
 xcodebuild test \
-  -project obsSync.xcodeproj \
-  -scheme obsSync \
+  -project floderSync.xcodeproj \
+  -scheme floderSync \
   -destination 'platform=macOS'
 ```
 
-也可以打开 `obsSync.xcodeproj` 后直接运行 `obsSync` scheme。FloderSync 使用 `LSUIElement`，启动后只显示在系统菜单栏，不显示 Dock 图标。
+也可以打开 `floderSync.xcodeproj` 后直接运行 `floderSync` scheme。FloderSync 使用 `LSUIElement`，启动后只显示在系统菜单栏，不显示 Dock 图标。
 
 ### 安装到 Applications
 
@@ -94,14 +95,14 @@ FloderSync 按顺序查找 `/usr/bin/git`、Apple Silicon Homebrew Git 和 Intel
 运行配置和最近 100 条同步摘要保存在：
 
 ```text
-~/Library/Application Support/dev.obssync.app/
+~/Library/Application Support/dev.flodersync.app/
 ```
 
 从 FloderSync 移除仓库时只会删除应用配置，不会删除本地工作区或任何 `.git` 数据。
 
 ## 发布前待办
 
-- 将开发期 Bundle Identifier `dev.obssync.app` 替换为最终反向域名标识。
+- 将开发期 Bundle Identifier `dev.flodersync.app` 替换为最终反向域名标识。
 - 配置 Developer ID、Hardened Runtime、公证与更新渠道。
 - 在已签名 App 中验证真实 SSH、HTTPS Keychain、登录启动和完整窗口外观矩阵。
 

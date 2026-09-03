@@ -1,7 +1,7 @@
-name: obsSync
+name: floderSync
 options:
   xcodeVersion: "26.6"
-  bundleIdPrefix: dev.obssync
+  bundleIdPrefix: dev.flodersync
   deploymentTarget:
     macOS: "14.0"
   createIntermediateGroups: true
@@ -16,7 +16,7 @@ settings:
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     STRING_CATALOG_GENERATE_SYMBOLS: YES
 targets:
-  obsSync:
+  floderSync:
     type: application
     platform: macOS
     sources:
@@ -25,9 +25,9 @@ targets:
         buildPhase: resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.obssync.app
+        PRODUCT_BUNDLE_IDENTIFIER: dev.flodersync.app
         PRODUCT_NAME: FloderSync
-        PRODUCT_MODULE_NAME: obsSync
+        PRODUCT_MODULE_NAME: floderSync
         MARKETING_VERSION: 0.1.0
         CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: YES
@@ -35,26 +35,26 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: FloderSync
         CODE_SIGN_STYLE: Automatic
         ENABLE_APP_SANDBOX: NO
-  obsSyncTests:
+  floderSyncTests:
     type: bundle.unit-test
     platform: macOS
     sources:
       - path: Tests
     dependencies:
-      - target: obsSync
+      - target: floderSync
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.obssync.tests
+        PRODUCT_BUNDLE_IDENTIFIER: dev.flodersync.tests
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGNING_ALLOWED: NO
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/FloderSync.app/Contents/MacOS/FloderSync"
         BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
-  obsSync:
+  floderSync:
     build:
       targets:
-        obsSync: all
-        obsSyncTests: [test]
+        floderSync: all
+        floderSyncTests: [test]
     test:
       targets:
-        - obsSyncTests
+        - floderSyncTests

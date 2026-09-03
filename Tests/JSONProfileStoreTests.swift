@@ -1,10 +1,10 @@
 import XCTest
-@testable import obsSync
+@testable import floderSync
 
 final class JSONProfileStoreTests: XCTestCase {
     func testProfilesRoundTrip() async throws {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("obsSync-store-test-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("floderSync-store-test-\(UUID().uuidString)", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = JSONProfileStore(fileURL: directory.appendingPathComponent("configuration.json"))
         let profiles = [SyncProfile(name: "Notes", localPath: "/tmp/Notes")]
@@ -19,7 +19,7 @@ final class JSONProfileStoreTests: XCTestCase {
 
     func testMissingStoreLoadsAsEmpty() async throws {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("obsSync-missing-\(UUID().uuidString)/configuration.json")
+            .appendingPathComponent("floderSync-missing-\(UUID().uuidString)/configuration.json")
         let store = JSONProfileStore(fileURL: url)
 
         let loaded = try await store.loadConfiguration()
@@ -29,7 +29,7 @@ final class JSONProfileStoreTests: XCTestCase {
 
     func testSchemaV1MigratesToCustomRebaseConfiguration() async throws {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("obsSync-v1-store-test-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("floderSync-v1-store-test-\(UUID().uuidString)", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: directory) }
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let url = directory.appendingPathComponent("configuration.json")
@@ -57,5 +57,68 @@ final class JSONProfileStoreTests: XCTestCase {
         XCTAssertEqual(loaded.profiles.first?.fileChangeDebounceSeconds, 5)
         XCTAssertEqual(loaded.profiles.first?.intervalSeconds, 600)
         XCTAssertEqual(loaded.profiles.first?.integrationStrategy, .rebase)
+        XCTAssertEqual(loaded.profiles.first?.automaticCommit.isEnabled, true)
+        XCTAssertEqual(loaded.profiles.first?.automaticCommit.messageTemplate, "Sync {timestamp}")
+    }
+
+    func testSchemaV2MigratesAutomaticCommitForCustomAndRuleConfigurations() async throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("floderSync-v2-store-test-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let url = directory.appendingPathComponent("configuration.json")
+        let customProfileID = UUID()
+        let ruleProfileID = UUID()
+        let ruleID = UUID()
+        let json = """
+        {
+          "schemaVersion": 2,
+          "profiles": [
+            {
+              "id": "\(customProfileID.uuidString)",
+              "name": "Custom",
+              "localPath": "/tmp/Custom",
+              "remoteName": "origin",
+              "commitMessageTemplate": "Custom ${user}",
+              "customAutomationConfiguration": {
+                "policies": [{"interval": {"seconds": 300}}],
+                "integrationStrategy": "rebase"
+              },
+              "isEnabled": true
+            },
+            {
+              "id": "\(ruleProfileID.uuidString)",
+              "name": "Rule Repository",
+              "localPath": "/tmp/Rule",
+              "remoteName": "origin",
+              "commitMessageTemplate": "Rule ${time}",
+              "customAutomationConfiguration": {
+                "policies": [{"fileChanges": {"debounceSeconds": 5}}],
+                "integrationStrategy": "rebase"
+              },
+              "automationRuleID": "\(ruleID.uuidString)",
+              "isEnabled": true
+            }
+          ],
+          "automationRules": [{
+            "id": "\(ruleID.uuidString)",
+            "name": "Shared",
+            "configuration": {
+              "policies": [{"daily": {"times": [{"hour": 9, "minute": 30}]}}],
+              "integrationStrategy": "merge"
+            }
+          }]
+        }
+        """
+        try Data(json.utf8).write(to: url)
+
+        let loaded = try await JSONProfileStore(fileURL: url).loadConfiguration()
+
+        let custom = try XCTUnwrap(loaded.profiles.first(where: { $0.id == customProfileID }))
+        XCTAssertTrue(custom.automaticCommit.isEnabled)
+        XCTAssertEqual(custom.automaticCommit.messageTemplate, "Custom ${user}")
+        let rule = try XCTUnwrap(loaded.automationRules.first)
+        XCTAssertTrue(rule.configuration.automaticCommit.isEnabled)
+        XCTAssertEqual(rule.configuration.automaticCommit.messageTemplate, "Rule ${time}")
     }
 }

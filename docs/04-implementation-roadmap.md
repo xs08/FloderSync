@@ -34,7 +34,7 @@
 
 退出条件：CLI 级测试覆盖无变化、本地变化、远端变化、冲突和失败路径。
 
-进度：已完成 MVP 范围；配置存储已升级到 schema v2，并覆盖自动化规则库与 schema v1 迁移。本地 bare remote 集成测试通过。
+进度：已完成 MVP 范围；配置存储已升级到 schema v3，覆盖自动化规则库、可配置自动提交与 schema v1/v2 迁移。本地 bare remote 集成测试通过；Git 子进程取消/超时具备 TERM→KILL 的有限等待。
 
 ## Phase 3：调度与系统集成
 
@@ -63,4 +63,4 @@
 
 ## 编码启动条件
 
-需求文档第 6 节中的 12 项决策已确认。应用名称为 `FloderSync`，开发期 Bundle Identifier 继续使用 `dev.obssync.app` 以兼容现有本地配置，发布前允许迁移为用户最终持有的反向域名标识。
+需求文档第 6 节中的 12 项决策已确认。应用名称为 `FloderSync`，开发期 Bundle Identifier 继续使用 `dev.flodersync.app` 以兼容现有本地配置，发布前允许迁移为用户最终持有的反向域名标识。

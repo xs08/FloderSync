@@ -137,7 +137,7 @@ final class AppModel: ObservableObject {
             } catch {
                 presentedError = error.localizedDescription
             }
-            launchAtLoginStatus = await loginItemService.status()
+            await refreshLaunchAtLoginStatus()
             if notifyOnFailure, !profiles.isEmpty {
                 _ = try? await notificationService.requestAuthorization()
             }
@@ -247,6 +247,15 @@ final class AppModel: ObservableObject {
             presentedError = L10n.string("automation.rule.triggerRequired", table: .automation)
             return false
         }
+        guard !rule.configuration.automaticCommit.isEnabled ||
+                !rule.configuration.automaticCommit.messageTemplate
+                    .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            presentedError = L10n.string(
+                "automation.autoCommit.messageRequired",
+                table: .automation
+            )
+            return false
+        }
         guard let index = automationRules.firstIndex(where: { $0.id == rule.id }) else { return false }
         var savedRule = rule
         savedRule.name = trimmedName
@@ -329,12 +338,6 @@ final class AppModel: ObservableObject {
         connectionChecks[id] = nil
     }
 
-    func setCommitMessageTemplate(id: UUID, template: String) {
-        updateProfile(id: id) { profile in
-            profile.commitMessageTemplate = template
-        }
-    }
-
     func checkConnection(for profile: SyncProfile) {
         connectionChecks[profile.id] = .checking
         Task {
@@ -356,12 +359,18 @@ final class AppModel: ObservableObject {
         Task {
             do {
                 try await loginItemService.setEnabled(enabled)
-                launchAtLoginStatus = await loginItemService.status()
+                await refreshLaunchAtLoginStatus()
             } catch {
-                launchAtLoginStatus = await loginItemService.status()
+                await refreshLaunchAtLoginStatus()
                 presentedError = error.localizedDescription
             }
         }
+    }
+
+    /// Re-reads the system-owned login item state without restarting the app model.
+    /// System Settings can change this state while FloderSync is inactive.
+    func refreshLaunchAtLoginStatus() async {
+        launchAtLoginStatus = await loginItemService.status()
     }
 
     func openLoginItemsSettings() {

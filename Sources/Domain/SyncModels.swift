@@ -30,16 +30,76 @@ enum SyncIntegrationStrategy: String, Codable, CaseIterable, Identifiable, Senda
     var id: Self { self }
 }
 
+struct GitCommitIdentity: Codable, Hashable, Sendable {
+    var name: String?
+    var email: String?
+
+    init(name: String? = nil, email: String? = nil) {
+        self.name = Self.normalized(name)
+        self.email = Self.normalized(email)
+    }
+
+    var isComplete: Bool {
+        name != nil && email != nil
+    }
+
+    private static func normalized(_ value: String?) -> String? {
+        guard let trimmed = value?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !trimmed.isEmpty else { return nil }
+        return trimmed
+    }
+}
+
+struct AutomaticCommitConfiguration: Codable, Hashable, Sendable {
+    static let defaultMessageTemplate = "FloderSync: automatic sync at ${time}"
+
+    var isEnabled: Bool
+    var authorName: String?
+    var authorEmail: String?
+    var messageTemplate: String
+
+    init(
+        isEnabled: Bool = true,
+        authorName: String? = nil,
+        authorEmail: String? = nil,
+        messageTemplate: String = Self.defaultMessageTemplate
+    ) {
+        self.isEnabled = isEnabled
+        self.authorName = authorName
+        self.authorEmail = authorEmail
+        self.messageTemplate = messageTemplate
+    }
+
+    func resolvedIdentity(fallingBackTo fallback: GitCommitIdentity) -> GitCommitIdentity {
+        let configured = GitCommitIdentity(name: authorName, email: authorEmail)
+        return GitCommitIdentity(
+            name: configured.name ?? fallback.name,
+            email: configured.email ?? fallback.email
+        )
+    }
+
+    func resolvedMessage(identity: GitCommitIdentity, at date: Date) -> String {
+        messageTemplate
+            .replacingOccurrences(of: "${user}", with: identity.name ?? "")
+            .replacingOccurrences(of: "${email}", with: identity.email ?? "")
+            .replacingOccurrences(of: "${time}", with: date.formatted(.iso8601))
+            .replacingOccurrences(of: "{timestamp}", with: date.formatted(.iso8601))
+    }
+}
+
 struct AutomationConfiguration: Codable, Hashable, Sendable {
     var policies: [SyncPolicy]
     var integrationStrategy: SyncIntegrationStrategy
+    var automaticCommit: AutomaticCommitConfiguration
 
     init(
         policies: [SyncPolicy] = [.fileChanges(debounceSeconds: 5)],
-        integrationStrategy: SyncIntegrationStrategy = .rebase
+        integrationStrategy: SyncIntegrationStrategy = .rebase,
+        automaticCommit: AutomaticCommitConfiguration = AutomaticCommitConfiguration()
     ) {
         self.policies = policies
         self.integrationStrategy = integrationStrategy
+        self.automaticCommit = automaticCommit
     }
 
     var watchesFileChanges: Bool {
@@ -89,7 +149,6 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
     var name: String
     var localPath: String
     var remoteName: String
-    var commitMessageTemplate: String
     var customAutomationConfiguration: AutomationConfiguration
     var automationRuleID: UUID?
     var isEnabled: Bool
@@ -99,9 +158,10 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
         name: String,
         localPath: String,
         remoteName: String = "origin",
-        commitMessageTemplate: String = "FloderSync: automatic sync at {timestamp}",
+        commitMessageTemplate: String? = nil,
         policies: [SyncPolicy] = [.fileChanges(debounceSeconds: 5)],
         integrationStrategy: SyncIntegrationStrategy = .rebase,
+        automaticCommit: AutomaticCommitConfiguration = AutomaticCommitConfiguration(),
         automationRuleID: UUID? = nil,
         isEnabled: Bool = true
     ) {
@@ -109,20 +169,17 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
         self.name = name
         self.localPath = localPath
         self.remoteName = remoteName
-        self.commitMessageTemplate = commitMessageTemplate
+        var resolvedAutomaticCommit = automaticCommit
+        if let commitMessageTemplate {
+            resolvedAutomaticCommit.messageTemplate = commitMessageTemplate
+        }
         self.customAutomationConfiguration = AutomationConfiguration(
             policies: policies,
-            integrationStrategy: integrationStrategy
+            integrationStrategy: integrationStrategy,
+            automaticCommit: resolvedAutomaticCommit
         )
         self.automationRuleID = automationRuleID
         self.isEnabled = isEnabled
-    }
-
-    func commitMessage(at date: Date) -> String {
-        commitMessageTemplate.replacingOccurrences(
-            of: "{timestamp}",
-            with: date.formatted(.iso8601)
-        )
     }
 
     var watchesFileChanges: Bool {
@@ -143,6 +200,10 @@ struct SyncProfile: Identifiable, Codable, Hashable, Sendable {
 
     var integrationStrategy: SyncIntegrationStrategy {
         customAutomationConfiguration.integrationStrategy
+    }
+
+    var automaticCommit: AutomaticCommitConfiguration {
+        customAutomationConfiguration.automaticCommit
     }
 
     var policies: [SyncPolicy] {
@@ -193,6 +254,7 @@ enum SyncFailureCategory: String, Codable, Sendable {
     case network
     case timedOut
     case cancelled
+    case configuration
     case commandFailed
 }
 
@@ -285,6 +347,7 @@ enum SyncFailure: Error, Equatable, Sendable {
     case network(String)
     case timedOut
     case cancelled
+    case configuration(String)
     case commandFailed(step: SyncStep, message: String)
 
     var category: SyncFailureCategory {
@@ -298,13 +361,15 @@ enum SyncFailure: Error, Equatable, Sendable {
         case .network: .network
         case .timedOut: .timedOut
         case .cancelled: .cancelled
+        case .configuration: .configuration
         case .commandFailed: .commandFailed
         }
     }
 
     var requiresUserAction: Bool {
         switch self {
-        case .invalidRepository, .remoteMissing, .detachedHead, .authentication, .conflict:
+        case .invalidRepository, .remoteMissing, .detachedHead, .authentication, .conflict,
+             .configuration:
             true
         default:
             false
@@ -319,6 +384,7 @@ enum SyncFailure: Error, Equatable, Sendable {
              let .authentication(message),
              let .conflict(message),
              let .network(message),
+             let .configuration(message),
              let .commandFailed(_, message):
             message
         case .detachedHead:

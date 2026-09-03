@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0444F7F068361D4DD8DCC5F0 /* AppModelLoginItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23CD46F05F746EAC443775FB /* AppModelLoginItemTests.swift */; };
 		078DBD1A585DC90931CD6CD3 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 062F32F20AF6E12A8717C646 /* MenuBarView.swift */; };
 		0C78F5790EAC0A640AD668DE /* ProcessGitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB99BE2F94A900ADF4A4FC57 /* ProcessGitClient.swift */; };
 		14DA9261DBF64E65AC995FC4 /* SyncEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9EABF0697691AD62B15244 /* SyncEngineTests.swift */; };
@@ -21,6 +22,7 @@
 		44A59B4B96DC89C56D793142 /* Errors.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 6EF2240985155158FD931603 /* Errors.xcstrings */; };
 		450ABF086E6FF2E7D6057B8C /* SyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4E6F2FE0A46BBB9F2409C0 /* SyncModels.swift */; };
 		4899D075BD39353DA0511FE8 /* UserNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F34C21C3F42415899CCDEFB /* UserNotificationService.swift */; };
+		4D941BAF18D549DC98316F5C /* AutomationRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262CC8DD00FF08966C14FA78 /* AutomationRuleTests.swift */; };
 		5C2FC09B4F3941516E577C41 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBEAD1FD0A2AA6ACAF2E90 /* Localizable.xcstrings */; };
 		5CBC7530840C1461E79F509C /* GitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E855D28821340B65667957EE /* GitClient.swift */; };
 		5F52C6864D914B1A64A1E731 /* JSONProfileStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA60C851105CC4DD34DF4B3 /* JSONProfileStoreTests.swift */; };
@@ -43,7 +45,7 @@
 		C5492244399C18D506C4D985 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA26AD8498CBE1D15070797 /* Assets.xcassets */; };
 		D4922A5BAA939FA73CBE0F6D /* JSONRunHistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C442DD394878E98C1CEB055 /* JSONRunHistoryStoreTests.swift */; };
 		D7D34EC098A0EBB491C6E90B /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B29008BF496757BF302BECB /* AppModel.swift */; };
-		D927950B934BAE385ED1556F /* ObsSyncApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */; };
+		D927950B934BAE385ED1556F /* FloderSyncApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3894EAB5AB081EB4BA83B052 /* FloderSyncApp.swift */; };
 		DBF3B2CBB0F6DE3A6E74FD98 /* SettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405AE485A5D0418E8D514578 /* SettingsRootView.swift */; };
 		DD1FEB71D1B583A3CB923D02 /* FileEventFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */; };
 		E32003662F7D17BD3DAAE00A /* LoginItemService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FA87E9E1BFA13130C2F9D52 /* LoginItemService.swift */; };
@@ -56,7 +58,7 @@
 			containerPortal = 2275CE13923BAFCA54B80F28 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8C4576B632D753E2229515E5;
-			remoteInfo = obsSync;
+			remoteInfo = floderSync;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -67,9 +69,11 @@
 		17A698585A5FDDCF7D545E34 /* RunHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunHistoryStore.swift; sourceTree = "<group>"; };
 		1F34C21C3F42415899CCDEFB /* UserNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationService.swift; sourceTree = "<group>"; };
 		2302C5CD6F5B53A9271DA6B1 /* CatchUpCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpCalculator.swift; sourceTree = "<group>"; };
+		23CD46F05F746EAC443775FB /* AppModelLoginItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelLoginItemTests.swift; sourceTree = "<group>"; };
+		262CC8DD00FF08966C14FA78 /* AutomationRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationRuleTests.swift; sourceTree = "<group>"; };
 		2EC4D531CBB1D7BB718B9D35 /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
-		30E61765D9381998A51F096B /* obsSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = obsSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObsSyncApp.swift; sourceTree = "<group>"; };
+		30E61765D9381998A51F096B /* floderSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = floderSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3894EAB5AB081EB4BA83B052 /* FloderSyncApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloderSyncApp.swift; sourceTree = "<group>"; };
 		405AE485A5D0418E8D514578 /* SettingsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRootView.swift; sourceTree = "<group>"; };
 		48F34EF3998FD19F21BACF4A /* Settings.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Settings.xcstrings; sourceTree = "<group>"; };
 		4B29008BF496757BF302BECB /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -90,7 +94,7 @@
 		AB99BE2F94A900ADF4A4FC57 /* ProcessGitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessGitClient.swift; sourceTree = "<group>"; };
 		B2D24536D26E02945B2AF930 /* FSEventsDirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSEventsDirectoryWatcher.swift; sourceTree = "<group>"; };
 		BB4E6F2FE0A46BBB9F2409C0 /* SyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncModels.swift; sourceTree = "<group>"; };
-		BEBAB136B9D70B8D6C095C20 /* obsSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = obsSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEBAB136B9D70B8D6C095C20 /* floderSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = floderSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3138238A8DCD6D02904A994 /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		C319C1ED0C180017591BDBD7 /* ProcessGitClientIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessGitClientIntegrationTests.swift; sourceTree = "<group>"; };
 		C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileEventFilterTests.swift; sourceTree = "<group>"; };
@@ -121,7 +125,7 @@
 		230471F695B487E93E06D5F4 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				3894EAB5AB081EB4BA83B052 /* ObsSyncApp.swift */,
+				3894EAB5AB081EB4BA83B052 /* FloderSyncApp.swift */,
 				998AA02E7F485FB2161C177C /* SettingsWindowController.swift */,
 			);
 			path = App;
@@ -145,6 +149,8 @@
 		3DBAC632B2776939DF8667CD /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				23CD46F05F746EAC443775FB /* AppModelLoginItemTests.swift */,
+				262CC8DD00FF08966C14FA78 /* AutomationRuleTests.swift */,
 				8D57DFF53638C2F4B72248D4 /* CatchUpCalculatorTests.swift */,
 				C3E9E3ED43051F8CCCC5BCC2 /* FileEventFilterTests.swift */,
 				EDA60C851105CC4DD34DF4B3 /* JSONProfileStoreTests.swift */,
@@ -203,8 +209,8 @@
 		D674C8A2FC40292F9C345185 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				30E61765D9381998A51F096B /* obsSync.app */,
-				BEBAB136B9D70B8D6C095C20 /* obsSyncTests.xctest */,
+				30E61765D9381998A51F096B /* floderSync.app */,
+				BEBAB136B9D70B8D6C095C20 /* floderSyncTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -231,9 +237,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8C4576B632D753E2229515E5 /* obsSync */ = {
+		8C4576B632D753E2229515E5 /* floderSync */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 94F4F3135A39A1EB98FBA268 /* Build configuration list for PBXNativeTarget "obsSync" */;
+			buildConfigurationList = 94F4F3135A39A1EB98FBA268 /* Build configuration list for PBXNativeTarget "floderSync" */;
 			buildPhases = (
 				4B710BBF40D03A54BE2EB36F /* Sources */,
 				3957C63E4BF51276997D246B /* Resources */,
@@ -242,16 +248,16 @@
 			);
 			dependencies = (
 			);
-			name = obsSync;
+			name = floderSync;
 			packageProductDependencies = (
 			);
-			productName = obsSync;
-			productReference = 30E61765D9381998A51F096B /* obsSync.app */;
+			productName = floderSync;
+			productReference = 30E61765D9381998A51F096B /* floderSync.app */;
 			productType = "com.apple.product-type.application";
 		};
-		9F8E401F1C6C94A173E54BA6 /* obsSyncTests */ = {
+		9F8E401F1C6C94A173E54BA6 /* floderSyncTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 843AAF9ADD718AE47810BDA4 /* Build configuration list for PBXNativeTarget "obsSyncTests" */;
+			buildConfigurationList = 843AAF9ADD718AE47810BDA4 /* Build configuration list for PBXNativeTarget "floderSyncTests" */;
 			buildPhases = (
 				E0997CF0AA368DA3406063FB /* Sources */,
 			);
@@ -260,11 +266,11 @@
 			dependencies = (
 				91F6B543874E902F21FDD3AF /* PBXTargetDependency */,
 			);
-			name = obsSyncTests;
+			name = floderSyncTests;
 			packageProductDependencies = (
 			);
-			productName = obsSyncTests;
-			productReference = BEBAB136B9D70B8D6C095C20 /* obsSyncTests.xctest */;
+			productName = floderSyncTests;
+			productReference = BEBAB136B9D70B8D6C095C20 /* floderSyncTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -281,7 +287,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 88B6807FF5A7AE626510BC39 /* Build configuration list for PBXProject "obsSync" */;
+			buildConfigurationList = 88B6807FF5A7AE626510BC39 /* Build configuration list for PBXProject "floderSync" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -296,8 +302,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8C4576B632D753E2229515E5 /* obsSync */,
-				9F8E401F1C6C94A173E54BA6 /* obsSyncTests */,
+				8C4576B632D753E2229515E5 /* floderSync */,
+				9F8E401F1C6C94A173E54BA6 /* floderSyncTests */,
 			);
 		};
 /* End PBXProject section */
@@ -336,7 +342,7 @@
 				4393641115A1446F629854F7 /* Localization.swift in Sources */,
 				E32003662F7D17BD3DAAE00A /* LoginItemService.swift in Sources */,
 				078DBD1A585DC90931CD6CD3 /* MenuBarView.swift in Sources */,
-				D927950B934BAE385ED1556F /* ObsSyncApp.swift in Sources */,
+				D927950B934BAE385ED1556F /* FloderSyncApp.swift in Sources */,
 				0C78F5790EAC0A640AD668DE /* ProcessGitClient.swift in Sources */,
 				813F90B2576A08D5BC8EFD87 /* ProfileStore.swift in Sources */,
 				37222E173840FAB98F703DDB /* RepositoryPicker.swift in Sources */,
@@ -355,6 +361,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0444F7F068361D4DD8DCC5F0 /* AppModelLoginItemTests.swift in Sources */,
+				4D941BAF18D549DC98316F5C /* AutomationRuleTests.swift in Sources */,
 				7B3DB5FD354D16872C7D5197 /* CatchUpCalculatorTests.swift in Sources */,
 				DD1FEB71D1B583A3CB923D02 /* FileEventFilterTests.swift in Sources */,
 				5F52C6864D914B1A64A1E731 /* JSONProfileStoreTests.swift in Sources */,
@@ -373,7 +381,7 @@
 /* Begin PBXTargetDependency section */
 		91F6B543874E902F21FDD3AF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8C4576B632D753E2229515E5 /* obsSync */;
+			target = 8C4576B632D753E2229515E5 /* floderSync */;
 			targetProxy = 25E41F9B09AF3799B028923C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -395,8 +403,8 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.app;
-				PRODUCT_MODULE_NAME = obsSync;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flodersync.app;
+				PRODUCT_MODULE_NAME = floderSync;
 				PRODUCT_NAME = FloderSync;
 				SDKROOT = macosx;
 			};
@@ -414,7 +422,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flodersync.tests;
 				SDKROOT = macosx;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloderSync.app/Contents/MacOS/FloderSync";
 			};
@@ -493,7 +501,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flodersync.tests;
 				SDKROOT = macosx;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FloderSync.app/Contents/MacOS/FloderSync";
 			};
@@ -515,8 +523,8 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.obssync.app;
-				PRODUCT_MODULE_NAME = obsSync;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flodersync.app;
+				PRODUCT_MODULE_NAME = floderSync;
 				PRODUCT_NAME = FloderSync;
 				SDKROOT = macosx;
 			};
@@ -593,7 +601,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		843AAF9ADD718AE47810BDA4 /* Build configuration list for PBXNativeTarget "obsSyncTests" */ = {
+		843AAF9ADD718AE47810BDA4 /* Build configuration list for PBXNativeTarget "floderSyncTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				645B4262C03A8FE5D31B5CE3 /* Debug */,
@@ -602,7 +610,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		88B6807FF5A7AE626510BC39 /* Build configuration list for PBXProject "obsSync" */ = {
+		88B6807FF5A7AE626510BC39 /* Build configuration list for PBXProject "floderSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BF48B49ED453CE3AE8469D36 /* Debug */,
@@ -611,7 +619,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		94F4F3135A39A1EB98FBA268 /* Build configuration list for PBXNativeTarget "obsSync" */ = {
+		94F4F3135A39A1EB98FBA268 /* Build configuration list for PBXNativeTarget "floderSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8BBCC91EFDDFE10DD45CC502 /* Debug */,

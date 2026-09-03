@@ -1,10 +1,87 @@
 import Foundation
 
 actor JSONProfileStore: ProfileStore {
-    private struct StoredConfigurationV2: Codable {
+    private struct StoredConfigurationV3: Codable {
         let schemaVersion: Int
         let profiles: [SyncProfile]
         let automationRules: [AutomationRule]
+    }
+
+    private struct StoredConfigurationV2: Decodable {
+        let profiles: [SyncProfileV2]
+        let automationRules: [AutomationRuleV2]
+
+        func migrated() -> AppConfiguration {
+            let migratedRules = automationRules.map { rule in
+                let inheritedMessage = profiles.first(where: { $0.automationRuleID == rule.id })?
+                    .commitMessageTemplate ?? AutomaticCommitConfiguration.defaultMessageTemplate
+                return rule.migrated(commitMessageTemplate: inheritedMessage)
+            }
+            return AppConfiguration(
+                profiles: profiles.map { $0.migrated() },
+                automationRules: migratedRules
+            )
+        }
+    }
+
+    private struct AutomationConfigurationV2: Decodable {
+        let policies: [SyncPolicy]
+        let integrationStrategy: SyncIntegrationStrategy
+
+        func migrated(commitMessageTemplate: String) -> AutomationConfiguration {
+            AutomationConfiguration(
+                policies: policies,
+                integrationStrategy: integrationStrategy,
+                automaticCommit: AutomaticCommitConfiguration(
+                    isEnabled: true,
+                    messageTemplate: commitMessageTemplate
+                )
+            )
+        }
+    }
+
+    private struct AutomationRuleV2: Decodable {
+        let id: UUID
+        let name: String
+        let configuration: AutomationConfigurationV2
+
+        func migrated(commitMessageTemplate: String) -> AutomationRule {
+            AutomationRule(
+                id: id,
+                name: name,
+                configuration: configuration.migrated(
+                    commitMessageTemplate: commitMessageTemplate
+                )
+            )
+        }
+    }
+
+    private struct SyncProfileV2: Decodable {
+        let id: UUID
+        let name: String
+        let localPath: String
+        let remoteName: String
+        let commitMessageTemplate: String
+        let customAutomationConfiguration: AutomationConfigurationV2
+        let automationRuleID: UUID?
+        let isEnabled: Bool
+
+        func migrated() -> SyncProfile {
+            SyncProfile(
+                id: id,
+                name: name,
+                localPath: localPath,
+                remoteName: remoteName,
+                policies: customAutomationConfiguration.policies,
+                integrationStrategy: customAutomationConfiguration.integrationStrategy,
+                automaticCommit: AutomaticCommitConfiguration(
+                    isEnabled: true,
+                    messageTemplate: commitMessageTemplate
+                ),
+                automationRuleID: automationRuleID,
+                isEnabled: isEnabled
+            )
+        }
     }
 
     private struct ConfigurationHeader: Decodable {
@@ -94,7 +171,7 @@ actor JSONProfileStore: ProfileStore {
             in: .userDomainMask
         ).first ?? FileManager.default.homeDirectoryForCurrentUser
             .appendingPathComponent("Library/Application Support", isDirectory: true)
-        let directory = applicationSupport.appendingPathComponent("dev.obssync.app", isDirectory: true)
+        let directory = applicationSupport.appendingPathComponent("dev.flodersync.app", isDirectory: true)
         return JSONProfileStore(fileURL: directory.appendingPathComponent("configuration.json"))
     }
 
@@ -120,8 +197,8 @@ actor JSONProfileStore: ProfileStore {
             try fileManager.copyItem(at: fileURL, to: backupURL)
         }
 
-        let storedConfiguration = StoredConfigurationV2(
-            schemaVersion: 2,
+        let storedConfiguration = StoredConfigurationV3(
+            schemaVersion: 3,
             profiles: configuration.profiles,
             automationRules: configuration.automationRules
         )
@@ -144,10 +221,10 @@ actor JSONProfileStore: ProfileStore {
             )
         case 2:
             let stored = try decoder.decode(StoredConfigurationV2.self, from: data)
-            return AppConfiguration(
-                profiles: stored.profiles,
-                automationRules: stored.automationRules
-            )
+            return stored.migrated()
+        case 3:
+            let stored = try decoder.decode(StoredConfigurationV3.self, from: data)
+            return AppConfiguration(profiles: stored.profiles, automationRules: stored.automationRules)
         default:
             throw ProfileStoreError.unsupportedSchema(header.schemaVersion)
         }

@@ -13,8 +13,8 @@ if /usr/bin/pgrep -x FloderSync >/dev/null; then
 fi
 
 /usr/bin/xcodebuild \
-  -project "$project_root/obsSync.xcodeproj" \
-  -scheme obsSync \
+  -project "$project_root/floderSync.xcodeproj" \
+  -scheme floderSync \
   -configuration Release \
   -destination 'platform=macOS' \
   -derivedDataPath "$derived_data_path" \

@@ -7,12 +7,14 @@ enum LoginItemStatus: Sendable {
     case unavailable
 }
 
+@MainActor
 protocol LoginItemManaging: Sendable {
     func status() async -> LoginItemStatus
     func setEnabled(_ enabled: Bool) async throws
     func openSystemSettings() async
 }
 
+@MainActor
 struct LoginItemService: LoginItemManaging {
     func status() async -> LoginItemStatus {
         switch SMAppService.mainApp.status {

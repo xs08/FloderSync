@@ -1,5 +1,5 @@
 import XCTest
-@testable import obsSync
+@testable import floderSync
 
 final class SyncCoordinatorTests: XCTestCase {
     func testRepeatedTriggersForOneRepositoryAreCoalesced() async throws {

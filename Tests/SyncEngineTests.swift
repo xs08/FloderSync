@@ -1,5 +1,5 @@
 import XCTest
-@testable import obsSync
+@testable import floderSync
 
 final class SyncEngineTests: XCTestCase {
     func testLocalChangesAreCommittedBeforePullAndPush() async throws {
@@ -97,6 +97,59 @@ final class SyncEngineTests: XCTestCase {
         XCTAssertEqual(calls, ["validate", "status"])
     }
 
+    func testAutomaticCommitUsesConfiguredIdentityAndDynamicMessage() async throws {
+        let git = FakeGitClient(
+            hasChanges: true,
+            commitIdentity: GitCommitIdentity(name: "Global User", email: "global@example.com")
+        )
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let profile = SyncProfile(
+            name: "Notes",
+            localPath: "/tmp/notes",
+            automaticCommit: AutomaticCommitConfiguration(
+                authorName: "Repository User",
+                messageTemplate: "Sync ${user} <${email}> at ${time}"
+            )
+        )
+
+        let record = await SyncEngine(git: git).synchronize(
+            profile: profile,
+            trigger: .scheduled,
+            now: { date }
+        )
+
+        XCTAssertEqual(record.result, .succeeded)
+        let committedIdentity = await git.committedIdentity
+        let committedMessage = await git.committedMessage
+        XCTAssertEqual(
+            committedIdentity,
+            GitCommitIdentity(name: "Repository User", email: "global@example.com")
+        )
+        XCTAssertEqual(
+            committedMessage,
+            "Sync Repository User <global@example.com> at \(date.formatted(.iso8601))"
+        )
+    }
+
+    func testDirtyTreeStopsBeforeWritesWhenAutomaticCommitIsDisabled() async throws {
+        let git = FakeGitClient(hasChanges: true)
+        let profile = SyncProfile(
+            name: "Notes",
+            localPath: "/tmp/notes",
+            automaticCommit: AutomaticCommitConfiguration(isEnabled: false)
+        )
+
+        let record = await SyncEngine(git: git).synchronize(
+            profile: profile,
+            trigger: .interval
+        )
+
+        XCTAssertEqual(record.result, .needsUserAction)
+        XCTAssertEqual(record.failureCategory, .configuration)
+        let calls = await git.calls
+        XCTAssertEqual(calls, ["validate", "status"])
+    }
+
     func testDailyTimeRejectsInvalidValues() {
         XCTAssertThrowsError(try DailyTime(hour: 24, minute: 0))
         XCTAssertThrowsError(try DailyTime(hour: 12, minute: 60))
@@ -109,15 +162,23 @@ private actor FakeGitClient: GitClient {
     private let hasChanges: Bool
     private let status: GitWorkingTreeStatus?
     private let pullFailure: SyncFailure?
+    private let availableCommitIdentity: GitCommitIdentity
+    private(set) var committedIdentity: GitCommitIdentity?
+    private(set) var committedMessage: String?
 
     init(
         hasChanges: Bool,
         pullFailure: SyncFailure? = nil,
-        status: GitWorkingTreeStatus? = nil
+        status: GitWorkingTreeStatus? = nil,
+        commitIdentity: GitCommitIdentity = GitCommitIdentity(
+            name: "Test User",
+            email: "test@example.com"
+        )
     ) {
         self.hasChanges = hasChanges
         self.pullFailure = pullFailure
         self.status = status
+        self.availableCommitIdentity = commitIdentity
     }
 
     func validateRepository(_ profile: SyncProfile) async throws -> RepositoryInfo {
@@ -132,11 +193,25 @@ private actor FakeGitClient: GitClient {
 
     func checkRemoteAccess(at path: String, remote: String) async throws { }
 
+    func commitIdentity(at path: String) async throws -> GitCommitIdentity {
+        availableCommitIdentity
+    }
+
     func stageAll(at path: String) async throws {
         calls.append("stage")
     }
 
     func commit(at path: String, message: String) async throws {
+        calls.append("commit")
+    }
+
+    func commit(
+        at path: String,
+        message: String,
+        identity: GitCommitIdentity
+    ) async throws {
+        committedMessage = message
+        committedIdentity = identity
         calls.append("commit")
     }
 

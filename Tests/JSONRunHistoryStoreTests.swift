@@ -1,10 +1,10 @@
 import XCTest
-@testable import obsSync
+@testable import floderSync
 
 final class JSONRunHistoryStoreTests: XCTestCase {
     func testAppendKeepsNewestRunsWithinLimit() async throws {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("obsSync-history-test-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("floderSync-history-test-\(UUID().uuidString)", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: directory) }
         let store = JSONRunHistoryStore(fileURL: directory.appendingPathComponent("history.json"))
         let profileID = UUID()

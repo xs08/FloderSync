@@ -14,7 +14,7 @@ final class FSEventsDirectoryWatcher: @unchecked Sendable {
 
     private let path: String
     private let handler: EventHandler
-    private let queue = DispatchQueue(label: "dev.obssync.fsevents", qos: .utility)
+    private let queue = DispatchQueue(label: "dev.flodersync.fsevents", qos: .utility)
     private var stream: FSEventStreamRef?
 
     init(path: String, handler: @escaping EventHandler) {

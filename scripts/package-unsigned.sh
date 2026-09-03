@@ -9,8 +9,8 @@ built_app="$derived_data_path/Build/Products/Release/FloderSync.app"
 
 /usr/bin/xcodebuild \
   -quiet \
-  -project "$project_root/obsSync.xcodeproj" \
-  -scheme obsSync \
+  -project "$project_root/floderSync.xcodeproj" \
+  -scheme floderSync \
   -configuration Release \
   -destination 'generic/platform=macOS' \
   -derivedDataPath "$derived_data_path" \
