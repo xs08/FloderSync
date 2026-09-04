@@ -321,6 +321,7 @@ enum SyncFailureCategory: String, Codable, Sendable {
     case detachedHead
     case authentication
     case conflict
+    case nonFastForward
     case network
     case timedOut
     case cancelled
@@ -390,6 +391,19 @@ struct RepositoryInfo: Equatable, Sendable {
     }
 }
 
+struct GitRemoteSnapshot: Equatable, Sendable {
+    let revision: String
+}
+
+struct RepositoryDivergence: Equatable, Sendable {
+    let localCommitCount: Int
+    let remoteCommitCount: Int
+
+    var requiresIntegration: Bool {
+        remoteCommitCount > 0
+    }
+}
+
 enum RepositorySynchronizationState: Equatable, Sendable {
     case upToDate
     case outOfSync
@@ -423,6 +437,7 @@ enum SyncFailure: Error, Equatable, Sendable {
     case detachedHead
     case authentication(String)
     case conflict(String)
+    case nonFastForward(String)
     case network(String)
     case timedOut
     case cancelled
@@ -437,6 +452,7 @@ enum SyncFailure: Error, Equatable, Sendable {
         case .detachedHead: .detachedHead
         case .authentication: .authentication
         case .conflict: .conflict
+        case .nonFastForward: .nonFastForward
         case .network: .network
         case .timedOut: .timedOut
         case .cancelled: .cancelled
@@ -448,7 +464,7 @@ enum SyncFailure: Error, Equatable, Sendable {
     var requiresUserAction: Bool {
         switch self {
         case .invalidRepository, .remoteMissing, .detachedHead, .authentication, .conflict,
-             .configuration:
+             .nonFastForward, .configuration:
             true
         default:
             false
@@ -462,6 +478,7 @@ enum SyncFailure: Error, Equatable, Sendable {
              let .remoteMissing(message),
              let .authentication(message),
              let .conflict(message),
+             let .nonFastForward(message),
              let .network(message),
              let .configuration(message),
              let .commandFailed(_, message):

@@ -18,10 +18,18 @@ protocol GitClient: Sendable {
         message: String,
         identity: GitCommitIdentity
     ) async throws
-    func integrateRemote(
+    func fetchRemote(
         at path: String,
         remote: String,
-        branch: String,
+        branch: String
+    ) async throws -> GitRemoteSnapshot
+    func divergence(
+        at path: String,
+        remoteRevision: String
+    ) async throws -> RepositoryDivergence
+    func integrateFetchedRemote(
+        at path: String,
+        remoteRevision: String,
         strategy: SyncIntegrationStrategy
     ) async throws
     func push(at path: String, remote: String, branch: String) async throws

@@ -1,10 +1,36 @@
 import Foundation
 
+struct SyncRetryPolicy: Sendable {
+    let networkAttemptLimit: Int
+    let pushRaceRetryLimit: Int
+    let retryDelayNanoseconds: UInt64
+
+    init(
+        networkAttemptLimit: Int = 3,
+        pushRaceRetryLimit: Int = 2,
+        retryDelayNanoseconds: UInt64 = 1_000_000_000
+    ) {
+        self.networkAttemptLimit = max(1, networkAttemptLimit)
+        self.pushRaceRetryLimit = max(0, pushRaceRetryLimit)
+        self.retryDelayNanoseconds = retryDelayNanoseconds
+    }
+}
+
 struct SyncEngine: Sendable {
     private let git: any GitClient
+    private let retryPolicy: SyncRetryPolicy
+    private let sleep: @Sendable (UInt64) async throws -> Void
 
-    init(git: any GitClient) {
+    init(
+        git: any GitClient,
+        retryPolicy: SyncRetryPolicy = SyncRetryPolicy(),
+        sleep: @escaping @Sendable (UInt64) async throws -> Void = {
+            try await Task.sleep(nanoseconds: $0)
+        }
+    ) {
         self.git = git
+        self.retryPolicy = retryPolicy
+        self.sleep = sleep
     }
 
     func synchronize(
@@ -36,13 +62,22 @@ struct SyncEngine: Sendable {
                 )
             }
 
-            if status.hasChanges {
-                guard profile.automaticCommit.isEnabled else {
-                    throw SyncFailure.configuration(
-                        L10n.string("error.autoCommitDisabled", table: .errors)
-                    )
-                }
+            if status.hasChanges && !profile.automaticCommit.isEnabled {
+                throw SyncFailure.configuration(
+                    L10n.string("error.autoCommitDisabled", table: .errors)
+                )
+            }
 
+            activeStep = .pulling
+            var remoteSnapshot = try await retryingNetworkOperation {
+                try await git.fetchRemote(
+                    at: repository.rootPath,
+                    remote: profile.remoteName,
+                    branch: repository.currentBranch
+                )
+            }
+
+            if status.hasChanges {
                 let configuredIdentity = GitCommitIdentity(
                     name: profile.automaticCommit.authorName,
                     email: profile.automaticCommit.authorEmail
@@ -82,23 +117,51 @@ struct SyncEngine: Sendable {
                 completedSteps.append(.init(step: .committing, completedAt: now()))
             }
 
-            activeStep = .pulling
-            try Task.checkCancellation()
-            try await git.integrateRemote(
-                at: repository.rootPath,
-                remote: profile.remoteName,
-                branch: repository.currentBranch,
-                strategy: profile.integrationStrategy
-            )
-            completedSteps.append(.init(step: .pulling, completedAt: now()))
+            var remainingPushRaceRetries = retryPolicy.pushRaceRetryLimit
+            while true {
+                activeStep = .pulling
+                try Task.checkCancellation()
+                let divergence = try await git.divergence(
+                    at: repository.rootPath,
+                    remoteRevision: remoteSnapshot.revision
+                )
+                if divergence.requiresIntegration {
+                    try await git.integrateFetchedRemote(
+                        at: repository.rootPath,
+                        remoteRevision: remoteSnapshot.revision,
+                        strategy: profile.integrationStrategy
+                    )
+                }
 
-            activeStep = .pushing
-            try Task.checkCancellation()
-            try await git.push(
-                at: repository.rootPath,
-                remote: profile.remoteName,
-                branch: repository.currentBranch
-            )
+                activeStep = .pushing
+                do {
+                    try Task.checkCancellation()
+                    try await retryingNetworkOperation {
+                        try await git.push(
+                            at: repository.rootPath,
+                            remote: profile.remoteName,
+                            branch: repository.currentBranch
+                        )
+                    }
+                    break
+                } catch let failure as SyncFailure {
+                    guard case .nonFastForward = failure,
+                          remainingPushRaceRetries > 0 else {
+                        throw failure
+                    }
+                    remainingPushRaceRetries -= 1
+                    activeStep = .pulling
+                    remoteSnapshot = try await retryingNetworkOperation {
+                        try await git.fetchRemote(
+                            at: repository.rootPath,
+                            remote: profile.remoteName,
+                            branch: repository.currentBranch
+                        )
+                    }
+                }
+            }
+
+            completedSteps.append(.init(step: .pulling, completedAt: now()))
             completedSteps.append(.init(step: .pushing, completedAt: now()))
 
             return SyncRunRecord(
@@ -151,6 +214,27 @@ struct SyncEngine: Sendable {
                 hadLocalChanges: hadLocalChanges,
                 automationRuleName: automationRuleName
             )
+        }
+    }
+
+    private func retryingNetworkOperation<T: Sendable>(
+        _ operation: @Sendable () async throws -> T
+    ) async throws -> T {
+        var attempt = 1
+        while true {
+            do {
+                return try await operation()
+            } catch let failure as SyncFailure {
+                guard case .network = failure,
+                      attempt < retryPolicy.networkAttemptLimit else {
+                    throw failure
+                }
+                let multiplier = UInt64(attempt)
+                let (delay, overflow) = retryPolicy.retryDelayNanoseconds
+                    .multipliedReportingOverflow(by: multiplier)
+                try await sleep(overflow ? UInt64.max : delay)
+                attempt += 1
+            }
         }
     }
 

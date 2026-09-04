@@ -53,10 +53,10 @@ FloderSync 增加可复用的自动化规则库。用户可以先在“自动化
 
 | 策略 | Git 行为 | 产品语义 |
 | --- | --- | --- |
-| Rebase，默认 | `git pull --rebase <remote> <branch>` | 将尚未推送的本地提交应用到远端最新提交之后，保持历史线性。 |
-| Merge | `git pull --no-rebase --no-edit <remote> <branch>` | 保留两侧历史；产生分叉时允许 Git 创建 merge commit。 |
+| Rebase，默认 | `git fetch <remote> <branch>` 后 `git rebase <fetched-revision>` | 将尚未推送的本地提交应用到本次获取的远端 revision 之后，保持历史线性。 |
+| Merge | `git fetch <remote> <branch>` 后 `git merge --no-edit <fetched-revision>` | 保留两侧历史；产生分叉时允许 Git 创建 merge commit。 |
 
-用户只能选择受支持的策略，不能输入任意 Git 命令或附加参数。两种策略发生冲突时都停止后续 push，记录为“需要用户处理”，且不自动执行 `rebase --abort`、`merge --abort`、强制推送或破坏性恢复。
+用户只能选择受支持的策略，不能输入任意 Git 命令或附加参数。两种策略发生冲突时都停止后续 push，记录为“需要用户处理”，且不自动选用 ours/theirs、强制推送或执行破坏性恢复。若冲突来自本次运行启动的操作，应用自动执行对应 `rebase --abort` / `merge --abort`，保留双方提交并恢复整合前的干净操作状态；用户预先启动的操作不在自动恢复范围内。
 
 ## 5. 数据模型
 
@@ -133,6 +133,6 @@ schema v1 迁移规则：
 - 固定间隔和每日多个时间点正确调度，且不会保留重复任务。
 - 每日新增从 `00:00` 开始逐小时递增并封顶 `23:00`；编辑期间顺序稳定，保存时排序，重复时间无法保存。
 - Rebase 与 Merge 分别执行明确、非交互的 Git 参数。
-- 任一整合策略出现冲突后都不会执行 push。
+- 任一整合策略出现冲突后都不会执行 push，并自动回滚本次运行启动的整合操作。
 - 删除规则不会留下悬空引用。
 - schema v1/v2/v3 配置迁移为 schema v4，并保留原提交模板、自定义配置和 Rebase；旧文件变化策略迁移为新增 commit 检测，旧共享规则按首个引用仓库的模板建立自动提交配置。

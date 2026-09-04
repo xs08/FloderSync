@@ -59,10 +59,24 @@ private actor DelayedGitClient: GitClient {
 
     func stageAll(at path: String) async throws { }
     func commit(at path: String, message: String) async throws { }
-    func integrateRemote(
+    func fetchRemote(
         at path: String,
         remote: String,
-        branch: String,
+        branch: String
+    ) async throws -> GitRemoteSnapshot {
+        GitRemoteSnapshot(revision: "remote")
+    }
+
+    func divergence(
+        at path: String,
+        remoteRevision: String
+    ) async throws -> RepositoryDivergence {
+        RepositoryDivergence(localCommitCount: 0, remoteCommitCount: 0)
+    }
+
+    func integrateFetchedRemote(
+        at path: String,
+        remoteRevision: String,
         strategy: SyncIntegrationStrategy
     ) async throws { }
     func push(at path: String, remote: String, branch: String) async throws { }

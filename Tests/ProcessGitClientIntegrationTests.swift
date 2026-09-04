@@ -62,6 +62,36 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertEqual(state, .outOfSync)
     }
 
+    func testFetchReturnsImmutableRevisionAndDivergenceCountsBothSides() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.pushRemoteChange("remote update\n")
+        try fixture.write("local file\n", to: fixture.workURL.appendingPathComponent("Local.md"))
+        _ = try fixture.git(["-C", fixture.workURL.path, "add", "--all"])
+        _ = try fixture.git(["-C", fixture.workURL.path, "commit", "-m", "Local change"])
+
+        let client = ProcessGitClient(timeout: 10)
+        let snapshot = try await client.fetchRemote(
+            at: fixture.workURL.path,
+            remote: "origin",
+            branch: "main"
+        )
+        let divergence = try await client.divergence(
+            at: fixture.workURL.path,
+            remoteRevision: snapshot.revision
+        )
+
+        XCTAssertEqual(
+            snapshot.revision,
+            try fixture.git(["--git-dir", fixture.remoteURL.path, "rev-parse", "refs/heads/main"])
+        )
+        XCTAssertEqual(
+            divergence,
+            RepositoryDivergence(localCommitCount: 1, remoteCommitCount: 1)
+        )
+    }
+
     func testValidationRejectsNonGitFolder() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }
@@ -139,7 +169,7 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         )
     }
 
-    func testRemoteChangeIsPulledIntoCleanWorkingTree() async throws {
+    func testRemoteChangeIsFetchedAndIntegratedIntoCleanWorkingTree() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }
         try fixture.createInitialRepository()
@@ -180,7 +210,7 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertEqual(parents.count, 2)
     }
 
-    func testConflictingChangesStopBeforePush() async throws {
+    func testConflictingRebaseStopsBeforePushAndRestoresRepository() async throws {
         let fixture = try GitFixture()
         defer { fixture.remove() }
         try fixture.createInitialRepository()
@@ -201,12 +231,99 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
             "--git-dir", fixture.remoteURL.path, "rev-parse", "refs/heads/main"
         ])
         XCTAssertEqual(remoteHeadAfterSync, remoteHeadBeforeSync)
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "symbolic-ref", "--short", "HEAD"]),
+            "main"
+        )
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "status", "--porcelain"]),
+            ""
+        )
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "log", "-1", "--format=%s"]),
+            AutomaticCommitConfiguration.defaultMessageTemplate
+                .replacingOccurrences(of: "${time}", with: record.startedAt.formatted(.iso8601))
+        )
 
         let retry = await SyncEngine(git: ProcessGitClient(timeout: 10))
             .synchronize(profile: profile, trigger: .newCommit)
         XCTAssertEqual(retry.result, .needsUserAction)
         XCTAssertEqual(retry.failureCategory, .conflict)
-        XCTAssertTrue(retry.steps.isEmpty, "A conflicted repository must stop before any write step.")
+        XCTAssertEqual(retry.steps.map(\.step), [.validation, .status])
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "symbolic-ref", "--short", "HEAD"]),
+            "main"
+        )
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "status", "--porcelain"]),
+            ""
+        )
+    }
+
+    func testConflictingMergeStopsBeforePushAndRestoresRepository() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.pushRemoteChange("remote change\n")
+        try fixture.write("local change\n", to: fixture.workURL.appendingPathComponent("Notes.md"))
+        let localHeadBeforeSync = try fixture.git([
+            "-C", fixture.workURL.path, "rev-parse", "HEAD"
+        ])
+
+        let profile = SyncProfile(
+            name: "Notes",
+            localPath: fixture.workURL.path,
+            integrationStrategy: .merge
+        )
+        let record = await SyncEngine(git: ProcessGitClient(timeout: 10))
+            .synchronize(profile: profile, trigger: .manual)
+
+        XCTAssertEqual(record.result, .needsUserAction, record.failureMessage ?? "")
+        XCTAssertEqual(record.failureCategory, .conflict)
+        XCTAssertFalse(record.steps.contains(where: { $0.step == .pushing }))
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "symbolic-ref", "--short", "HEAD"]),
+            "main"
+        )
+        XCTAssertEqual(
+            try fixture.git(["-C", fixture.workURL.path, "status", "--porcelain"]),
+            ""
+        )
+        XCTAssertNotEqual(
+            try fixture.git(["-C", fixture.workURL.path, "rev-parse", "HEAD"]),
+            localHeadBeforeSync,
+            "The automatic local commit must survive an integration rollback."
+        )
+    }
+
+    func testPreexistingUserMergeConflictIsNotAborted() async throws {
+        let fixture = try GitFixture()
+        defer { fixture.remove() }
+        try fixture.createInitialRepository()
+        try fixture.pushRemoteChange("remote change\n")
+        try fixture.write("local change\n", to: fixture.workURL.appendingPathComponent("Notes.md"))
+        _ = try fixture.git(["-C", fixture.workURL.path, "add", "--all"])
+        _ = try fixture.git(["-C", fixture.workURL.path, "commit", "-m", "Local change"])
+        _ = try fixture.git(["-C", fixture.workURL.path, "fetch", "origin", "main"])
+        let mergeResult = try fixture.gitAllowingFailure([
+            "-C", fixture.workURL.path, "merge", "--no-edit", "FETCH_HEAD"
+        ])
+        XCTAssertNotEqual(mergeResult.exitCode, 0)
+        XCTAssertFalse(
+            try fixture.git(["-C", fixture.workURL.path, "ls-files", "-u"]).isEmpty
+        )
+
+        let profile = SyncProfile(name: "Notes", localPath: fixture.workURL.path)
+        let record = await SyncEngine(git: ProcessGitClient(timeout: 10))
+            .synchronize(profile: profile, trigger: .manual)
+
+        XCTAssertEqual(record.result, .needsUserAction)
+        XCTAssertEqual(record.failureCategory, .conflict)
+        XCTAssertTrue(record.steps.isEmpty)
+        XCTAssertFalse(
+            try fixture.git(["-C", fixture.workURL.path, "ls-files", "-u"]).isEmpty,
+            "FloderSync must not abort a Git operation that existed before the run."
+        )
     }
 
     func testTimeoutForceKillsCommandThatIgnoresTermination() async throws {
@@ -258,6 +375,63 @@ final class ProcessGitClientIntegrationTests: XCTestCase {
         XCTAssertLessThan(ProcessInfo.processInfo.systemUptime - cancelledAt, 2)
         let processDidExit = await fixture.waitUntilProcessExits(pid: pid)
         XCTAssertTrue(processDidExit)
+    }
+
+    func testSSHConnectionFailureIsClassifiedAsNetwork() async throws {
+        let fixture = try FailingCommandFixture(
+            message: "ssh: connect to host github.com port 22: Undefined error: 0"
+        )
+        defer { fixture.remove() }
+
+        do {
+            try await ProcessGitClient(gitExecutable: fixture.executableURL.path, timeout: 2)
+                .checkRemoteAccess(at: "/", remote: "origin")
+            XCTFail("The command must fail.")
+        } catch let failure as SyncFailure {
+            guard case .network = failure else {
+                return XCTFail("Expected network, got \(failure)")
+            }
+        }
+    }
+
+    func testRejectedPushIsClassifiedAsNonFastForward() async throws {
+        let fixture = try FailingCommandFixture(
+            message: "! [rejected] main -> main (fetch first)\nerror: failed to push some refs"
+        )
+        defer { fixture.remove() }
+
+        do {
+            try await ProcessGitClient(gitExecutable: fixture.executableURL.path, timeout: 2)
+                .push(at: "/", remote: "origin", branch: "main")
+            XCTFail("The command must fail.")
+        } catch let failure as SyncFailure {
+            guard case .nonFastForward = failure else {
+                return XCTFail("Expected nonFastForward, got \(failure)")
+            }
+        }
+    }
+}
+
+private final class FailingCommandFixture {
+    let executableURL: URL
+    private let rootURL: URL
+
+    init(message: String) throws {
+        rootURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("FloderSync-Failure-\(UUID().uuidString)", isDirectory: true)
+        executableURL = rootURL.appendingPathComponent("fail.sh")
+        try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: true)
+        let escapedMessage = message.replacingOccurrences(of: "'", with: "'\\''")
+        let script = "#!/bin/sh\nprintf '%s\\n' '\(escapedMessage)' >&2\nexit 1\n"
+        try Data(script.utf8).write(to: executableURL, options: .atomic)
+        try FileManager.default.setAttributes(
+            [.posixPermissions: 0o755],
+            ofItemAtPath: executableURL.path
+        )
+    }
+
+    func remove() {
+        try? FileManager.default.removeItem(at: rootURL)
     }
 }
 
@@ -370,6 +544,14 @@ private final class GitFixture {
 
     @discardableResult
     func git(_ arguments: [String]) throws -> String {
+        let result = try gitAllowingFailure(arguments)
+        guard result.exitCode == 0 else {
+            throw GitFixtureError.commandFailed(arguments: arguments, output: result.output)
+        }
+        return result.output.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    func gitAllowingFailure(_ arguments: [String]) throws -> (exitCode: Int32, output: String) {
         let process = Process()
         let stdout = Pipe()
         let stderr = Pipe()
@@ -387,10 +569,7 @@ private final class GitFixture {
         let errorData = stderr.fileHandleForReading.readDataToEndOfFile()
         let output = String(data: outputData, encoding: .utf8) ?? ""
         let error = String(data: errorData, encoding: .utf8) ?? ""
-        guard process.terminationStatus == 0 else {
-            throw GitFixtureError.commandFailed(arguments: arguments, output: error + output)
-        }
-        return output.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (process.terminationStatus, error + output)
     }
 
     private func configureIdentity(at repositoryURL: URL) throws {

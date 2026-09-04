@@ -51,7 +51,7 @@ Infrastructure
 
 ### Infrastructure
 
-- `ProcessGitClient`：安全构造参数数组、设置工作目录与非交互环境、捕获 stdout/stderr、超时与退出码；取消/超时使用 TERM 后有限等待并升级到 KILL；不通过 shell 拼接命令。
+- `ProcessGitClient`：安全构造参数数组、设置工作目录与非交互环境、捕获 stdout/stderr、超时与退出码；取消/超时使用 TERM 后有限等待并升级到 KILL；将 fetch、分叉分析、整合和 push 分为明确操作；本次启动的整合失败时回滚对应 Git 操作；不通过 shell 拼接命令。
 - `GitMetadataWatcher`：监听 `HEAD`、当前分支 ref 与 reflog 事件，去抖后比较 revision；普通工作区文件变化不会触发。
 - `ConfigStore`：在 Application Support 中原子保存版本化配置；不保存认证秘密。
 - `HistoryStore`：保存有限数量的同步摘要和脱敏步骤日志。
@@ -112,7 +112,7 @@ Trigger Source ──→ Scheduler ──→ SyncCoordinator
 - 同一 profile 永远最多一个活跃 run。
 - 运行期间的新触发被合并为一个 pending run，避免事件风暴。
 - 不同仓库可以有限并发；MVP 默认全局并发 2，后续可配置。
-- 应用退出时不强杀正在写入 Git 的子进程；先请求取消并等待安全边界，超时后明确记录中止状态。
+- 应用退出时先请求取消并等待安全边界；子进程超时后按 TERM→KILL 停止，并回滚由本次运行启动但未完成的 Rebase/Merge。
 - Git 元数据事件只表示“revision 可能变化”；比较当前 `HEAD` 与已记录 revision 后才生成新增 commit 触发。
 - 同步协调器开始处理仓库前暂停其 commit 检测，任务完全空闲后读取最新 `HEAD` 作为新基线，再恢复检测，避免自动 commit、pull、rebase 或 merge 造成重触发。
 
@@ -139,6 +139,14 @@ GUI 应用通常不继承交互式 shell 的环境。架构中应显式解析 Gi
 - 远端 URL、stderr 和 trace 日志经过统一脱敏器。
 - 所有命令有超时、退出码解释和可取消性。
 - 只允许白名单 Git 操作；MVP 不暴露任意命令输入。
+
+### 远端整合事务
+
+- 同步使用 `fetch → rev-list 分叉分析 → rebase/merge 到已获取 revision → push`，不使用同时包含网络和工作区变更的 `git pull`。
+- fetch 返回不可变 revision；本次整合只使用该 revision，便于诊断远端在同步过程中的竞态。
+- 网络错误只重试 fetch/push 等可安全重入的边界；commit 和整合命令不盲目重试。
+- push 遇到 non-fast-forward 时重新 fetch 并最多重做有限轮整合；任何一轮出现内容冲突立即停止。
+- `ProcessGitClient` 在开始整合前确认仓库没有进行中的 Git 操作并记录 git directory。命令失败、取消或超时后，只有检测到与本次策略一致的 operation marker 才执行 `rebase --abort` 或 `merge --abort`；回滚失败必须升级为需要人工处理的错误。
 
 ## 6. 配置与迁移
 
@@ -193,7 +201,7 @@ UI 以 Apple Human Interface Guidelines、系统字体、语义色、系统间�
 | 002 应用形态 | 原生 SwiftUI 菜单栏应用 + 独立设置窗口 | 已确认 |
 | 003 后台模型 | 登录会话内运行，`SMAppService.mainApp` | 已确认 |
 | 004 发布模型 | Developer ID 签名公证、直接分发 | 已确认 |
-| 005 同步整合 | 自动提交后按有效配置执行 Rebase 或 Merge；默认 Rebase，冲突即停 | 已确认 |
+| 005 同步整合 | fetch 与整合分离；按有效配置执行 Rebase 或 Merge；默认 Rebase，冲突回滚本次操作后停止 | 已确认 |
 | 006 自动化复用 | 规则库保存完整自动化配置；仓库按 ID 引用规则或保存自定义配置 | 已确认 |
 | 006 数据存储 | 版本化 JSON 配置 + 有界历史存储 | 已确认 |
 | 007 最低系统 | macOS 14+，新版视觉按可用性渐进增强 | 已确认 |

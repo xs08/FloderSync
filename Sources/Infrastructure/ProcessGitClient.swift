@@ -153,23 +153,86 @@ struct ProcessGitClient: GitClient, Sendable {
         )
     }
 
-    func integrateRemote(
+    func fetchRemote(
         at path: String,
         remote: String,
-        branch: String,
-        strategy: SyncIntegrationStrategy
-    ) async throws {
-        let strategyArguments: [String]
-        switch strategy {
-        case .rebase:
-            strategyArguments = ["--rebase"]
-        case .merge:
-            strategyArguments = ["--no-rebase", "--no-edit"]
-        }
+        branch: String
+    ) async throws -> GitRemoteSnapshot {
         _ = try await run(
-            arguments: ["-C", path, "pull"] + strategyArguments + [remote, branch],
+            arguments: ["-C", path, "fetch", "--no-tags", remote, branch],
             step: .pulling
         )
+        let revision = try await run(
+            arguments: ["-C", path, "rev-parse", "--verify", "FETCH_HEAD"],
+            step: .pulling
+        ).standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        return GitRemoteSnapshot(revision: revision)
+    }
+
+    func divergence(
+        at path: String,
+        remoteRevision: String
+    ) async throws -> RepositoryDivergence {
+        let output = try await run(
+            arguments: [
+                "-C", path, "rev-list", "--left-right", "--count",
+                "HEAD...\(remoteRevision)"
+            ],
+            step: .pulling
+        ).standardOutput
+        let counts = output.split(whereSeparator: { $0.isWhitespace }).compactMap {
+            Int($0)
+        }
+        guard counts.count == 2 else {
+            throw SyncFailure.commandFailed(step: .pulling, message: Self.sanitized(output))
+        }
+        return RepositoryDivergence(
+            localCommitCount: counts[0],
+            remoteCommitCount: counts[1]
+        )
+    }
+
+    func integrateFetchedRemote(
+        at path: String,
+        remoteRevision: String,
+        strategy: SyncIntegrationStrategy
+    ) async throws {
+        let gitDirectory = try await run(
+            arguments: ["-C", path, "rev-parse", "--absolute-git-dir"],
+            step: .pulling
+        ).standardOutput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !Self.hasOperationInProgress(gitDirectory: gitDirectory) else {
+            throw SyncFailure.conflict(
+                L10n.string("error.operationInProgress", table: .errors)
+            )
+        }
+
+        let arguments: [String]
+        switch strategy {
+        case .rebase:
+            arguments = ["-C", path, "rebase", remoteRevision]
+        case .merge:
+            arguments = ["-C", path, "merge", "--no-edit", remoteRevision]
+        }
+
+        do {
+            _ = try await run(arguments: arguments, step: .pulling)
+        } catch {
+            if let recoveryFailure = await recoverFailedIntegration(
+                at: path,
+                gitDirectory: gitDirectory,
+                strategy: strategy
+            ) {
+                let originalMessage = (error as? SyncFailure)?.displayMessage
+                    ?? error.localizedDescription
+                throw SyncFailure.conflict(
+                    [originalMessage, recoveryFailure.displayMessage]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: "\n\n")
+                )
+            }
+            throw error
+        }
     }
 
     func push(at path: String, remote: String, branch: String) async throws {
@@ -244,13 +307,65 @@ struct ProcessGitClient: GitClient, Sendable {
             lowercased.contains("resolve all conflicts manually") {
             return .conflict(message)
         }
+        if lowercased.contains("non-fast-forward") ||
+            lowercased.contains("fetch first") ||
+            lowercased.contains("failed to push some refs") ||
+            lowercased.contains("updates were rejected") {
+            return .nonFastForward(message)
+        }
         if lowercased.contains("could not resolve host") ||
             lowercased.contains("network is unreachable") ||
             lowercased.contains("connection timed out") ||
-            lowercased.contains("connection refused") {
+            lowercased.contains("connection refused") ||
+            lowercased.contains("ssh: connect to host") {
             return .network(message)
         }
         return .commandFailed(step: step, message: message)
+    }
+
+    private func recoverFailedIntegration(
+        at path: String,
+        gitDirectory: String,
+        strategy: SyncIntegrationStrategy
+    ) async -> SyncFailure? {
+        guard Self.hasIntegrationInProgress(gitDirectory: gitDirectory, strategy: strategy) else {
+            return nil
+        }
+
+        let executable = gitExecutable
+        let recoveryTimeout = min(timeout, 30)
+        let arguments: [String]
+        switch strategy {
+        case .rebase:
+            arguments = ["-C", path, "rebase", "--abort"]
+        case .merge:
+            arguments = ["-C", path, "merge", "--abort"]
+        }
+
+        return await Task.detached(priority: .utility) {
+            do {
+                let result = try Self.runSynchronously(
+                    executable: executable,
+                    arguments: arguments,
+                    timeout: recoveryTimeout,
+                    isCancelled: { false }
+                )
+                guard result.exitCode == 0 else {
+                    let output = [result.standardError, result.standardOutput]
+                        .filter { !$0.isEmpty }
+                        .joined(separator: "\n")
+                    return SyncFailure.conflict(Self.sanitized(output))
+                }
+                return nil
+            } catch let failure as SyncFailure {
+                return failure
+            } catch {
+                return SyncFailure.commandFailed(
+                    step: .pulling,
+                    message: error.localizedDescription
+                )
+            }
+        }.value
     }
 
     private static func runSynchronously(
@@ -348,6 +463,24 @@ struct ProcessGitClient: GitClient, Sendable {
             "rebase-merge", "rebase-apply", "MERGE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD"
         ]
         return operationMarkers.contains { marker in
+            FileManager.default.fileExists(
+                atPath: URL(fileURLWithPath: gitDirectory).appendingPathComponent(marker).path
+            )
+        }
+    }
+
+    private static func hasIntegrationInProgress(
+        gitDirectory: String,
+        strategy: SyncIntegrationStrategy
+    ) -> Bool {
+        let markers: [String]
+        switch strategy {
+        case .rebase:
+            markers = ["rebase-merge", "rebase-apply"]
+        case .merge:
+            markers = ["MERGE_HEAD"]
+        }
+        return markers.contains { marker in
             FileManager.default.fileExists(
                 atPath: URL(fileURLWithPath: gitDirectory).appendingPathComponent(marker).path
             )
