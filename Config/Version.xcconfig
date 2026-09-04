@@ -1,0 +1,3 @@
+// This is the single source of truth for the version embedded in FloderSync.app.
+MARKETING_VERSION = 0.1.0
+CURRENT_PROJECT_VERSION = 1

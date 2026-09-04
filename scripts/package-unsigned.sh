@@ -7,6 +7,18 @@ derived_data_path="$project_root/build/UnsignedDistributionDerivedData"
 distribution_path="$project_root/dist"
 built_app="$derived_data_path/Build/Products/Release/FloderSync.app"
 
+if [[ $# -gt 1 ]]; then
+  echo "Usage: $0 [x.y.z]" >&2
+  exit 1
+fi
+
+if [[ $# -eq 1 ]]; then
+  app_version="$("$project_root/scripts/prepare-version.sh" "$1")"
+else
+  app_version="$("$project_root/scripts/prepare-version.sh")"
+fi
+echo "Building FloderSync $app_version"
+
 /usr/bin/xcodebuild \
   -quiet \
   -project "$project_root/floderSync.xcodeproj" \
@@ -33,8 +45,12 @@ for required_architecture in arm64 x86_64; do
   fi
 done
 
-version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$built_app/Contents/Info.plist")"
-archive_path="$distribution_path/FloderSync-$version-macOS-universal-unsigned.zip"
+bundled_version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$built_app/Contents/Info.plist")"
+if [[ "$bundled_version" != "$app_version" ]]; then
+  echo "Built app version '$bundled_version' does not match requested version '$app_version'." >&2
+  exit 1
+fi
+archive_path="$distribution_path/FloderSync-$bundled_version-macOS-universal-unsigned.zip"
 
 /bin/mkdir -p "$distribution_path"
 if [[ -e "$archive_path" ]]; then

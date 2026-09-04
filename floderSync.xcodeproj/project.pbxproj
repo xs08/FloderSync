@@ -43,6 +43,7 @@
 		A8008B2084F57EE1F6214AC5 /* CatchUpCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E150E4A60F91A0A44631B8 /* CatchUpCalculatorTests.swift */; };
 		A846F80102979FA1EA242ED4 /* SettingsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 008112B98CDD8401AD008751 /* SettingsRootView.swift */; };
 		AD65BA082E91B4767D21CFCA /* CommitChangeScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0311B28734208CAC81B1A152 /* CommitChangeScheduler.swift */; };
+		B49B4446BD3E899B8ACD4C98 /* AppVersionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7612324346730AD48DA0DEF1 /* AppVersionTests.swift */; };
 		C3C6B1ED6E2EBE1FA56D16D9 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = E250ECE8EAA99C489164B3A0 /* Localization.swift */; };
 		C40977265C82F9D4257929D9 /* LoginItemService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E7FF3BB4DF4DFA305B189A0 /* LoginItemService.swift */; };
 		CB4027530BB52A47A2C08017 /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73C097A6B2951709AB1EB6A /* ProfileStore.swift */; };
@@ -50,6 +51,7 @@
 		D85DD3D9C63455E7DB62AE89 /* ScheduleCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E379631C36F1523E5F7C3D /* ScheduleCalculatorTests.swift */; };
 		E08C55A5B04840967F94CBD4 /* ProcessGitClientIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540F64800325337AEFBCED6B /* ProcessGitClientIntegrationTests.swift */; };
 		E65E684046E1C9C8288E4888 /* ConfigurationArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8E1B1117A1B1D497932915 /* ConfigurationArchive.swift */; };
+		EE3D44FFF9C7B4819B668F22 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF71FACA7F5783137D2B3B9 /* AppVersion.swift */; };
 		F0C27C0872265E4F6EAC5C5E /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C2954D05F2479641F5FDE4 /* SyncEngine.swift */; };
 		F14F39AD2B199CFFAE08320D /* ProcessGitClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FD61D675BAD13709411443C /* ProcessGitClient.swift */; };
 		F4050E48355B3E2E81AC0619 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD295E99E88FC5811D754AC9 /* MenuBarView.swift */; };
@@ -88,11 +90,13 @@
 		67C9829D49BB73A7BB65B4E0 /* UIRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIRenderTests.swift; sourceTree = "<group>"; };
 		726AF503D8DEE7AE3860A9D1 /* JSONProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONProfileStore.swift; sourceTree = "<group>"; };
 		72E379631C36F1523E5F7C3D /* ScheduleCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCalculatorTests.swift; sourceTree = "<group>"; };
+		7612324346730AD48DA0DEF1 /* AppVersionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersionTests.swift; sourceTree = "<group>"; };
 		7CB2D1628F5FF1107A9E5AFB /* ConfigurationArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationArchiveTests.swift; sourceTree = "<group>"; };
 		7EDAFB6F723652BDC7508414 /* SyncEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngineTests.swift; sourceTree = "<group>"; };
 		7F2C9D003765A9C76A6E9BD8 /* FloderSyncApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloderSyncApp.swift; sourceTree = "<group>"; };
 		803F7D1C21DC6ECFD0D81F48 /* SyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinator.swift; sourceTree = "<group>"; };
 		8D6F4F33AE45A9B5AE96CDA9 /* UserNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationService.swift; sourceTree = "<group>"; };
+		9AF71FACA7F5783137D2B3B9 /* AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVersion.swift; sourceTree = "<group>"; };
 		A675427291AA43A83313C944 /* GitClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitClient.swift; sourceTree = "<group>"; };
 		AD7A8945FA75BADA037C478D /* floderSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = floderSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B005B39C64FF80BB75A60AA2 /* FSEventsDirectoryWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FSEventsDirectoryWatcher.swift; sourceTree = "<group>"; };
@@ -101,15 +105,16 @@
 		C48A97FD4919D9580BAF438F /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		C7F88B30F1DF615626854B50 /* JSONRunHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONRunHistoryStore.swift; sourceTree = "<group>"; };
 		C9202A671003D22E3D1A4861 /* CatchUpCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatchUpCalculator.swift; sourceTree = "<group>"; };
-		D040FE643EF7A26A526A86A2 /* floderSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = floderSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0F8C299E3F0D5A4632FC6DD /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		D378CE6892F7A16E5E1B3869 /* CommitChangeSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitChangeSchedulerTests.swift; sourceTree = "<group>"; };
+		D43DA6266BEE0B760F6BF42D /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		D73C097A6B2951709AB1EB6A /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		D8D134E7149A1AF7DFF6EDA7 /* LocalizationCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationCatalogTests.swift; sourceTree = "<group>"; };
 		D9A13773FA5BB7F1E9E60D09 /* SyncCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncCoordinatorTests.swift; sourceTree = "<group>"; };
 		DC6B10FFFA847BE4BBD3A60B /* Notifications.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Notifications.xcstrings; sourceTree = "<group>"; };
 		DD9EDD38D9A2C73D80A50597 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		DF18EF14F3E1B99221DEA09B /* SystemWakeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemWakeMonitor.swift; sourceTree = "<group>"; };
+		E1E33F3789868AAD78962C98 /* FloderSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloderSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E250ECE8EAA99C489164B3A0 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		E9C2954D05F2479641F5FDE4 /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		E9E2802D5830C4385C2F1754 /* AutomationRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutomationRuleTests.swift; sourceTree = "<group>"; };
@@ -170,7 +175,7 @@
 		6BE6D51EC76D8D209A0BB34E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D040FE643EF7A26A526A86A2 /* floderSync.app */,
+				E1E33F3789868AAD78962C98 /* FloderSync.app */,
 				AD7A8945FA75BADA037C478D /* floderSyncTests.xctest */,
 			);
 			name = Products;
@@ -188,6 +193,7 @@
 		8D97ED2C851461B5EE02B5E3 = {
 			isa = PBXGroup;
 			children = (
+				D922AC66B39D61C14EF1ACA5 /* Config */,
 				ECDAB822528543640DF4882E /* Resources */,
 				31DCF6F284AF601AC95B4F84 /* Sources */,
 				93328008920E5ED275ECBB50 /* Tests */,
@@ -199,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				5F8C0ECF9E7DB213287A690E /* AppModelLoginItemTests.swift */,
+				7612324346730AD48DA0DEF1 /* AppVersionTests.swift */,
 				E9E2802D5830C4385C2F1754 /* AutomationRuleTests.swift */,
 				09E150E4A60F91A0A44631B8 /* CatchUpCalculatorTests.swift */,
 				D378CE6892F7A16E5E1B3869 /* CommitChangeSchedulerTests.swift */,
@@ -213,6 +220,14 @@
 				67C9829D49BB73A7BB65B4E0 /* UIRenderTests.swift */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		D922AC66B39D61C14EF1ACA5 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				D43DA6266BEE0B760F6BF42D /* Version.xcconfig */,
+			);
+			path = Config;
 			sourceTree = "<group>";
 		};
 		ECDAB822528543640DF4882E /* Resources */ = {
@@ -233,6 +248,7 @@
 		FEF3233D61387D41CF1915F0 /* Application */ = {
 			isa = PBXGroup;
 			children = (
+				9AF71FACA7F5783137D2B3B9 /* AppVersion.swift */,
 				3BCAE0E97D4730AF4EBDFD9D /* AutomationScheduler.swift */,
 				C9202A671003D22E3D1A4861 /* CatchUpCalculator.swift */,
 				0311B28734208CAC81B1A152 /* CommitChangeScheduler.swift */,
@@ -264,7 +280,7 @@
 			packageProductDependencies = (
 			);
 			productName = floderSync;
-			productReference = D040FE643EF7A26A526A86A2 /* floderSync.app */;
+			productReference = E1E33F3789868AAD78962C98 /* FloderSync.app */;
 			productType = "com.apple.product-type.application";
 		};
 		ABA5CA7BE24678F74249718B /* floderSyncTests */ = {
@@ -344,6 +360,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				82C74EAAF0656025E614E803 /* AppModel.swift in Sources */,
+				EE3D44FFF9C7B4819B668F22 /* AppVersion.swift in Sources */,
 				9F4E1BEEA8F657B013788F05 /* AutomationScheduler.swift in Sources */,
 				F777EF2F0D9871C2B9FB96D9 /* CatchUpCalculator.swift in Sources */,
 				AD65BA082E91B4767D21CFCA /* CommitChangeScheduler.swift in Sources */,
@@ -377,6 +394,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				23C38E4C5465EE30566B56BD /* AppModelLoginItemTests.swift in Sources */,
+				B49B4446BD3E899B8ACD4C98 /* AppVersionTests.swift in Sources */,
 				0C135FBF3F890A510FB765BD /* AutomationRuleTests.swift in Sources */,
 				A8008B2084F57EE1F6214AC5 /* CatchUpCalculatorTests.swift in Sources */,
 				199F8AC0EF7EC7EFF113641B /* CommitChangeSchedulerTests.swift in Sources */,
@@ -405,11 +423,11 @@
 /* Begin XCBuildConfiguration section */
 		16339301265896D375DA6360 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D43DA6266BEE0B760F6BF42D /* Version.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FloderSync;
@@ -418,7 +436,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flodersync.app;
 				PRODUCT_MODULE_NAME = floderSync;
 				PRODUCT_NAME = FloderSync;
@@ -428,11 +445,11 @@
 		};
 		3DE0F4FB0B130A02CBB8E53B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D43DA6266BEE0B760F6BF42D /* Version.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_APP_SANDBOX = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = FloderSync;
@@ -441,7 +458,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flodersync.app;
 				PRODUCT_MODULE_NAME = floderSync;
 				PRODUCT_NAME = FloderSync;

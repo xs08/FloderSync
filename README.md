@@ -53,6 +53,8 @@ xcodebuild test \
 
 You can also open `floderSync.xcodeproj` and run the `floderSync` scheme. FloderSync is an `LSUIElement` app, so it appears only in the system menu bar and does not show a Dock icon.
 
+The app version is stored in `Config/Version.xcconfig`, embedded in the app bundle at build time, and shown in Settings. Development builds and tests keep the current version. The install and packaging scripts below increment the minor component by default (`0.1.0` → `0.2.0`); pass an explicit `x.y.z` argument when a specific version is required.
+
 ### Install in Applications
 
 Quit any running copy of FloderSync, then run:
@@ -60,6 +62,8 @@ Quit any running copy of FloderSync, then run:
 ```bash
 ./scripts/install-local.sh
 ```
+
+To install an explicit version, run `./scripts/install-local.sh 1.2.3`.
 
 The script creates a Release build, installs `FloderSync.app` in `/Applications`, and launches the installed app. After the first install, or after replacing a development build, turn **Launch at Login** off and on again from the installed app so the macOS login item points to `/Applications/FloderSync.app` instead of Xcode's DerivedData directory.
 
@@ -72,6 +76,8 @@ You can create an unnotarized ZIP for trusted testers:
 ```bash
 ./scripts/package-unsigned.sh
 ```
+
+To package an explicit version, run `./scripts/package-unsigned.sh 1.2.3`.
 
 The output is `dist/FloderSync-<version>-macOS-universal-unsigned.zip`. It includes both Apple Silicon and Intel architectures and uses an ad-hoc signature so the app bundle can be checked for damage after packaging. This is not a Developer ID signature and does not pass Gatekeeper's first-download assessment or qualify for Apple notarization.
 

@@ -19,6 +19,10 @@ targets:
   floderSync:
     type: application
     platform: macOS
+    productName: FloderSync
+    configFiles:
+      Debug: Config/Version.xcconfig
+      Release: Config/Version.xcconfig
     sources:
       - path: Sources
       - path: Resources
@@ -28,8 +32,6 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: dev.flodersync.app
         PRODUCT_NAME: FloderSync
         PRODUCT_MODULE_NAME: floderSync
-        MARKETING_VERSION: 0.1.0
-        CURRENT_PROJECT_VERSION: 1
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_LSUIElement: YES
         INFOPLIST_KEY_CFBundleDisplayName: FloderSync

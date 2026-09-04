@@ -149,6 +149,10 @@ Tab 导航仍然可用，但不会产生“蓝色填充在新模块、蓝色外�
 - `system` 映射为 `nil`，交回系统外观决定。
 - 缺失或非法持久化值回退为 `system`。
 
+### 5.3 应用版本
+
+设置模块底部使用原生 `LabeledContent` 展示“版本/Version”。标签进入 `Settings` String Catalog，版本值直接读取当前 App Bundle 的 `CFBundleShortVersionString`，不硬编码在视图中；等宽数字与可选择文本便于用户确认和反馈具体构建。
+
 主题选项本地化，但持久化使用稳定枚举原始值，不能保存显示文案。
 
 深色设置窗口使用 `SettingsPalette` 的不透明冷调炭灰色阶。深度依靠表面明度而不是黑色阴影或大面积透明材质表达：

@@ -186,6 +186,13 @@ xcodebuild test \
   -derivedDataPath /private/tmp/FloderSyncDerivedData
 ```
 
+版本规则：
+
+- `Config/Version.xcconfig` 是应用版本唯一真源，必须保持 `x.y.z` 三段数字格式。
+- 普通 `xcodebuild build/test` 仅用于开发验证，不递增版本。
+- 用户要求生成、安装或打包新的可运行 App 时，优先使用 `scripts/install-local.sh` 或 `scripts/package-unsigned.sh`。用户未明确指定版本时，脚本只在首次产物构建前递增一次 minor 并将 patch 归零；用户明确指定时将完整版本作为脚本参数传入。
+- 同一版本的构建失败重试必须显式传回已经选定的版本，避免一次任务内重复递增。
+
 验证要求按变更风险递增：
 
 - 纯文档：检查链接、命令、名称与当前实现一致，并执行 `git diff --check`。

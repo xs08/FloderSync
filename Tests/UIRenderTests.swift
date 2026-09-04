@@ -205,6 +205,50 @@ final class UIRenderTests: XCTestCase {
         )
     }
 
+    func testRenderAppVersionInSettingsForVisualReview() throws {
+        let defaults = UserDefaults.standard
+        let originalLanguage = defaults.string(forKey: AppLanguage.defaultsKey)
+        let originalTheme = defaults.string(forKey: AppTheme.defaultsKey)
+        defer {
+            if let originalLanguage {
+                defaults.set(originalLanguage, forKey: AppLanguage.defaultsKey)
+            } else {
+                defaults.removeObject(forKey: AppLanguage.defaultsKey)
+            }
+            if let originalTheme {
+                defaults.set(originalTheme, forKey: AppTheme.defaultsKey)
+            } else {
+                defaults.removeObject(forKey: AppTheme.defaultsKey)
+            }
+        }
+
+        let model = AppModel()
+        model.selectedSettingsSection = .settings
+        model.setAppLanguage(.english)
+        model.setAppTheme(.light)
+        let size = CGSize(width: 960, height: 640)
+
+        let englishView = NSHostingView(
+            rootView: SettingsRootView(model: model)
+                .environment(\.locale, model.appLanguage.locale)
+                .environment(\.colorScheme, .light)
+                .frame(width: size.width, height: size.height)
+        )
+        englishView.frame = CGRect(origin: .zero, size: size)
+        try render(englishView, to: URL(fileURLWithPath: "/tmp/floderSync-version-en.png"))
+
+        model.setAppLanguage(.simplifiedChinese)
+        model.setAppTheme(.dark)
+        let chineseView = NSHostingView(
+            rootView: SettingsRootView(model: model)
+                .environment(\.locale, model.appLanguage.locale)
+                .environment(\.colorScheme, .dark)
+                .frame(width: size.width, height: size.height)
+        )
+        chineseView.frame = CGRect(origin: .zero, size: size)
+        try render(chineseView, to: URL(fileURLWithPath: "/tmp/floderSync-version-zh.png"))
+    }
+
     private func render<Content: View>(
         _ content: Content,
         size: CGSize,

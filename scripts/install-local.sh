@@ -7,10 +7,22 @@ derived_data_path="$project_root/build/LocalInstallDerivedData"
 built_app="$derived_data_path/Build/Products/Release/FloderSync.app"
 installed_app="/Applications/FloderSync.app"
 
+if [[ $# -gt 1 ]]; then
+  echo "Usage: $0 [x.y.z]" >&2
+  exit 1
+fi
+
 if /usr/bin/pgrep -x FloderSync >/dev/null; then
   echo "FloderSync is running. Quit it from the menu bar, then run this script again."
   exit 1
 fi
+
+if [[ $# -eq 1 ]]; then
+  app_version="$("$project_root/scripts/prepare-version.sh" "$1")"
+else
+  app_version="$("$project_root/scripts/prepare-version.sh")"
+fi
+echo "Building FloderSync $app_version"
 
 /usr/bin/xcodebuild \
   -project "$project_root/floderSync.xcodeproj" \
@@ -47,4 +59,4 @@ fi
 
 /usr/bin/open "$installed_app"
 
-echo "Installed and launched $installed_app"
+echo "Installed and launched FloderSync $app_version at $installed_app"

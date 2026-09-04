@@ -695,6 +695,16 @@ private struct AppSettingsView: View {
     var body: some View {
         Form {
             Section {
+                LabeledContent(L10n.string("about.version", table: .settings)) {
+                    Text(AppVersion.current.semanticVersion)
+                        .monospacedDigit()
+                        .textSelection(.enabled)
+                }
+            } header: {
+                Text(L10n.string("about.section", table: .settings))
+            }
+
+            Section {
                 Toggle(
                     L10n.string("general.launchAtLogin", table: .settings),
                     isOn: Binding(

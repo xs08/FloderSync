@@ -12,6 +12,7 @@
 - Commit 监听：FSEvents 只用于唤醒 Git 引用检查，实际触发由 `HEAD` revision 变化确认。
 - 并发：Swift Concurrency；每个仓库由 actor 串行化，调度器只发出意图。
 - 发布：默认按 Developer ID 签名、公证、直接分发设计。若要求 Mac App Store，需要重新评估 sandbox、目录授权和 Git/SSH 访问。
+- 版本：`Config/Version.xcconfig` 是 `MARKETING_VERSION` 的单一真源，Xcode 将其写入 `CFBundleShortVersionString`；Application 层的 `AppVersion` 从 Bundle 读取后交给设置页展示。安装与打包脚本在构建前统一处理显式版本或默认 minor 递增。
 
 建议最低版本为 macOS 14，既保留合理覆盖面，也能使用成熟的 SwiftUI scene 能力。最新系统视觉通过系统组件自然获得；仅在有明确交互收益时使用 macOS 26 专属 API，并用 availability gate 降级。
 

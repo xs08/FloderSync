@@ -53,6 +53,8 @@ xcodebuild test \
 
 也可以打开 `floderSync.xcodeproj` 后直接运行 `floderSync` scheme。FloderSync 使用 `LSUIElement`，启动后只显示在系统菜单栏，不显示 Dock 图标。
 
+应用版本统一保存在 `Config/Version.xcconfig`，构建时写入 App Bundle，并在“设置”中展示。普通开发构建和测试保持当前版本；下方安装与打包脚本默认递增 minor 版本（`0.1.0` → `0.2.0`），需要指定版本时传入完整的 `x.y.z` 参数。
+
 ### 安装到 Applications
 
 先退出正在运行的 FloderSync，然后执行：
@@ -60,6 +62,8 @@ xcodebuild test \
 ```bash
 ./scripts/install-local.sh
 ```
+
+如需安装明确版本，可执行 `./scripts/install-local.sh 1.2.3`。
 
 脚本会执行 Release 构建，将 `FloderSync.app` 安装到 `/Applications`，然后启动安装后的应用。首次安装或替换开发构建后，请在安装后的应用中关闭并重新开启“登录时启动”，确保 macOS 登录项指向 `/Applications/FloderSync.app`，而不是 Xcode 的 DerivedData 目录。
 
@@ -72,6 +76,8 @@ xcodebuild test \
 ```bash
 ./scripts/package-unsigned.sh
 ```
+
+如需打包明确版本，可执行 `./scripts/package-unsigned.sh 1.2.3`。
 
 产物位于 `dist/FloderSync-<版本>-macOS-universal-unsigned.zip`，包含 Apple Silicon 与 Intel 两种架构，并使用 ad-hoc 签名保证 App 在传输后可进行完整性校验。这不是 Developer ID 签名，也无法通过 Apple 公证或 Gatekeeper 的首次下载检查。
 

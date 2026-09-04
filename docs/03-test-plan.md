@@ -88,6 +88,8 @@
 - 验证 Asset Catalog 可加载 `MenuBarIcon`，资源采用 original rendering 且尺寸有效；人工确认图标视觉占位接近 1:1，16–18pt 下细线文件夹、双向轨道箭头和蓝青渐变仍可辨识。
 - 验证 AppIcon 的 16–1024px 全部槽位来自同一母版、背景为不透明纯白；安装包拖入 Applications 后不受 Finder 背景颜色影响。
 - 验证英文与简体中文 README 都能显示品牌 PNG，顶部语言链接可互相跳转，安装、构建、认证和数据路径信息保持一致。
+- 验证 App Bundle 的 `CFBundleShortVersionString` 为三段数字版本，设置页显示值与 Bundle 一致，中英文标签完整。
+- 验证版本脚本从 `0.1.0` 默认计算出 `0.2.0`、显式版本保持原值、非法格式失败；普通 XCTest 和 Debug 构建不修改版本源。
 
 ## 3. P0 验收矩阵
 
