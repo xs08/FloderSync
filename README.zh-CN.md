@@ -53,7 +53,7 @@ xcodebuild test \
 
 也可以打开 `floderSync.xcodeproj` 后直接运行 `floderSync` scheme。FloderSync 使用 `LSUIElement`，启动后只显示在系统菜单栏，不显示 Dock 图标。
 
-应用版本统一保存在 `Config/Version.xcconfig`，构建时写入 App Bundle，并在“设置”中展示。普通开发构建和测试保持当前版本；下方安装与打包脚本默认递增 minor 版本（`0.1.0` → `0.2.0`），需要指定版本时传入完整的 `x.y.z` 参数。
+应用版本统一保存在 `Config/Version.xcconfig`，构建时写入 App Bundle，并在“设置”中展示。普通开发构建和测试保持当前版本；下方安装与打包脚本默认递增 patch 版本（`0.1.0` → `0.1.1`），需要指定版本时传入完整的 `x.y.z` 参数。
 
 ### 安装到 Applications
 

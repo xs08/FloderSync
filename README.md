@@ -53,7 +53,7 @@ xcodebuild test \
 
 You can also open `floderSync.xcodeproj` and run the `floderSync` scheme. FloderSync is an `LSUIElement` app, so it appears only in the system menu bar and does not show a Dock icon.
 
-The app version is stored in `Config/Version.xcconfig`, embedded in the app bundle at build time, and shown in Settings. Development builds and tests keep the current version. The install and packaging scripts below increment the minor component by default (`0.1.0` → `0.2.0`); pass an explicit `x.y.z` argument when a specific version is required.
+The app version is stored in `Config/Version.xcconfig`, embedded in the app bundle at build time, and shown in Settings. Development builds and tests keep the current version. The install and packaging scripts below increment the patch component by default (`0.1.0` → `0.1.1`); pass an explicit `x.y.z` argument when a specific version is required.
 
 ### Install in Applications
 

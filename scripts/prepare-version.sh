@@ -15,18 +15,19 @@ is_semantic_version() {
   [[ "$1" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 }
 
-next_minor_version() {
+next_patch_version() {
   local current_version="$1"
   local major
   local minor
+  local patch
 
   if ! is_semantic_version "$current_version"; then
     echo "Invalid version '$current_version'. Expected x.y.z with numeric components." >&2
     exit 1
   fi
 
-  IFS=. read -r major minor _ <<< "$current_version"
-  echo "$major.$((10#$minor + 1)).0"
+  IFS=. read -r major minor patch <<< "$current_version"
+  echo "$major.$minor.$((10#$patch + 1))"
 }
 
 current_version="$(/usr/bin/awk -F ' *= *' '$1 == "MARKETING_VERSION" { print $2 }' "$version_file")"
@@ -49,7 +50,7 @@ if [[ "${1:-}" == "--next" ]]; then
     usage >&2
     exit 1
   fi
-  next_minor_version "$2"
+  next_patch_version "$2"
   exit 0
 fi
 
@@ -65,7 +66,7 @@ if [[ $# -eq 1 ]]; then
     exit 1
   fi
 else
-  target_version="$(next_minor_version "$current_version")"
+  target_version="$(next_patch_version "$current_version")"
 fi
 
 temporary_file="$(/usr/bin/mktemp "$version_file.XXXXXX")"
