@@ -192,6 +192,8 @@ xcodebuild test \
 - 普通 `xcodebuild build/test` 仅用于开发验证，不递增版本。
 - 用户要求生成、安装或打包新的可运行 App 时，优先使用 `scripts/install-local.sh` 或 `scripts/package-unsigned.sh`。用户未明确指定版本时，脚本只在首次产物构建前递增一次 minor 并将 patch 归零；用户明确指定时将完整版本作为脚本参数传入。
 - 同一版本的构建失败重试必须显式传回已经选定的版本，避免一次任务内重复递增。
+- 用户后续只说“打包”时，默认含义是执行 `scripts/package-unsigned.sh` 生成 Release ZIP，而不是只留下 `.app` 或 DerivedData。
+- ZIP 创建并完成校验后必须清理仓库根目录的 `build/`；`dist/` 中的 ZIP 与校验信息保留用于交付。
 
 验证要求按变更风险递增：
 
